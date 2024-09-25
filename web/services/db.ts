@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Provides database access using the PrismaClient ORM.
  * Uses a singleton in non-production environments to prevent

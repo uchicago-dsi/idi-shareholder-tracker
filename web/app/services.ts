@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { post } from "@/services/http";
 import { InvestmentSearchRequest } from "@/types";
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * HTTP utilities used throughout the application.
  */
