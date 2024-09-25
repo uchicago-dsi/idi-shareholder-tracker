@@ -36,14 +36,14 @@ export default function Home() {
     column: "investor_name",
     direction: "ascending",
   });
-  const recordsPerPage = parseInt(
-    process.env.NEXT_PUBLIC_DEFAULT_TABLE_ROWS ?? "",
+  const [recordsPerPage, setRecordsPerPage] = useState(
+    parseInt(process.env.NEXT_PUBLIC_DEFAULT_TABLE_ROWS ?? ""),
   );
   const [isNewSearch, setIsNewSearch] = useState(false);
 
   const totalPages = useMemo(() => {
     return totalRecords ? Math.ceil(totalRecords / recordsPerPage) : 0;
-  }, [totalRecords]);
+  }, [totalRecords, recordsPerPage]);
 
   useEffect(() => {
     setInvestmentsLoading(true);
@@ -66,7 +66,7 @@ export default function Home() {
       setInvestmentsLoading(false);
       setIsNewSearch(false);
     });
-  }, [currentPage, sortObj, isNewSearch]);
+  }, [currentPage, sortObj, isNewSearch, recordsPerPage]);
 
   const onSearchChange = () => {
     setCurrentPage(1);
@@ -136,6 +136,23 @@ export default function Home() {
                 Viewing results {(currentPage - 1) * recordsPerPage + 1}-
                 {currentPage * recordsPerPage}.
               </h3>
+              <div className="flex justify-between items-center pb-4">
+                <label className="flex items-center text-default-400 text-small">
+                  Rows per page:
+                  <select
+                    className="bg-transparent outline-none text-default-400 text-small"
+                    value={recordsPerPage}
+                    onChange={(e) => {
+                      setRecordsPerPage(parseInt(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+                </label>
+              </div>
               <Table
                 aria-label=""
                 bottomContent={
