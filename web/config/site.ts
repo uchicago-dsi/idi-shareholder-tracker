@@ -11,6 +11,6 @@ export const siteConfig = {
   ],
   navMenuItems: [],
   links: {
-    github: "https://github.com/nextui-org/nextui",
+    github: "https://github.com/uchicago-dsi/idi-shareholder-tracker",
   },
 };
