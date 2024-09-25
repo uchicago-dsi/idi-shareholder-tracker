@@ -45,6 +45,11 @@ export async function POST(request: NextRequest) {
     searchParams.issuer ||
     searchParams.document;
 
+  let formattedSearchPhrase = searchParams.document
+    ?.replace(/\s+/g, " ")
+    ?.trim();
+  let tsquerySearchPhrase = formattedSearchPhrase?.replace(/\s+/g, " & ");
+
   let searchResults: Investment[] = await prismaHelper.$queryRaw`
     SELECT
         stock_id::text,
@@ -74,7 +79,7 @@ export async function POST(request: NextRequest) {
     ${searchParams.cusip ? Prisma.sql` AND stock_cusip ILIKE ${"%" + searchParams.cusip + "%"}` : Prisma.empty}
     ${searchParams.investor ? Prisma.sql` AND concat(investor_name, ' ', investor_former_names::text) ILIKE ${"%" + searchParams.cusip + "%"}` : Prisma.empty}
     ${searchParams.issuer ? Prisma.sql` AND stock_issuer ILIKE ${"%" + searchParams.issuer + "%"}` : Prisma.empty}
-    ${searchParams.document ? Prisma.sql` AND document @@ to_tsquery(${searchParams.document})` : Prisma.empty}
+    ${searchParams.document ? Prisma.sql` AND document @@ to_tsquery(${tsquerySearchPhrase + ":*"})` : Prisma.empty}
     ORDER BY ${sortCol} ${sortDirection}
     ${!hasFilters ? Prisma.sql`LIMIT ${searchParams.limit} OFFSET ${offset}` : Prisma.empty}
     `;

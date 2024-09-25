@@ -38,6 +38,7 @@ export default function Home() {
   const recordsPerPage = parseInt(
     process.env.NEXT_PUBLIC_DEFAULT_TABLE_ROWS ?? "",
   );
+  const [isNewSearch, setIsNewSearch] = useState(false);
 
   const totalPages = useMemo(() => {
     return totalRecords ? Math.ceil(totalRecords / recordsPerPage) : 0;
@@ -62,17 +63,13 @@ export default function Home() {
       setTotalRecords(results["total"]);
       setInvestments(results["data"]);
       setInvestmentsLoading(false);
+      setIsNewSearch(false);
     });
-  }, [currentPage, sortObj, searchTerm]);
+  }, [currentPage, sortObj, isNewSearch]);
 
-  const onSearchChange = (value: string) => {
-    if (value) {
-      setSearchTerm(value);
-      setCurrentPage(1);
-    } else {
-      setSearchTerm("");
-      setCurrentPage(1);
-    }
+  const onSearchChange = () => {
+    setCurrentPage(1);
+    setIsNewSearch(true);
   };
 
   return (
@@ -108,12 +105,17 @@ export default function Home() {
             Disclosures for Quarter 2024-06-30
           </h2>
           <Input
+            isClearable
             placeholder="Search investments by keyword..."
             size={"lg"}
             startContent={<SearchIcon />}
             type="text"
             value={searchTerm}
-            onValueChange={debounce((val) => onSearchChange(val), 400)}
+            onClear={() => onSearchChange()}
+            onValueChange={(val) => {
+              setSearchTerm(val);
+              debounce(() => onSearchChange(), 1500)();
+            }}
           />
           <div className="w-screen font-bold" />
         </div>
