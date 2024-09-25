@@ -2,6 +2,7 @@
 "use client";
 
 import {
+  LinkIcon,
   Pagination,
   Table,
   TableBody,
@@ -92,7 +93,7 @@ export default function Home() {
           for shareholders by name. All search results can be sorted in
           ascending or descending order by clicking on the select column
           heading. To see the original Form 13F on the Securities and Exchange
-          Commission's website, click on the linked value in the "Company"
+          Commission's website, click on the arrow icon in the "Form Link"
           column.
         </div>
         <div className="inline-block max-w-4xl italic">
@@ -178,6 +179,7 @@ export default function Home() {
                   <TableColumn key="form_filing_date" allowsSorting>
                     FILING DATE
                   </TableColumn>
+                  <TableColumn>FORM LINK</TableColumn>
                 </TableHeader>
                 <TableBody
                   emptyContent={
@@ -187,14 +189,7 @@ export default function Home() {
                 >
                   {(item: Investment) => (
                     <TableRow key={item.stock_id}>
-                      <TableCell>
-                        <Link
-                          className="text-cyan-500 hover:text-indigo-900 font-bold"
-                          href={item.form_url}
-                        >
-                          {item.stock_issuer}
-                        </Link>
-                      </TableCell>
+                      <TableCell>{item.stock_issuer}</TableCell>
                       <TableCell>{item?.stock_ticker ?? "-"}</TableCell>
                       <TableCell>{item?.stock_cusip ?? "-"}</TableCell>
                       <TableCell>{item?.investor_name ?? "-"}</TableCell>
@@ -208,6 +203,15 @@ export default function Home() {
                       </TableCell>
                       <TableCell>{item.form_report_date}</TableCell>
                       <TableCell>{item.form_filing_date}</TableCell>
+                      <TableCell>
+                        <Link
+                          className="text-cyan-500 hover:text-indigo-900 font-bold"
+                          href={item.form_url}
+                          target="_blank"
+                        >
+                          <LinkIcon />
+                        </Link>
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
