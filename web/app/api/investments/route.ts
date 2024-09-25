@@ -13,7 +13,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 
 import prismaHelper from "@/services/db";
-import { InvestmentSearchRequest, InvestmentSearchResult } from "@/types";
+import {
+  Investment,
+  InvestmentSearchRequest,
+  InvestmentSearchResult,
+} from "@/types";
 import prisma from "@/services/db";
 
 /**
@@ -38,7 +42,7 @@ export async function POST(request: NextRequest) {
     searchParams.issuer ||
     searchParams.document;
 
-  let searchResults = await prismaHelper.$queryRaw`
+  let searchResults: Investment[] = await prismaHelper.$queryRaw`
     SELECT
         stock_id::text,
         investor_cik,
