@@ -20,6 +20,9 @@ import {
 } from "@/types";
 import prisma from "@/services/db";
 
+export const maxDuration = 300;
+export const dynamic = "force-dynamic";
+
 /**
  * Searches for investments satisfying multiple
  * criteria and then returns a subset of the results.
