@@ -100,8 +100,8 @@ export default function Home() {
           the user experience and adding new investors over time. Please refresh
           the page and reattempt your query if any unexpected errors occur.
         </div>
-        <div className="inline-block max-w-4xl">
-          <h2 className="py-4 font-bold text-lg">
+        <div className="inline-block max-w-4xl text-center">
+          <h2 className="py-4 font-bold text-xl">
             Disclosures for Quarter 2024-06-30
           </h2>
           <Input
@@ -119,15 +119,21 @@ export default function Home() {
           />
           <div className="w-screen font-bold" />
         </div>
-        <div>
+        <div className="text-center">
           {investmentsLoading ? (
             <div className="py-8">
               <Spinner color="primary" label="Loading..." size="lg" />
             </div>
           ) : (
             <>
-              <h3 className="font-bold py-4">
-                {totalRecords.toLocaleString()} Total Record(s)
+              <h3 className="font-bold py-4 text-lg">
+                <span className="font-bold text-green-600">
+                  {totalRecords.toLocaleString()}
+                </span>{" "}
+                total record(s) found.
+                <br />
+                Viewing results {(currentPage - 1) * recordsPerPage + 1}-
+                {currentPage * recordsPerPage}.
               </h3>
               <Table
                 aria-label=""
