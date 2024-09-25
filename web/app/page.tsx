@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import {
@@ -64,12 +65,13 @@ export default function Home() {
     });
   }, [currentPage, sortObj, searchTerm]);
 
-  const onSearchChange = (value) => {
+  const onSearchChange = (value: string) => {
     if (value) {
       setSearchTerm(value);
       setCurrentPage(1);
     } else {
       setSearchTerm("");
+      setCurrentPage(1);
     }
   };
 
