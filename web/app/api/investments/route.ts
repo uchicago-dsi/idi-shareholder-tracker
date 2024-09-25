@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   let sortDirection = Prisma.sql([
     searchParams.sortDirection == "ascending" ? "ASC" : "DESC",
   ]);
-  let offset = searchParams.limit * searchParams.page;
+  let offset = searchParams.limit * (searchParams.page - 1);
   let hasFilters =
     searchParams.cik ||
     searchParams.ticker ||
