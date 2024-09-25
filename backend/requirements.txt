@@ -1,0 +1,16 @@
+# Data Modeling
+pydantic
+
+# Data Wrangling
+beautifulsoup4
+pandas
+more-itertools
+
+# Django
+psycopg2
+Django
+django-pgviews
+
+# HTTP
+requests
+stream-unzip

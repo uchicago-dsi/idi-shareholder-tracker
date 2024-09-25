@@ -1,0 +1,2783 @@
+[
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 0,
+    "fields": {
+      "code": "AL",
+      "country": "UNITED STATES",
+      "state": "ALABAMA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 1,
+    "fields": {
+      "code": "AK",
+      "country": "UNITED STATES",
+      "state": "ALASKA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 2,
+    "fields": {
+      "code": "AZ",
+      "country": "UNITED STATES",
+      "state": "ARIZONA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 3,
+    "fields": {
+      "code": "AR",
+      "country": "UNITED STATES",
+      "state": "ARKANSAS"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 4,
+    "fields": {
+      "code": "CA",
+      "country": "UNITED STATES",
+      "state": "CALIFORNIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 5,
+    "fields": {
+      "code": "CO",
+      "country": "UNITED STATES",
+      "state": "COLORADO"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 6,
+    "fields": {
+      "code": "CT",
+      "country": "UNITED STATES",
+      "state": "CONNECTICUT"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 7,
+    "fields": {
+      "code": "DE",
+      "country": "UNITED STATES",
+      "state": "DELAWARE"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 8,
+    "fields": {
+      "code": "DC",
+      "country": "UNITED STATES",
+      "state": "DISTRICT OF COLUMBIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 9,
+    "fields": {
+      "code": "FL",
+      "country": "UNITED STATES",
+      "state": "FLORIDA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 10,
+    "fields": {
+      "code": "GA",
+      "country": "UNITED STATES",
+      "state": "GEORGIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 11,
+    "fields": {
+      "code": "HI",
+      "country": "UNITED STATES",
+      "state": "HAWAII"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 12,
+    "fields": {
+      "code": "ID",
+      "country": "UNITED STATES",
+      "state": "IDAHO"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 13,
+    "fields": {
+      "code": "IL",
+      "country": "UNITED STATES",
+      "state": "ILLINOIS"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 14,
+    "fields": {
+      "code": "IN",
+      "country": "UNITED STATES",
+      "state": "INDIANA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 15,
+    "fields": {
+      "code": "IA",
+      "country": "UNITED STATES",
+      "state": "IOWA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 16,
+    "fields": {
+      "code": "KS",
+      "country": "UNITED STATES",
+      "state": "KANSAS"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 17,
+    "fields": {
+      "code": "KY",
+      "country": "UNITED STATES",
+      "state": "KENTUCKY"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 18,
+    "fields": {
+      "code": "LA",
+      "country": "UNITED STATES",
+      "state": "LOUISIANA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 19,
+    "fields": {
+      "code": "ME",
+      "country": "UNITED STATES",
+      "state": "MAINE"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 20,
+    "fields": {
+      "code": "MD",
+      "country": "UNITED STATES",
+      "state": "MARYLAND"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 21,
+    "fields": {
+      "code": "MA",
+      "country": "UNITED STATES",
+      "state": "MASSACHUSETTS"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 22,
+    "fields": {
+      "code": "MI",
+      "country": "UNITED STATES",
+      "state": "MICHIGAN"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 23,
+    "fields": {
+      "code": "MN",
+      "country": "UNITED STATES",
+      "state": "MINNESOTA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 24,
+    "fields": {
+      "code": "MS",
+      "country": "UNITED STATES",
+      "state": "MISSISSIPPI"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 25,
+    "fields": {
+      "code": "MO",
+      "country": "UNITED STATES",
+      "state": "MISSOURI"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 26,
+    "fields": {
+      "code": "MT",
+      "country": "UNITED STATES",
+      "state": "MONTANA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 27,
+    "fields": {
+      "code": "NE",
+      "country": "UNITED STATES",
+      "state": "NEBRASKA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 28,
+    "fields": {
+      "code": "NV",
+      "country": "UNITED STATES",
+      "state": "NEVADA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 29,
+    "fields": {
+      "code": "NH",
+      "country": "UNITED STATES",
+      "state": "NEW HAMPSHIRE"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 30,
+    "fields": {
+      "code": "NJ",
+      "country": "UNITED STATES",
+      "state": "NEW JERSEY"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 31,
+    "fields": {
+      "code": "NM",
+      "country": "UNITED STATES",
+      "state": "NEW MEXICO"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 32,
+    "fields": {
+      "code": "NY",
+      "country": "UNITED STATES",
+      "state": "NEW YORK"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 33,
+    "fields": {
+      "code": "NC",
+      "country": "UNITED STATES",
+      "state": "NORTH CAROLINA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 34,
+    "fields": {
+      "code": "ND",
+      "country": "UNITED STATES",
+      "state": "NORTH DAKOTA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 35,
+    "fields": {
+      "code": "OH",
+      "country": "UNITED STATES",
+      "state": "OHIO"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 36,
+    "fields": {
+      "code": "OK",
+      "country": "UNITED STATES",
+      "state": "OKLAHOMA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 37,
+    "fields": {
+      "code": "OR",
+      "country": "UNITED STATES",
+      "state": "OREGON"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 38,
+    "fields": {
+      "code": "PA",
+      "country": "UNITED STATES",
+      "state": "PENNSYLVANIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 39,
+    "fields": {
+      "code": "RI",
+      "country": "UNITED STATES",
+      "state": "RHODE ISLAND"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 40,
+    "fields": {
+      "code": "SC",
+      "country": "UNITED STATES",
+      "state": "SOUTH CAROLINA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 41,
+    "fields": {
+      "code": "SD",
+      "country": "UNITED STATES",
+      "state": "SOUTH DAKOTA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 42,
+    "fields": {
+      "code": "TN",
+      "country": "UNITED STATES",
+      "state": "TENNESSEE"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 43,
+    "fields": {
+      "code": "TX",
+      "country": "UNITED STATES",
+      "state": "TEXAS"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 44,
+    "fields": {
+      "code": "X1",
+      "country": "UNITED STATES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 45,
+    "fields": {
+      "code": "UT",
+      "country": "UNITED STATES",
+      "state": "UTAH"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 46,
+    "fields": {
+      "code": "VT",
+      "country": "UNITED STATES",
+      "state": "VERMONT"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 47,
+    "fields": {
+      "code": "VA",
+      "country": "UNITED STATES",
+      "state": "VIRGINIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 48,
+    "fields": {
+      "code": "WA",
+      "country": "UNITED STATES",
+      "state": "WASHINGTON"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 49,
+    "fields": {
+      "code": "WV",
+      "country": "UNITED STATES",
+      "state": "WEST VIRGINIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 50,
+    "fields": {
+      "code": "WI",
+      "country": "UNITED STATES",
+      "state": "WISCONSIN"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 51,
+    "fields": {
+      "code": "WY",
+      "country": "UNITED STATES",
+      "state": "WYOMING"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 52,
+    "fields": {
+      "code": "A0",
+      "country": "CANADA",
+      "state": "ALBERTA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 53,
+    "fields": {
+      "code": "A1",
+      "country": "CANADA",
+      "state": "BRITISH COLUMBIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 54,
+    "fields": {
+      "code": "A2",
+      "country": "CANADA",
+      "state": "MANITOBA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 55,
+    "fields": {
+      "code": "A3",
+      "country": "CANADA",
+      "state": "NEW BRUNSWICK"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 56,
+    "fields": {
+      "code": "A4",
+      "country": "CANADA",
+      "state": "NEWFOUNDLAND"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 57,
+    "fields": {
+      "code": "A5",
+      "country": "CANADA",
+      "state": "NOVA SCOTIA"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 58,
+    "fields": {
+      "code": "A6",
+      "country": "CANADA",
+      "state": "ONTARIO"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 59,
+    "fields": {
+      "code": "A7",
+      "country": "CANADA",
+      "state": "PRINCE EDWARD ISLAND"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 60,
+    "fields": {
+      "code": "A8",
+      "country": "CANADA",
+      "state": "QUEBEC"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 61,
+    "fields": {
+      "code": "A9",
+      "country": "CANADA",
+      "state": "SASKATCHEWAN"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 62,
+    "fields": {
+      "code": "B0",
+      "country": "CANADA",
+      "state": "YUKON"
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 63,
+    "fields": {
+      "code": "Z4",
+      "country": "CANADA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 64,
+    "fields": {
+      "code": "B2",
+      "country": "AFGHANISTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 65,
+    "fields": {
+      "code": "Y6",
+      "country": "ALAND ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 66,
+    "fields": {
+      "code": "B3",
+      "country": "ALBANIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 67,
+    "fields": {
+      "code": "B4",
+      "country": "ALGERIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 68,
+    "fields": {
+      "code": "B5",
+      "country": "AMERICAN SAMOA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 69,
+    "fields": {
+      "code": "B6",
+      "country": "ANDORRA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 70,
+    "fields": {
+      "code": "B7",
+      "country": "ANGOLA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 71,
+    "fields": {
+      "code": "1A",
+      "country": "ANGUILLA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 72,
+    "fields": {
+      "code": "B8",
+      "country": "ANTARCTICA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 73,
+    "fields": {
+      "code": "B9",
+      "country": "ANTIGUA AND BARBUDA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 74,
+    "fields": {
+      "code": "C1",
+      "country": "ARGENTINA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 75,
+    "fields": {
+      "code": "1B",
+      "country": "ARMENIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 76,
+    "fields": {
+      "code": "1C",
+      "country": "ARUBA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 77,
+    "fields": {
+      "code": "C3",
+      "country": "AUSTRALIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 78,
+    "fields": {
+      "code": "C4",
+      "country": "AUSTRIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 79,
+    "fields": {
+      "code": "1D",
+      "country": "AZERBAIJAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 80,
+    "fields": {
+      "code": "C5",
+      "country": "BAHAMAS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 81,
+    "fields": {
+      "code": "C6",
+      "country": "BAHRAIN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 82,
+    "fields": {
+      "code": "C7",
+      "country": "BANGLADESH",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 83,
+    "fields": {
+      "code": "C8",
+      "country": "BARBADOS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 84,
+    "fields": {
+      "code": "1F",
+      "country": "BELARUS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 85,
+    "fields": {
+      "code": "C9",
+      "country": "BELGIUM",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 86,
+    "fields": {
+      "code": "D1",
+      "country": "BELIZE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 87,
+    "fields": {
+      "code": "G6",
+      "country": "BENIN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 88,
+    "fields": {
+      "code": "D0",
+      "country": "BERMUDA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 89,
+    "fields": {
+      "code": "D2",
+      "country": "BHUTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 90,
+    "fields": {
+      "code": "D3",
+      "country": "BOLIVIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 91,
+    "fields": {
+      "code": "1E",
+      "country": "BOSNIA AND HERZEGOVINA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 92,
+    "fields": {
+      "code": "B1",
+      "country": "BOTSWANA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 93,
+    "fields": {
+      "code": "D4",
+      "country": "BOUVET ISLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 94,
+    "fields": {
+      "code": "D5",
+      "country": "BRAZIL",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 95,
+    "fields": {
+      "code": "D6",
+      "country": "BRITISH INDIAN OCEAN TERRITORY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 96,
+    "fields": {
+      "code": "D9",
+      "country": "BRUNEI DARUSSALAM",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 97,
+    "fields": {
+      "code": "E0",
+      "country": "BULGARIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 98,
+    "fields": {
+      "code": "X2",
+      "country": "BURKINA FASO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 99,
+    "fields": {
+      "code": "E2",
+      "country": "BURUNDI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 100,
+    "fields": {
+      "code": "E3",
+      "country": "CAMBODIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 101,
+    "fields": {
+      "code": "E4",
+      "country": "CAMEROON",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 102,
+    "fields": {
+      "code": "E8",
+      "country": "CAPE VERDE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 103,
+    "fields": {
+      "code": "E9",
+      "country": "CAYMAN ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 104,
+    "fields": {
+      "code": "F0",
+      "country": "CENTRAL AFRICAN REPUBLIC",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 105,
+    "fields": {
+      "code": "F2",
+      "country": "CHAD",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 106,
+    "fields": {
+      "code": "F3",
+      "country": "CHILE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 107,
+    "fields": {
+      "code": "F4",
+      "country": "CHINA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 108,
+    "fields": {
+      "code": "F6",
+      "country": "CHRISTMAS ISLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 109,
+    "fields": {
+      "code": "F7",
+      "country": "COCOS (KEELING) ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 110,
+    "fields": {
+      "code": "F8",
+      "country": "COLOMBIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 111,
+    "fields": {
+      "code": "F9",
+      "country": "COMOROS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 112,
+    "fields": {
+      "code": "G0",
+      "country": "CONGO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 113,
+    "fields": {
+      "code": "Y3",
+      "country": "THE DEMOCRATIC REPUBLIC OF THE CONGO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 114,
+    "fields": {
+      "code": "G1",
+      "country": "COOK ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 115,
+    "fields": {
+      "code": "G2",
+      "country": "COSTA RICA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 116,
+    "fields": {
+      "code": "L7",
+      "country": "COTE D'IVOIRE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 117,
+    "fields": {
+      "code": "1M",
+      "country": "CROATIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 118,
+    "fields": {
+      "code": "G3",
+      "country": "CUBA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 119,
+    "fields": {
+      "code": "G4",
+      "country": "CYPRUS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 120,
+    "fields": {
+      "code": "2N",
+      "country": "CZECH REPUBLIC",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 121,
+    "fields": {
+      "code": "G7",
+      "country": "DENMARK",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 122,
+    "fields": {
+      "code": "1G",
+      "country": "DJIBOUTI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 123,
+    "fields": {
+      "code": "G9",
+      "country": "DOMINICA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 124,
+    "fields": {
+      "code": "G8",
+      "country": "DOMINICAN REPUBLIC",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 125,
+    "fields": {
+      "code": "H1",
+      "country": "ECUADOR",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 126,
+    "fields": {
+      "code": "H2",
+      "country": "EGYPT",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 127,
+    "fields": {
+      "code": "H3",
+      "country": "EL SALVADOR",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 128,
+    "fields": {
+      "code": "H4",
+      "country": "EQUATORIAL GUINEA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 129,
+    "fields": {
+      "code": "1J",
+      "country": "ERITREA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 130,
+    "fields": {
+      "code": "1H",
+      "country": "ESTONIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 131,
+    "fields": {
+      "code": "H5",
+      "country": "ETHIOPIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 132,
+    "fields": {
+      "code": "H7",
+      "country": "FALKLAND ISLANDS (MALVINAS)",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 133,
+    "fields": {
+      "code": "H6",
+      "country": "FAROE ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 134,
+    "fields": {
+      "code": "H8",
+      "country": "FIJI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 135,
+    "fields": {
+      "code": "H9",
+      "country": "FINLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 136,
+    "fields": {
+      "code": "I0",
+      "country": "FRANCE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 137,
+    "fields": {
+      "code": "I3",
+      "country": "FRENCH GUIANA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 138,
+    "fields": {
+      "code": "I4",
+      "country": "FRENCH POLYNESIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 139,
+    "fields": {
+      "code": "2C",
+      "country": "FRENCH SOUTHERN TERRITORIES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 140,
+    "fields": {
+      "code": "I5",
+      "country": "GABON",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 141,
+    "fields": {
+      "code": "I6",
+      "country": "GAMBIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 142,
+    "fields": {
+      "code": "2Q",
+      "country": "GEORGIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 143,
+    "fields": {
+      "code": "2M",
+      "country": "GERMANY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 144,
+    "fields": {
+      "code": "J0",
+      "country": "GHANA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 145,
+    "fields": {
+      "code": "J1",
+      "country": "GIBRALTAR",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 146,
+    "fields": {
+      "code": "J3",
+      "country": "GREECE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 147,
+    "fields": {
+      "code": "J4",
+      "country": "GREENLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 148,
+    "fields": {
+      "code": "J5",
+      "country": "GRENADA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 149,
+    "fields": {
+      "code": "J6",
+      "country": "GUADELOUPE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 150,
+    "fields": {
+      "code": "GU",
+      "country": "GUAM",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 151,
+    "fields": {
+      "code": "J8",
+      "country": "GUATEMALA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 152,
+    "fields": {
+      "code": "Y7",
+      "country": "GUERNSEY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 153,
+    "fields": {
+      "code": "J9",
+      "country": "GUINEA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 154,
+    "fields": {
+      "code": "S0",
+      "country": "GUINEA-BISSAU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 155,
+    "fields": {
+      "code": "K0",
+      "country": "GUYANA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 156,
+    "fields": {
+      "code": "K1",
+      "country": "HAITI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 157,
+    "fields": {
+      "code": "K4",
+      "country": "HEARD ISLAND AND MCDONALD ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 158,
+    "fields": {
+      "code": "X4",
+      "country": "HOLY SEE (VATICAN CITY STATE)",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 159,
+    "fields": {
+      "code": "K2",
+      "country": "HONDURAS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 160,
+    "fields": {
+      "code": "K3",
+      "country": "HONG KONG",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 161,
+    "fields": {
+      "code": "K5",
+      "country": "HUNGARY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 162,
+    "fields": {
+      "code": "K6",
+      "country": "ICELAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 163,
+    "fields": {
+      "code": "K7",
+      "country": "INDIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 164,
+    "fields": {
+      "code": "K8",
+      "country": "INDONESIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 165,
+    "fields": {
+      "code": "K9",
+      "country": "ISLAMIC REPUBLIC OF IRAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 166,
+    "fields": {
+      "code": "L0",
+      "country": "IRAQ",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 167,
+    "fields": {
+      "code": "L2",
+      "country": "IRELAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 168,
+    "fields": {
+      "code": "Y8",
+      "country": "ISLE OF MAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 169,
+    "fields": {
+      "code": "L3",
+      "country": "ISRAEL",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 170,
+    "fields": {
+      "code": "L6",
+      "country": "ITALY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 171,
+    "fields": {
+      "code": "L8",
+      "country": "JAMAICA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 172,
+    "fields": {
+      "code": "M0",
+      "country": "JAPAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 173,
+    "fields": {
+      "code": "Y9",
+      "country": "JERSEY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 174,
+    "fields": {
+      "code": "M2",
+      "country": "JORDAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 175,
+    "fields": {
+      "code": "1P",
+      "country": "KAZAKSTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 176,
+    "fields": {
+      "code": "M3",
+      "country": "KENYA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 177,
+    "fields": {
+      "code": "J2",
+      "country": "KIRIBATI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 178,
+    "fields": {
+      "code": "M4",
+      "country": "DEMOCRATIC PEOPLE'S REPUBLIC OF KOREA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 179,
+    "fields": {
+      "code": "M5",
+      "country": "REPUBLIC OF KOREA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 180,
+    "fields": {
+      "code": "M6",
+      "country": "KUWAIT",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 181,
+    "fields": {
+      "code": "1N",
+      "country": "KYRGYZSTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 182,
+    "fields": {
+      "code": "M7",
+      "country": "LAO PEOPLE'S DEMOCRATIC REPUBLIC",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 183,
+    "fields": {
+      "code": "1R",
+      "country": "LATVIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 184,
+    "fields": {
+      "code": "M8",
+      "country": "LEBANON",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 185,
+    "fields": {
+      "code": "M9",
+      "country": "LESOTHO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 186,
+    "fields": {
+      "code": "N0",
+      "country": "LIBERIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 187,
+    "fields": {
+      "code": "N1",
+      "country": "LIBYAN ARAB JAMAHIRIYA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 188,
+    "fields": {
+      "code": "N2",
+      "country": "LIECHTENSTEIN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 189,
+    "fields": {
+      "code": "1Q",
+      "country": "LITHUANIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 190,
+    "fields": {
+      "code": "N4",
+      "country": "LUXEMBOURG",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 191,
+    "fields": {
+      "code": "N5",
+      "country": "MACAU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 192,
+    "fields": {
+      "code": "1U",
+      "country": "THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 193,
+    "fields": {
+      "code": "N6",
+      "country": "MADAGASCAR",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 194,
+    "fields": {
+      "code": "N7",
+      "country": "MALAWI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 195,
+    "fields": {
+      "code": "N8",
+      "country": "MALAYSIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 196,
+    "fields": {
+      "code": "N9",
+      "country": "MALDIVES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 197,
+    "fields": {
+      "code": "O0",
+      "country": "MALI",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 198,
+    "fields": {
+      "code": "O1",
+      "country": "MALTA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 199,
+    "fields": {
+      "code": "1T",
+      "country": "MARSHALL ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 200,
+    "fields": {
+      "code": "O2",
+      "country": "MARTINIQUE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 201,
+    "fields": {
+      "code": "O3",
+      "country": "MAURITANIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 202,
+    "fields": {
+      "code": "O4",
+      "country": "MAURITIUS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 203,
+    "fields": {
+      "code": "2P",
+      "country": "MAYOTTE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 204,
+    "fields": {
+      "code": "O5",
+      "country": "MEXICO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 205,
+    "fields": {
+      "code": "1K",
+      "country": "FEDERATED STATES OF MICRONESIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 206,
+    "fields": {
+      "code": "1S",
+      "country": "REPUBLIC OF MOLDOVA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 207,
+    "fields": {
+      "code": "O9",
+      "country": "MONACO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 208,
+    "fields": {
+      "code": "P0",
+      "country": "MONGOLIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 209,
+    "fields": {
+      "code": "Z5",
+      "country": "MONTENEGRO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 210,
+    "fields": {
+      "code": "P1",
+      "country": "MONTSERRAT",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 211,
+    "fields": {
+      "code": "P2",
+      "country": "MOROCCO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 212,
+    "fields": {
+      "code": "P3",
+      "country": "MOZAMBIQUE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 213,
+    "fields": {
+      "code": "E1",
+      "country": "MYANMAR",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 214,
+    "fields": {
+      "code": "T6",
+      "country": "NAMIBIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 215,
+    "fields": {
+      "code": "P5",
+      "country": "NAURU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 216,
+    "fields": {
+      "code": "P6",
+      "country": "NEPAL",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 217,
+    "fields": {
+      "code": "P7",
+      "country": "NETHERLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 218,
+    "fields": {
+      "code": "P8",
+      "country": "NETHERLANDS ANTILLES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 219,
+    "fields": {
+      "code": "1W",
+      "country": "NEW CALEDONIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 220,
+    "fields": {
+      "code": "Q2",
+      "country": "NEW ZEALAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 221,
+    "fields": {
+      "code": "Q3",
+      "country": "NICARAGUA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 222,
+    "fields": {
+      "code": "Q4",
+      "country": "NIGER",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 223,
+    "fields": {
+      "code": "Q5",
+      "country": "NIGERIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 224,
+    "fields": {
+      "code": "Q6",
+      "country": "NIUE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 225,
+    "fields": {
+      "code": "Q7",
+      "country": "NORFOLK ISLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 226,
+    "fields": {
+      "code": "1V",
+      "country": "NORTHERN MARIANA ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 227,
+    "fields": {
+      "code": "Q8",
+      "country": "NORWAY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 228,
+    "fields": {
+      "code": "P4",
+      "country": "OMAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 229,
+    "fields": {
+      "code": "R0",
+      "country": "PAKISTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 230,
+    "fields": {
+      "code": "1Y",
+      "country": "PALAU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 231,
+    "fields": {
+      "code": "1X",
+      "country": "OCCUPIED PALESTINIAN TERRITORY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 232,
+    "fields": {
+      "code": "R1",
+      "country": "PANAMA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 233,
+    "fields": {
+      "code": "R2",
+      "country": "PAPUA NEW GUINEA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 234,
+    "fields": {
+      "code": "R4",
+      "country": "PARAGUAY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 235,
+    "fields": {
+      "code": "R5",
+      "country": "PERU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 236,
+    "fields": {
+      "code": "R6",
+      "country": "PHILIPPINES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 237,
+    "fields": {
+      "code": "R8",
+      "country": "PITCAIRN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 238,
+    "fields": {
+      "code": "R9",
+      "country": "POLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 239,
+    "fields": {
+      "code": "S1",
+      "country": "PORTUGAL",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 240,
+    "fields": {
+      "code": "PR",
+      "country": "PUERTO RICO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 241,
+    "fields": {
+      "code": "S3",
+      "country": "QATAR",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 242,
+    "fields": {
+      "code": "S4",
+      "country": "REUNION",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 243,
+    "fields": {
+      "code": "S5",
+      "country": "ROMANIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 244,
+    "fields": {
+      "code": "1Z",
+      "country": "RUSSIAN FEDERATION",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 245,
+    "fields": {
+      "code": "S6",
+      "country": "RWANDA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 246,
+    "fields": {
+      "code": "Z0",
+      "country": "SAINT BARTHELEMY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 247,
+    "fields": {
+      "code": "U8",
+      "country": "SAINT HELENA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 248,
+    "fields": {
+      "code": "U7",
+      "country": "SAINT KITTS AND NEVIS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 249,
+    "fields": {
+      "code": "U9",
+      "country": "SAINT LUCIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 250,
+    "fields": {
+      "code": "Z1",
+      "country": "SAINT MARTIN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 251,
+    "fields": {
+      "code": "V0",
+      "country": "SAINT PIERRE AND MIQUELON",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 252,
+    "fields": {
+      "code": "V1",
+      "country": "SAINT VINCENT AND THE GRENADINES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 253,
+    "fields": {
+      "code": "Y0",
+      "country": "SAMOA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 254,
+    "fields": {
+      "code": "S8",
+      "country": "SAN MARINO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 255,
+    "fields": {
+      "code": "S9",
+      "country": "SAO TOME AND PRINCIPE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 256,
+    "fields": {
+      "code": "T0",
+      "country": "SAUDI ARABIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 257,
+    "fields": {
+      "code": "T1",
+      "country": "SENEGAL",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 258,
+    "fields": {
+      "code": "Z2",
+      "country": "SERBIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 259,
+    "fields": {
+      "code": "T2",
+      "country": "SEYCHELLES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 260,
+    "fields": {
+      "code": "T8",
+      "country": "SIERRA LEONE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 261,
+    "fields": {
+      "code": "U0",
+      "country": "SINGAPORE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 262,
+    "fields": {
+      "code": "2B",
+      "country": "SLOVAKIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 263,
+    "fields": {
+      "code": "2A",
+      "country": "SLOVENIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 264,
+    "fields": {
+      "code": "D7",
+      "country": "SOLOMON ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 265,
+    "fields": {
+      "code": "U1",
+      "country": "SOMALIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 266,
+    "fields": {
+      "code": "T3",
+      "country": "SOUTH AFRICA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 267,
+    "fields": {
+      "code": "1L",
+      "country": "SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 268,
+    "fields": {
+      "code": "U3",
+      "country": "SPAIN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 269,
+    "fields": {
+      "code": "F1",
+      "country": "SRI LANKA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 270,
+    "fields": {
+      "code": "V2",
+      "country": "SUDAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 271,
+    "fields": {
+      "code": "V3",
+      "country": "SURINAME",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 272,
+    "fields": {
+      "code": "L9",
+      "country": "SVALBARD AND JAN MAYEN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 273,
+    "fields": {
+      "code": "V6",
+      "country": "SWAZILAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 274,
+    "fields": {
+      "code": "V7",
+      "country": "SWEDEN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 275,
+    "fields": {
+      "code": "V8",
+      "country": "SWITZERLAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 276,
+    "fields": {
+      "code": "V9",
+      "country": "SYRIAN ARAB REPUBLIC",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 277,
+    "fields": {
+      "code": "F5",
+      "country": "TAIWAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 278,
+    "fields": {
+      "code": "2D",
+      "country": "TAJIKISTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 279,
+    "fields": {
+      "code": "W0",
+      "country": "UNITED REPUBLIC OF TANZANIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 280,
+    "fields": {
+      "code": "W1",
+      "country": "THAILAND",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 281,
+    "fields": {
+      "code": "Z3",
+      "country": "TIMOR-LESTE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 282,
+    "fields": {
+      "code": "W2",
+      "country": "TOGO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 283,
+    "fields": {
+      "code": "W3",
+      "country": "TOKELAU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 284,
+    "fields": {
+      "code": "W4",
+      "country": "TONGA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 285,
+    "fields": {
+      "code": "W5",
+      "country": "TRINIDAD AND TOBAGO",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 286,
+    "fields": {
+      "code": "W6",
+      "country": "TUNISIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 287,
+    "fields": {
+      "code": "W8",
+      "country": "TURKEY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 288,
+    "fields": {
+      "code": "2E",
+      "country": "TURKMENISTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 289,
+    "fields": {
+      "code": "W7",
+      "country": "TURKS AND CAICOS ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 290,
+    "fields": {
+      "code": "2G",
+      "country": "TUVALU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 291,
+    "fields": {
+      "code": "W9",
+      "country": "UGANDA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 292,
+    "fields": {
+      "code": "2H",
+      "country": "UKRAINE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 293,
+    "fields": {
+      "code": "C0",
+      "country": "UNITED ARAB EMIRATES",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 294,
+    "fields": {
+      "code": "X0",
+      "country": "UNITED KINGDOM",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 295,
+    "fields": {
+      "code": "2J",
+      "country": "UNITED STATES MINOR OUTLYING ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 296,
+    "fields": {
+      "code": "X3",
+      "country": "URUGUAY",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 297,
+    "fields": {
+      "code": "2K",
+      "country": "UZBEKISTAN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 298,
+    "fields": {
+      "code": "2L",
+      "country": "VANUATU",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 299,
+    "fields": {
+      "code": "X5",
+      "country": "VENEZUELA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 300,
+    "fields": {
+      "code": "Q1",
+      "country": "VIET NAM",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 301,
+    "fields": {
+      "code": "D8",
+      "country": "BRITISH VIRGIN ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 302,
+    "fields": {
+      "code": "VI",
+      "country": "U.S. VIRGIN ISLANDS",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 303,
+    "fields": {
+      "code": "X8",
+      "country": "WALLIS AND FUTUNA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 304,
+    "fields": {
+      "code": "U5",
+      "country": "WESTERN SAHARA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 305,
+    "fields": {
+      "code": "T7",
+      "country": "YEMEN",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 306,
+    "fields": {
+      "code": "Y4",
+      "country": "ZAMBIA",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 307,
+    "fields": {
+      "code": "Y5",
+      "country": "ZIMBABWE",
+      "state": NaN
+    }
+  },
+  {
+    "model": "scrape.edgarplacecode",
+    "pk": 308,
+    "fields": {
+      "code": "XX",
+      "country": "UNKNOWN",
+      "state": NaN
+    }
+  }
+]

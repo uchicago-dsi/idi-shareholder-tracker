@@ -1,0 +1,72 @@
+services:
+  # POSTGRES
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -h postgres -p 5432 -U postgres'"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  # PGADMIN
+  pgadmin:
+    image: dpage/pgadmin4:8.11
+    container_name: pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    platform: ${DOCKER_PLATFORM}
+    environment:
+      - COMPOSE_HTTP_TIMEOUT=300
+      - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com
+      - PGADMIN_DEFAULT_PASSWORD=p@sssw0rd!123
+      - PGADMIN_LISTEN_PORT=443
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    ports:
+      - "443:443"
+    volumes:
+      - ./server.local.json:/pgadmin4/servers.json
+      - ./db:/tmp-exports/
+
+  # BACKEND
+  backend:
+    build:
+      context: backend
+    container_name: backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      pgadmin:
+        condition: service_started
+    restart: "no"      
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/shareholder-tracker/backend
+   
+  # WEB
+  web:
+    build:
+      context: web
+    container_name: web
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - /app/.next
