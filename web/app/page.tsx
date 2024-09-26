@@ -134,7 +134,7 @@ export default function Home() {
                 total record(s) found.
                 <br />
                 Viewing results {(currentPage - 1) * recordsPerPage + 1}-
-                {currentPage * recordsPerPage}.
+                {Math.min(totalRecords, currentPage * recordsPerPage)}.
               </h3>
               <div className="flex justify-between items-center pb-4">
                 <label className="flex items-center text-default-400 text-small">
@@ -174,6 +174,7 @@ export default function Home() {
                 bottomContentPlacement="outside"
                 sortDescriptor={sortObj}
                 onSortChange={(item) => {
+                  setCurrentPage(1);
                   setSortObj(item);
                 }}
               >
@@ -191,8 +192,12 @@ export default function Home() {
                     SHAREHOLDER
                   </TableColumn>
                   <TableColumn>OTHER SHAREHOLDERS</TableColumn>
-                  <TableColumn>STAKE</TableColumn>
-                  <TableColumn>REPORT DATE</TableColumn>
+                  <TableColumn key="stock_shares_prn_amt" allowsSorting>
+                    STAKE
+                  </TableColumn>
+                  <TableColumn key="form_report_date" allowsSorting>
+                    REPORT DATE
+                  </TableColumn>
                   <TableColumn key="form_filing_date" allowsSorting>
                     FILING DATE
                   </TableColumn>

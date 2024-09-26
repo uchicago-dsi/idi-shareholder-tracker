@@ -32,7 +32,7 @@ export type Investment = {
   stock_cusip: string;
   stock_ticker: string;
   stock_value_x1000: string;
-  stock_shares_prn_amt: string;
+  stock_shares_prn_amt: number;
   stock_prn_amt: string;
   stock_voting_auth_sole: string;
   stock_voting_auth_shared: string;

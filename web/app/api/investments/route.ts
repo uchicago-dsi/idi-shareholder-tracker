@@ -31,7 +31,10 @@ export const dynamic = "force-dynamic";
  *      search term and the number of matches to return.
  */
 export async function POST(request: NextRequest) {
+  // Parse JSON request body
   let searchParams: InvestmentSearchRequest = await request.json();
+
+  // Prepare variables for dynamic SQL query
   let sortCol = Prisma.sql([searchParams.sortColumn]);
   let sortDirection = Prisma.sql([
     searchParams.sortDirection == "ascending" ? "ASC" : "DESC",
@@ -44,12 +47,12 @@ export async function POST(request: NextRequest) {
     searchParams.investor ||
     searchParams.issuer ||
     searchParams.document;
-
   let formattedSearchPhrase = searchParams.document
     ?.replace(/\s+/g, " ")
     ?.trim();
   let tsquerySearchPhrase = formattedSearchPhrase?.replace(/\s+/g, " & ");
 
+  // Execute raw query
   let searchResults: Investment[] = await prismaHelper.$queryRaw`
     SELECT
         stock_id::text,
@@ -66,7 +69,7 @@ export async function POST(request: NextRequest) {
         stock_cusip,
         stock_ticker,
         stock_value_x1000::text,
-        stock_shares_prn_amt::text,
+        stock_shares_prn_amt,
         stock_prn_amt,
         stock_voting_auth_sole::text,
         stock_voting_auth_shared::text,
@@ -84,17 +87,26 @@ export async function POST(request: NextRequest) {
     ${!hasFilters ? Prisma.sql`LIMIT ${searchParams.limit} OFFSET ${offset}` : Prisma.empty}
     `;
 
+  // Parse BigInt DB fields in search results to JS Number instances
+  let parsed_data = searchResults.map((r) => {
+    r["stock_shares_prn_amt"] = Number(r["stock_shares_prn_amt"]);
+
+    return r;
+  });
+
+  // Determine total number of records for query and results to return
   let count = undefined;
   let data = undefined;
 
   if (!hasFilters) {
     count = await prisma.current_investments.count();
-    data = searchResults;
+    data = parsed_data;
   } else {
-    count = searchResults.length;
-    data = searchResults.slice(offset, offset + searchParams.limit);
+    count = parsed_data.length;
+    data = parsed_data.slice(offset, offset + searchParams.limit);
   }
 
+  // Compose response payload
   let payload: InvestmentSearchResult = {
     data: data,
     total: count,
