@@ -102,7 +102,7 @@ export default function Home() {
           the page and reattempt your query if any unexpected errors occur.
         </div>
         <div className="inline-block max-w-4xl text-center">
-          <h2 className="py-4 font-bold text-xl">
+          <h2 className="py-4 font-bold text-2xl">
             Disclosures for Quarter 2024-06-30
           </h2>
           <Input
