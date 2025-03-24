@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run the pipeline
-CMD ["bash", "setup.sh", "--migrate", "--load-fixtures", "--sync-views",  "--run-server"]
+CMD ["bash", "setup.sh", "--migrate", "--load-fixtures", "--run-server"]

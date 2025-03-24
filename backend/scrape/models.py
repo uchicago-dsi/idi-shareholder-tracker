@@ -1,5 +1,4 @@
-"""Database models used throughout the application.
-"""
+"""Database models used throughout the application."""
 
 # Third-party imports
 from django.db import models
@@ -93,15 +92,6 @@ class ScrapedForm13FManager(models.Model):
 
     class Meta:
         db_table = "scraped_form_13f_manager"
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=[
-        #             "filing",
-        #             "number",
-        #         ],
-        #         name="unique_scraped_form_13f_manager",
-        #     )
-        # ]
 
     filing = models.ForeignKey(
         to="ScrapedCompanyFiling", on_delete=models.CASCADE

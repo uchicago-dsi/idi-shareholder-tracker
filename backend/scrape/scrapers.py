@@ -1,5 +1,4 @@
-"""Scrapers for SEC EDGAR domain entities.
-"""
+"""Scrapers for SEC EDGAR domain entities."""
 
 # Standard library imports
 import json
@@ -237,12 +236,12 @@ class BulkSubmissionsScraper(EdgarScraper):
         self._logger.info(
             "Streaming zip file to unzip and process each file in sequence."
         )
-        for file_name, file_size, unzipped_chunks in stream_unzip(
+        for file_name, file_size, file_chunks in stream_unzip(
             self._stream_zip_file()
         ):
             # Consolidate file chunks
             arr = bytearray()
-            for chunk in unzipped_chunks:
+            for chunk in file_chunks:
                 arr.extend(chunk)
 
             # Add file metadata and contents to batch

@@ -1,0 +1,55 @@
+name: Deploy to Google Artifact Registry
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    # Reference previously-created GitHub environment containing variables for workflow
+    environment: "Production"
+    runs-on: ubuntu-latest
+
+    # Add "id-token" with the intended permissions. Used for OIDC connection with GitHub
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      # Check out repository under $GITHUB_WORKSPACE so workflow can access it
+      - uses: actions/checkout@v4
+
+      # Display metadata
+      - name: About
+        run: |
+          echo "Ref : ${{ github.ref }}"
+
+      # Use OIDC authentication to get an access token from GitHub
+      # Reference: https://www.youtube.com/watch?v=ZgVhU5qvK1M
+      - id: auth
+        name: "Authenticate to Google Cloud"
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.WORKLOAD_IDENTITY_SERVICE_ACCOUNT }}
+          token_format: access_token
+
+      # Login with Docker action using the token from the Google Cloud auth step
+      - name: "Authenticate to Docker Service"
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.CLOUD_REGION }}-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      # Build, tag, and push Docker image to Google Artifact Registry
+      - id: "docker-push-tagged"
+        name: "Tag Docker image and push to Google Artifact Registry"
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          context: ./backend
+          file: ./backend/Dockerfile
+          tags: ${{ vars.CLOUD_REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.ARTIFACT_REPOSITORY }}/${{ vars.IMAGE_NAME }}:latest

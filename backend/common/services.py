@@ -1,5 +1,4 @@
-"""Services used throughout the Django project.
-"""
+"""Services used throughout the Django project."""
 
 # Application imports
 from common.models import Task
@@ -12,6 +11,7 @@ from django.db import (
     IntegrityError,
     OperationalError,
 )
+from django.db.models import QuerySet
 
 
 class TaskService:
@@ -72,8 +72,15 @@ class TaskService:
         ).values_list("url", flat=True)
 
     @staticmethod
-    def get_active_data_tasks(workflow_execution: str) -> None:
-        """ """
+    def get_active_data_tasks(workflow_execution: str) -> QuerySet:
+        """Fetches tasks that are in progress for the given workflow execution.
+
+        Args:
+            workflow_execution (`str`): The execution id.
+
+        Returns:
+            (`Queryset`): The matching task database records, if any.
+        """
         return Task.objects.filter(
             workflow_execution=workflow_execution,
             type__in=[
