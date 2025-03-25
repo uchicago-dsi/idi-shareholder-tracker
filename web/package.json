@@ -10,6 +10,9 @@
 		"postinstall": "prisma generate"
 	},
 	"dependencies": {
+		"@json2csv/node": "^7.0.6",
+		"@json2csv/plainjs": "^7.0.6",
+		"@json2csv/transforms": "^7.0.6",
 		"@nextui-org/button": "2.0.38",
 		"@nextui-org/code": "2.0.33",
 		"@nextui-org/input": "2.2.5",
@@ -26,12 +29,15 @@
 		"@react-aria/ssr": "3.9.4",
 		"@react-aria/visually-hidden": "3.8.12",
 		"clsx": "2.1.1",
-		"framer-motion": "~11.1.1",
+		"framer-motion": "^12.5.0",
+		"fs": "^0.0.1-security",
 		"intl-messageformat": "^10.5.0",
 		"lodash": "^4.17.21",
 		"next": "14.2.4",
 		"next-themes": "^0.2.1",
 		"nextui-cli": "^0.3.4",
+		"pg": "^8.13.0",
+		"pg-query-stream": "^4.7.0",
 		"react": "18.3.1",
 		"react-dom": "18.3.1"
 	},
