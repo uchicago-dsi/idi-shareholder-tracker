@@ -1,11 +1,9 @@
-"""Services used throughout the Django application.
-"""
+"""Services used throughout the Django application."""
 
 # Standard library imports
 from typing import Iterator, List, Tuple
 
 # Third-party imports
-from django.conf import settings
 from more_itertools import chunked
 
 # Application imports
@@ -101,7 +99,6 @@ class ScrapedCompanyService:
         """
         return models.ScrapedCompanyFiling.objects.exclude(
             url__in=TaskService.get_success_urls(),
-            num_retries=settings.MAX_TASK_RETRIES,
         )
 
 

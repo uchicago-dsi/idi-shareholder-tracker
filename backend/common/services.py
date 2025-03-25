@@ -5,6 +5,7 @@ from common.models import Task
 from typing import List
 
 # Third-party imports
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import (
     DatabaseError,
@@ -67,9 +68,13 @@ class TaskService:
         Returns:
             (`list` of `str`): The URLs.
         """
-        return Task.objects.filter(
-            status=Task.Status.SUCCESS.value
-        ).values_list("url", flat=True)
+        return (
+            Task.objects.filter(status=Task.Status.SUCCESS.value)
+            .exclude(
+                num_retries=settings.MAX_TASK_RETRIES,
+            )
+            .values_list("url", flat=True)
+        )
 
     @staticmethod
     def get_active_data_tasks(workflow_execution: str) -> QuerySet:
