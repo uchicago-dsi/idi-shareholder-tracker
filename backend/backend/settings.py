@@ -21,6 +21,9 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.environ["ENV"] != "PROD"
 ALLOWED_HOSTS = []
 
+# CUSTOM SETTINGS
+MAX_TASK_RETRIES = 2
+
 
 # Application definition
 
