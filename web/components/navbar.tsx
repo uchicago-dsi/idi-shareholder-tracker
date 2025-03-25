@@ -17,20 +17,14 @@ export const Navbar = () => {
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
+        <NavbarBrand as="li" className="gap-3 max-w-fit py-2">
           <NextLink
             passHref
             className="flex justify-start items-center gap-1"
             href="https://www.inclusivedevelopment.net/"
             target="_blank"
           >
-            <Image
-              classname="py-2"
-              alt="Logo"
-              height={150}
-              src="/idi_logo.png"
-              width={150}
-            />
+            <Image alt="Logo" height={150} src="/idi_logo.png" width={150} />
           </NextLink>
         </NavbarBrand>
       </NavbarContent>
