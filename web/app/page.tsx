@@ -77,10 +77,7 @@ export default function Home() {
     <div>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <div className="inline-block max-w-4xl text-center justify-center">
-          <span className={title()}>Shareholder Tracker</span>{" "}
-          <Chip color="success" size="lg" variant="bordered">
-            Beta
-          </Chip>
+          <span className={title()}>Shareholder Tracker</span>
           <div className={subtitle({ class: "mt-4" })}>
             Discover institutional investments disclosed in SEC 13F filings
           </div>
@@ -96,14 +93,9 @@ export default function Home() {
           Commission's website, click on the arrow icon in the "Form Link"
           column.
         </div>
-        <div className="inline-block max-w-4xl italic">
-          NOTE: This page is currently under development. We will be optimizing
-          the user experience and adding new investors over time. Please refresh
-          the page and reattempt your query if any unexpected errors occur.
-        </div>
         <div className="inline-block max-w-4xl text-center">
           <h2 className="py-4 font-bold text-2xl">
-            Disclosures for Quarter 2024-06-30
+            Disclosures for Quarter 2024-12-31
           </h2>
           <Input
             isClearable
@@ -133,8 +125,13 @@ export default function Home() {
                 </span>{" "}
                 total record(s) found.
                 <br />
-                Viewing results {(currentPage - 1) * recordsPerPage + 1}-
-                {Math.min(totalRecords, currentPage * recordsPerPage)}.
+                Viewing results{" "}
+                {((currentPage - 1) * recordsPerPage + 1).toLocaleString()}-
+                {Math.min(
+                  totalRecords,
+                  currentPage * recordsPerPage
+                ).toLocaleString()}
+                .
               </h3>
               <div className="flex justify-between items-center pb-4">
                 <label className="flex items-center text-default-400 text-small">
