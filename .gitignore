@@ -298,3 +298,6 @@ pgdata/
 # Google Cloud SQL Auth Proxy
 cloud-sql-proxy
 private_key.json
+
+# VS Code
+*.vscode/
