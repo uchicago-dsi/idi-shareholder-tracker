@@ -25,7 +25,8 @@ export const Navbar = () => {
             target="_blank"
           >
             <Image
-              alt="Picture of the author"
+              classname="py-2"
+              alt="Logo"
               height={150}
               src="/idi_logo.png"
               width={150}
