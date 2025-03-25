@@ -16,7 +16,7 @@ import React from "react";
 import Link from "next/link";
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/react";
-import debounce from "lodash.debounce";
+import { debounce } from "lodash";
 import { Chip } from "@nextui-org/react";
 
 import { investmentService } from "./services";
@@ -37,7 +37,7 @@ export default function Home() {
     direction: "ascending",
   });
   const [recordsPerPage, setRecordsPerPage] = useState(
-    parseInt(process.env.NEXT_PUBLIC_DEFAULT_TABLE_ROWS ?? ""),
+    parseInt(process.env.NEXT_PUBLIC_DEFAULT_TABLE_ROWS ?? "")
   );
   const [isNewSearch, setIsNewSearch] = useState(false);
 
