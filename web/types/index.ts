@@ -44,3 +44,7 @@ export type InvestmentSearchResult = {
   data: Investment[];
   total: number;
 };
+
+export type InvestmentCount = {
+  count: number;
+};

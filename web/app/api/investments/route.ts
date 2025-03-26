@@ -15,6 +15,7 @@ import { Prisma } from "@prisma/client";
 import prismaHelper from "@/services/db";
 import {
   Investment,
+  InvestmentCount,
   InvestmentSearchRequest,
   InvestmentSearchResult,
 } from "@/types";
@@ -40,13 +41,6 @@ export async function POST(request: NextRequest) {
     searchParams.sortDirection == "ascending" ? "ASC" : "DESC",
   ]);
   let offset = searchParams.limit * (searchParams.page - 1);
-  let hasFilters =
-    searchParams.cik ||
-    searchParams.ticker ||
-    searchParams.cusip ||
-    searchParams.investor ||
-    searchParams.issuer ||
-    searchParams.document;
   let formattedSearchPhrase = searchParams.document
     ?.replace(/\s+/g, " ")
     ?.trim();
@@ -78,49 +72,17 @@ export async function POST(request: NextRequest) {
     FROM current_investments
     WHERE TRUE
     ${
-      searchParams.cik
-        ? Prisma.sql` AND investor_cik ILIKE ${"%" + searchParams.cik + "%"}`
-        : Prisma.empty
-    }
-    ${
-      searchParams.ticker
-        ? Prisma.sql` AND stock_ticker ILIKE ${"%" + searchParams.ticker + "%"}`
-        : Prisma.empty
-    }
-    ${
-      searchParams.cusip
-        ? Prisma.sql` AND stock_cusip ILIKE ${"%" + searchParams.cusip + "%"}`
-        : Prisma.empty
-    }
-    ${
-      searchParams.investor
-        ? Prisma.sql` AND concat(investor_name, ' ', investor_former_names::text) ILIKE ${
-            "%" + searchParams.cusip + "%"
-          }`
-        : Prisma.empty
-    }
-    ${
-      searchParams.issuer
-        ? Prisma.sql` AND stock_issuer ILIKE ${"%" + searchParams.issuer + "%"}`
-        : Prisma.empty
-    }
-    ${
       searchParams.document
         ? Prisma.sql` AND document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
         : Prisma.empty
     }
     ORDER BY ${sortCol} ${sortDirection}
-    ${
-      !hasFilters
-        ? Prisma.sql`LIMIT ${searchParams.limit} OFFSET ${offset}`
-        : Prisma.empty
-    }
+    LIMIT ${searchParams.limit} OFFSET ${offset};
     `;
 
   // Parse BigInt DB fields in search results to JS Number instances
   let parsed_data = searchResults.map((r) => {
     r["stock_shares_prn_amt"] = Number(r["stock_shares_prn_amt"]);
-
     return r;
   });
 
@@ -128,11 +90,16 @@ export async function POST(request: NextRequest) {
   let count = undefined;
   let data = undefined;
 
-  if (!hasFilters) {
+  if (!searchParams.document) {
     count = await prisma.current_investments.count();
     data = parsed_data;
   } else {
-    count = parsed_data.length;
+    const tallyResult: InvestmentCount = await prismaHelper.$queryRaw`
+      SELECT COUNT(*)
+      FROM current_investments
+      WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})
+    `;
+    count = Number(tallyResult["count"]);
     data = parsed_data.slice(offset, offset + searchParams.limit);
   }
 
