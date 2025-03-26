@@ -83,6 +83,7 @@ export async function POST(request: NextRequest) {
   // Parse BigInt DB fields in search results to JS Number instances
   let parsed_data = searchResults.map((r) => {
     r["stock_shares_prn_amt"] = Number(r["stock_shares_prn_amt"]);
+
     return r;
   });
 
@@ -94,12 +95,13 @@ export async function POST(request: NextRequest) {
     count = await prisma.current_investments.count();
     data = parsed_data;
   } else {
-    const tallyResult: InvestmentCount = await prismaHelper.$queryRaw`
+    const tallyResult: InvestmentCount[] = await prismaHelper.$queryRaw`
       SELECT COUNT(*)
       FROM current_investments
       WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})
     `;
-    count = Number(tallyResult["count"]);
+
+    count = Number(tallyResult[0]["count"]);
     data = parsed_data.slice(offset, offset + searchParams.limit);
   }
 
