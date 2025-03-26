@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
         investor_region,
         other_investor_names,
         form_accession_number,
-        to_char(form_report_date, 'YYYY-MM-DD') as form_report_date,
-        to_char(form_filing_date, 'YYYY-MM-DD') as form_filing_date,
+        immutable_date_to_string(form_report_date) as form_report_date,
+        immutable_date_to_string(form_filing_date) as form_filing_date,
         stock_issuer,
         stock_cusip,
         stock_ticker,
@@ -77,14 +77,44 @@ export async function POST(request: NextRequest) {
         form_url
     FROM current_investments
     WHERE TRUE
-    ${searchParams.cik ? Prisma.sql` AND investor_cik ILIKE ${"%" + searchParams.cik + "%"}` : Prisma.empty}
-    ${searchParams.ticker ? Prisma.sql` AND stock_ticker ILIKE ${"%" + searchParams.ticker + "%"}` : Prisma.empty}
-    ${searchParams.cusip ? Prisma.sql` AND stock_cusip ILIKE ${"%" + searchParams.cusip + "%"}` : Prisma.empty}
-    ${searchParams.investor ? Prisma.sql` AND concat(investor_name, ' ', investor_former_names::text) ILIKE ${"%" + searchParams.cusip + "%"}` : Prisma.empty}
-    ${searchParams.issuer ? Prisma.sql` AND stock_issuer ILIKE ${"%" + searchParams.issuer + "%"}` : Prisma.empty}
-    ${searchParams.document ? Prisma.sql` AND document @@ to_tsquery(${tsquerySearchPhrase + ":*"})` : Prisma.empty}
+    ${
+      searchParams.cik
+        ? Prisma.sql` AND investor_cik ILIKE ${"%" + searchParams.cik + "%"}`
+        : Prisma.empty
+    }
+    ${
+      searchParams.ticker
+        ? Prisma.sql` AND stock_ticker ILIKE ${"%" + searchParams.ticker + "%"}`
+        : Prisma.empty
+    }
+    ${
+      searchParams.cusip
+        ? Prisma.sql` AND stock_cusip ILIKE ${"%" + searchParams.cusip + "%"}`
+        : Prisma.empty
+    }
+    ${
+      searchParams.investor
+        ? Prisma.sql` AND concat(investor_name, ' ', investor_former_names::text) ILIKE ${
+            "%" + searchParams.cusip + "%"
+          }`
+        : Prisma.empty
+    }
+    ${
+      searchParams.issuer
+        ? Prisma.sql` AND stock_issuer ILIKE ${"%" + searchParams.issuer + "%"}`
+        : Prisma.empty
+    }
+    ${
+      searchParams.document
+        ? Prisma.sql` AND document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
+        : Prisma.empty
+    }
     ORDER BY ${sortCol} ${sortDirection}
-    ${!hasFilters ? Prisma.sql`LIMIT ${searchParams.limit} OFFSET ${offset}` : Prisma.empty}
+    ${
+      !hasFilters
+        ? Prisma.sql`LIMIT ${searchParams.limit} OFFSET ${offset}`
+        : Prisma.empty
+    }
     `;
 
   // Parse BigInt DB fields in search results to JS Number instances
