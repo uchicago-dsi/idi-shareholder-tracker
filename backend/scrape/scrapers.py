@@ -85,13 +85,30 @@ class BulkSubmissionsScraper(EdgarScraper):
         Returns:
             (`iterator` of `bytes`): The iterator.
         """
-        with requests.get(
-            self.submissions_file_url,
-            headers=self._headers,
-            timeout=None,
-            stream=True,
-        ) as r:
-            yield from r.iter_content(chunk_size=chunk_size)
+        downloaded = 0
+        while True:
+            headers = {"Range": f"bytes={downloaded}-"}
+            try:
+                with requests.get(
+                    self.submissions_file_url,
+                    headers={**self._headers, **headers},
+                    stream=True,
+                    timeout=None,
+                ) as r:
+                    if not r.ok:
+                        raise RuntimeError(
+                            "Error fetching data. The request failed with "
+                            f'a "{r.status_code} - {r.reason}" status '
+                            f'code and the message "{r.text}".'
+                        )
+
+                    for chunk in r.iter_content(chunk_size=chunk_size):
+                        if chunk:
+                            downloaded += len(chunk)
+                            yield chunk
+                    return
+            except (requests.exceptions.ChunkedEncodingError, ConnectionError):
+                time.sleep(1)
 
     def _process_file(
         self,
