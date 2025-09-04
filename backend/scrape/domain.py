@@ -1,5 +1,4 @@
-"""Domain entities used across the application.
-"""
+"""Domain entities used across the application."""
 
 # Standard library imports
 from datetime import date
@@ -7,7 +6,7 @@ from typing import Any, Dict, List, Literal
 
 # Third-party imports
 import pandas as pd
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, computed_field, ValidationError
 
 
 class ScrapedStreetAddress(BaseModel):
@@ -158,7 +157,7 @@ class ScrapedCompany(BaseModel):
                 state_or_country=business_addr["stateOrCountry"],
                 zip_code=business_addr.get("zipCode") or "",
             )
-        except KeyError:
+        except (KeyError, ValidationError):
             mailing_addr = submission["addresses"]["mailing"]
             address = ScrapedStreetAddress(
                 street=mailing_addr.get("street1") or "",
