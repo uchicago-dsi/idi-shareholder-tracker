@@ -17,7 +17,6 @@ import Link from "next/link";
 import { Input } from "@nextui-org/input";
 import { Spinner } from "@nextui-org/react";
 import { debounce } from "lodash";
-import { Chip } from "@nextui-org/react";
 
 import { investmentService } from "./services";
 
@@ -95,7 +94,7 @@ export default function Home() {
         </div>
         <div className="inline-block max-w-4xl text-center">
           <h2 className="py-4 font-bold text-2xl">
-            Disclosures for Quarter 2024-12-31
+            Disclosures for Quarter 2025-06-30
           </h2>
           <Input
             isClearable
