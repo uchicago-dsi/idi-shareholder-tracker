@@ -35,7 +35,9 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang="en">
-      <head />
+      <head>
+        <script defer src="https://core-facility-umami.vercel.app/script.js" data-website-id="7bfbdbc9-d5ce-4b21-b252-4c9edcd7f948"></script>
+      </head>
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
