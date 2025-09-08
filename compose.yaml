@@ -1,7 +1,7 @@
 services:
   # POSTGRES
   postgres:
-    image: postgres
+    image: postgres:16
     container_name: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
@@ -47,14 +47,14 @@ services:
         condition: service_healthy
       pgadmin:
         condition: service_started
-    restart: "no"      
+    restart: "no"
     env_file:
       - .env
     ports:
       - "8080:8080"
     volumes:
       - ./backend:/shareholder-tracker/backend
-   
+
   # WEB
   web:
     build:

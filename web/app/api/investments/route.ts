@@ -81,19 +81,17 @@ export async function POST(request: NextRequest) {
     `;
 
   // Parse BigInt DB fields in search results to JS Number instances
-  let parsed_data = searchResults.map((r) => {
+  let parsedData = searchResults.map((r) => {
     r["stock_shares_prn_amt"] = Number(r["stock_shares_prn_amt"]);
 
     return r;
   });
 
-  // Determine total number of records for query and results to return
+  // Determine total number of records for query
   let count = undefined;
-  let data = undefined;
 
   if (!searchParams.document) {
     count = await prisma.current_investments.count();
-    data = parsed_data;
   } else {
     const tallyResult: InvestmentCount[] = await prismaHelper.$queryRaw`
       SELECT COUNT(*)
@@ -102,12 +100,11 @@ export async function POST(request: NextRequest) {
     `;
 
     count = Number(tallyResult[0]["count"]);
-    data = parsed_data.slice(offset, offset + searchParams.limit);
   }
 
   // Compose response payload
   let payload: InvestmentSearchResult = {
-    data: data,
+    data: parsedData,
     total: count,
   };
 
