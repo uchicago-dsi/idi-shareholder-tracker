@@ -301,3 +301,6 @@ private_key.json
 
 # VS Code
 *.vscode/
+
+# Temporary folders
+data/*
