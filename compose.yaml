@@ -23,7 +23,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    platform: ${DOCKER_PLATFORM}
+    # platform: ${DOCKER_PLATFORM}
     environment:
       - COMPOSE_HTTP_TIMEOUT=300
       - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com

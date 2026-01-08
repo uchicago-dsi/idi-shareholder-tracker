@@ -227,6 +227,7 @@ def _process_pension_funds(
         if sheet not in ("Pension Fund Labeling"):
             sheet_df = xls.parse(sheet)
             sheet_df["Source"] = sheet
+            sheet_df.columns = [col.strip() for col in sheet_df.columns]
             pension_funds_df = (
                 sheet_df
                 if pension_funds_df is None
@@ -279,7 +280,7 @@ def _process_pension_funds(
         "BB Ticker": "stock_ticker",
         "Stock - Percent Ownership": "stock_percent_ownership",
         "Stock - Number of Shares": "stock_number_of_shares",
-        "Stock - Percent Voting Power ": "stock_percent_voting_power",
+        "Stock - Percent Voting Power": "stock_percent_voting_power",
         "Private Equity - Vintage Year": "security_vintage_year",
     }
 
