@@ -4,14 +4,14 @@ FROM node:alpine
 # Set working directory
 WORKDIR /app
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Copy node packages
 COPY package*.json ./
 
-# Copy prisma schema
-COPY prisma ./prisma/
-
 # Install dependencies
-RUN npm install
+RUN pnpm install
 
 # Copy the remaining app components
 COPY . .

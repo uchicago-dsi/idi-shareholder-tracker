@@ -1,111 +1,125 @@
 "server only";
 
-/**
- * API route for investment search requests.
- *
- * References:
- * - https://nextjs.org/docs/app/api-reference/functions/next-request
- * - https://nextjs.org/docs/app/api-reference/functions/next-response
- * - https://github.com/prisma/prisma/issues/11584
- */
-
+// Third-party imports
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 
-import prismaHelper from "@/services/db";
+// Application imports
 import {
   Investment,
-  InvestmentCount,
   InvestmentSearchRequest,
   InvestmentSearchResult,
-} from "@/types";
-import prisma from "@/services/db";
+} from "@/features/investments/interfaces";
+import { sql } from "@/lib/db";
 
+/**
+ * The maximum number of seconds the route can be executed on Vercel.
+ * Up to 300 seconds is permitted on the Pro tier.
+ */
 export const maxDuration = 300;
+
+/**
+ * Forces dynamic rendering (i.e., the route is always rendered for each user at request time).
+ */
 export const dynamic = "force-dynamic";
 
 /**
- * Searches for investments satisfying multiple
- * criteria and then returns a subset of the results.
+ * Fetches a page of investments matching a search query.
  *
- *  @param {NextRequest} - The HTTP request. Contains the
- *      search term and the number of matches to return.
+ * @param request - The HTTP request. Contains the search term, limit and offset parameters, and the sorting column and direction.
+ *
+ * @returns A Promise containing the API response.
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   // Parse JSON request body
-  let searchParams: InvestmentSearchRequest = await request.json();
+  const searchParams: InvestmentSearchRequest = await request.json();
 
   // Prepare variables for dynamic SQL query
-  let sortCol = Prisma.sql([searchParams.sortColumn]);
-  let sortDirection = Prisma.sql([
-    searchParams.sortDirection == "ascending" ? "ASC" : "DESC",
-  ]);
-  let offset = searchParams.limit * (searchParams.page - 1);
-  let formattedSearchPhrase = searchParams.document
+  const tsquerySearchPhrase = searchParams.query
     ?.replace(/\s+/g, " ")
-    ?.trim();
-  let tsquerySearchPhrase = formattedSearchPhrase?.replace(/\s+/g, " & ");
+    ?.trim()
+    ?.replace(/\s+/g, " & ");
 
   // Execute raw query
-  let searchResults: Investment[] = await prismaHelper.$queryRaw`
+  const searchResults: Investment[] = await sql`
     SELECT
-        stock_id::text,
+        id::text,
+        source,
+        document_report_date,
+        investor_type,
         investor_cik,
         investor_name,
-        investor_former_names,
-        investor_country,
-        investor_region,
-        other_investor_names,
-        form_accession_number,
-        immutable_date_to_string(form_report_date) as form_report_date,
-        immutable_date_to_string(form_filing_date) as form_filing_date,
-        stock_issuer,
-        stock_cusip,
+        investor_aliases,
+        investor_country_name,
+        investor_country_code,
+        investor_region_name,
+        investor_region_code,
+        issuer_name,
+        issuer_country_name,
+        issuer_country_code,
+        issuer_sector,
+        security_type,
+        security_vintage_year,
+        security_principal_amount_currency_code,
+        security_principal_amount,
+        security_market_value_currency_code,
+        security_market_value_amount,
+        security_market_value_multiplier,
+        security_market_value_conversion_rate,
+        security_market_value_amount_usd,
+        security_isin,
+        security_cusip,
+        security_figi,
         stock_ticker,
-        stock_value_x1000::text,
-        stock_shares_prn_amt,
-        stock_prn_amt,
-        stock_voting_auth_sole::text,
-        stock_voting_auth_shared::text,
-        stock_voting_auth_none::text,
-        form_url
-    FROM current_investments
-    WHERE TRUE
-    ${
-      searchParams.document
-        ? Prisma.sql` AND document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
-        : Prisma.empty
+        stock_number_of_shares,
+        stock_percent_ownership,
+        stock_percent_voting_power,
+        stock_voting_auth_sole,
+        stock_voting_auth_shared,
+        stock_voting_auth_none,
+        url
+    FROM investment ${
+      searchParams.query
+        ? sql`WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
+        : sql``
     }
-    ORDER BY ${sortCol} ${sortDirection}
-    LIMIT ${searchParams.limit} OFFSET ${offset};
+    ORDER BY ${sql(searchParams.sortColumn)} ${sql.unsafe(searchParams.sortDirection)}
+    LIMIT ${searchParams.limit} OFFSET ${searchParams.offset};
     `;
 
   // Parse BigInt DB fields in search results to JS Number instances
-  let parsedData = searchResults.map((r) => {
-    r["stock_shares_prn_amt"] = Number(r["stock_shares_prn_amt"]);
+  const parsedData = searchResults.map((r) => {
+    r["security_principal_amount"] = Number(r["security_principal_amount"]);
+    r["security_market_value_amount"] = Number(
+      r["security_market_value_amount"],
+    );
+    r["security_market_value_amount_usd"] = Number(
+      r["security_market_value_amount_usd"],
+    );
+    r["stock_number_of_shares"] = Number(r["stock_number_of_shares"]);
+    r["stock_voting_auth_sole"] = Number(r["stock_voting_auth_sole"]);
+    r["stock_voting_auth_shared"] = Number(r["stock_voting_auth_shared"]);
+    r["stock_voting_auth_none"] = Number(r["stock_voting_auth_none"]);
 
     return r;
   });
 
-  // Determine total number of records for query
-  let count = undefined;
-
-  if (!searchParams.document) {
-    count = await prisma.current_investments.count();
-  } else {
-    const tallyResult: InvestmentCount[] = await prismaHelper.$queryRaw`
+  // Query database for total number of records with search phrase
+  const tallyResult = await sql`
       SELECT COUNT(*)
-      FROM current_investments
-      WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})
+      FROM investment ${
+        searchParams.query
+          ? sql`WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
+          : sql``
+      }
     `;
 
-    count = Number(tallyResult[0]["count"]);
-  }
+  // Parse result
+  const count = Number(tallyResult[0]["count"]);
 
   // Compose response payload
-  let payload: InvestmentSearchResult = {
+  const payload: InvestmentSearchResult = {
     data: parsedData,
-    total: count,
+    totalRecords: count,
   };
 
   return NextResponse.json(payload);

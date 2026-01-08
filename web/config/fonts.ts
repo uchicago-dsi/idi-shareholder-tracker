@@ -1,11 +1,22 @@
-import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
+// Third-party imports
+import { Bebas_Neue, Geist, Geist_Mono, Montserrat } from "next/font/google";
 
-export const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+export const bebasNeue = Bebas_Neue({
+  weight: "400",
+  variable: "--font-bebas-neue",
 });
 
-export const fontMono = FontMono({
+export const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  variable: "--font-mono",
+});
+
+export const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const montserrat = Montserrat({
+  weight: "400",
+  variable: "--font-montserrat",
 });

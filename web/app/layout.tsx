@@ -1,67 +1,44 @@
-import "@/styles/globals.css";
-import { Metadata, Viewport } from "next";
-import { Link } from "@nextui-org/link";
-import clsx from "clsx";
-import { Analytics } from "@vercel/analytics/react";
+// Third-party imports
+import type { Metadata } from "next";
 
+// Application imports
+import { bebasNeue, geistMono, geistSans, montserrat } from "@/config/fonts";
 import { Providers } from "./providers";
 
-import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
-import { Navbar } from "@/components/navbar";
+// Style imports
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: {
-    icon: "/favicon.ico",
-  },
+  title: "Shareholder Tracker - Inclusive Development International",
+  description: "An online database of institutional investments.",
 };
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
-};
-
+/**
+ * The root layout component for the application. Sets up the HTML structure, imports global CSS, and wraps the children in a provider component.
+ *
+ * @param props - The component props.
+ * @param props.children - The children of the component.
+ *
+ * @returns - The wrapped component.
+ */
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html suppressHydrationWarning lang="en">
-      <head />
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          defer
+          src="https://core-facility-umami.vercel.app/script.js"
+          data-website-id="7bfbdbc9-d5ce-4b21-b252-4c9edcd7f948"
+        ></script>
+      </head>
       <body
-        className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-        )}
+        className={`${bebasNeue.variable} ${geistSans.variable} ${geistMono.variable} ${montserrat.variable} bg:white antialiased dark:bg-black`}
       >
-        <Analytics />
-        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
-          <div className="relative flex flex-col h-screen">
-            <Navbar />
-            <main className="container mx-auto max-w-7xl pt-8 px-6 flex-grow">
-              {children}
-            </main>
-            <footer className="w-full flex items-center justify-center py-3">
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-current"
-                href="https://nextui-docs-v2.vercel.app?utm_source=next-app-template"
-                title="nextui.org homepage"
-              >
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">NextUI</p>
-              </Link>
-            </footer>
-          </div>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
