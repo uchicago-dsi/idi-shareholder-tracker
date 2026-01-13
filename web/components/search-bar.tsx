@@ -7,6 +7,7 @@ import { SearchIcon } from "lucide-react";
 
 type SearchBarProps = {
   placeholder: string;
+  submitLabel: string;
   currentQuery: string;
   onValueChange: (value: string) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -14,19 +15,21 @@ type SearchBarProps = {
 };
 
 /**
- * A generic search bar component.
+ * A generic search bar component with a submit button.
  *
  * @param props - The component props.
  * @param props.placeholder - The text to display in the search field when it is empty.
+ * @param props.submitLabel - The label for the submit button.
  * @param props.currentQuery - The current user query string being searched for.
  * @param props.onValueChange - A callback function to handle query updates.
  * @param props.onSubmit - A callback function to handle submissions.
  * @param props.onClear - A callback function to handle query deletions.
  *
- * @returns The JSX element..
+ * @returns The JSX element.
  */
 export const SearchBar: React.FC<SearchBarProps> = ({
   placeholder,
+  submitLabel,
   currentQuery,
   onValueChange,
   onSubmit,
@@ -57,7 +60,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           size="lg"
           type="submit"
         >
-          Search
+          {submitLabel}
         </Button>
       </form>
     </div>

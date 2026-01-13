@@ -28,7 +28,7 @@ export const ResultCount: React.FC<ResultCountProps> = ({
   const end = Math.min(totalRecords, currentPage * recordsPerPage);
   return totalRecords === 0 ? (
     <h3 className="font-montserrat text-center text-xl font-bold">
-      No Results Found
+      0 Results Found
     </h3>
   ) : (
     <h3 className="font-montserrat text-center text-xl font-bold">

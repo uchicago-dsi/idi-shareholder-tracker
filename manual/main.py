@@ -28,7 +28,8 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
     nbim_df["source"] = "NORGES BANK"
     nbim_df["document_report_date"] = "2025-06-30"
     nbim_df["document_filing_date"] = ""
-    nbim_df["investor_type"] = "CENTRAL BANK"
+    nbim_df["investor_type"] = "PENSION FUND"
+    nbim_df["investor_abbreviation"] = "NBIM"
     nbim_df["investor_cik"] = ""
     nbim_df["investor_name"] = "NORGES BANK"
     nbim_df["investor_aliases"] = [[] for _ in range(len(nbim_df))]
@@ -179,6 +180,7 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
             "investor_type",
             "investor_cik",
             "investor_name",
+            "investor_abbreviation",
             "investor_aliases",
             "investor_country_name",
             "investor_country_code",
@@ -263,6 +265,11 @@ def _process_pension_funds(
     ].index
     pension_funds_df = pension_funds_df.drop(index=invalid_rows_idx)
 
+    # Drop rows with corporate bonds
+    pension_funds_df = pension_funds_df.query(
+        "`Security - Type` != 'CORPORATE BOND'"
+    )
+
     # Rename columns
     col_map = {
         "Source": "source",
@@ -303,6 +310,66 @@ def _process_pension_funds(
         "security_figi",
     ):
         pension_funds_df.loc[:, [col]] = ""
+
+    # Define investor abbreviation mapping
+    investor_abbreviation_map = {
+        "Copy of AMF": "AMF",
+        "Copy of BPL": "BPL",
+        "Copy of Fjarde AP Foreignshares": "AP4",
+        "Copy of Fjarde APswedishshares": "AP4",
+        "Copy of KPA": "KPA",
+        "Copy of PFZW": "PFZW",
+        "Copy of PKA": "PKA",
+        "Copy of PME": "PME",
+        "Copy of PMT": "PMT",
+        "Copy of Sjunde AP": "AP7",
+        "Copy of ap2 foreignequity": "AP2",
+        "Copy of ap2swedishequity": "P2",
+        "Copy of ap3foreignequity": "AP3",
+        "Copy of ap3privateequity": "AP3",
+        "Copy of ap3swedishequity": "AP3",
+        "Copy of bpfbouw": "bpfBOUW",
+        "Copy of danicapension": "",
+        "Copy of detailhandel": "",
+        "Copy of pansiondanmark": "",
+        "Copy of rail+ov": "Rail & OV",
+        "Copy of sampension": "",
+        "Copy of stichting_pensioenfonds": "ABP",
+        "Copy of vervoershares": "",
+    }
+    pension_funds_df.loc[:, ["investor_abbreviation"]] = pension_funds_df[
+        "source"
+    ].map(investor_abbreviation_map)
+
+    # Correct security types
+    def correct_security_type(row: pd.Series) -> str:
+        """Corrects a security type field by populating a missing value.
+
+        Args:
+            row: The investment.
+
+        Returns:
+            The corrected security type.
+        """
+        if row["source"] == "Copy of ap3privateequity":
+            return "Private Equity Fund"
+        elif not pd.isna(row["security_type"]) and row["security_type"] in (
+            "FUND EQ"
+        ):
+            return "Equity Fund"
+        else:
+            return "Stocks"
+
+    pension_funds_df.loc[:, ["security_type"]] = pension_funds_df.apply(
+        correct_security_type, axis=1
+    )
+
+    # Correct vintage year column
+    pension_funds_df.loc[:, ["security_vintage_year"]] = (
+        pension_funds_df["security_vintage_year"]
+        .apply(lambda year: "" if pd.isna(year) else str(year)[:4])
+        .astype(str)
+    )
 
     # Define country name mapping
     country_map = {
@@ -502,16 +569,20 @@ def _process_pension_funds(
             return np.nan
         elif row["source"] in (
             "Copy of Fjarde APswedishshares",
+            "Copy of Fjarde AP Foreignshares",
             "Copy of ap2 foreignequity",
             "Copy of ap2swedishequity",
             "Copy of vervoershares",
         ):
             return (
-                row["security_market_value_amount"].replace(" ", "")
+                row["security_market_value_amount"]
+                .replace(" ", "")
+                .replace(",", "")
                 if isinstance(row["security_market_value_amount"], str)
                 else row["security_market_value_amount"]
             )
         elif row["source"] == "Copy of detailhandel":
+
             return (
                 row["security_market_value_amount"].replace(".", "")
                 if isinstance(row["security_market_value_amount"], str)
@@ -668,14 +739,19 @@ def _process_pension_funds(
     return pension_funds_df
 
 
-def _process_sec_investments(data_fpath: Path) -> pd.DataFrame:
+def _process_sec_investments(
+    data_fpath: Path, pension_fund_labels_fpath: Path
+) -> pd.DataFrame:
     """Loads, cleans, and standardizes Form 13F investments from the S.E.C.
 
     Args:
         data_fpath: The path to the Form 13F investments file.
 
+        pension_fund_labels_fpath: The path to a CSV file identifying
+            which S.E.C. filers are pension funds.
+
     Returns:
-        A DataFrame of Form 13F investments.
+        A DataFrame of cleaned Form 13F investments.
     """
     # Read file using DuckDB
     db = duckdb.connect()
@@ -704,7 +780,9 @@ def _process_sec_investments(data_fpath: Path) -> pd.DataFrame:
     mapped_sec_df.loc[:, ["source"]] = (
         "U.S. SECURITIES AND EXCHANGE COMMISSION (SEC)"
     )
-    mapped_sec_df.loc[:, ["investor_type"]] = "NOT CLASSIFIED"
+    mapped_sec_df.loc[:, ["investor_abbreviation"]] = mapped_sec_df[
+        "investor_name"
+    ].apply(lambda name: "NBIM" if name.upper() == "NORGES BANK" else "")
     mapped_sec_df.loc[:, ["investor_region_code"]] = ""
     mapped_sec_df.loc[:, ["issuer_country_name"]] = ""
     mapped_sec_df.loc[:, ["issuer_country_code"]] = ""
@@ -741,9 +819,9 @@ def _process_sec_investments(data_fpath: Path) -> pd.DataFrame:
             "source",
             "document_report_date",
             "document_filing_date",
-            "investor_type",
             "investor_cik",
             "investor_name",
+            "investor_abbreviation",
             "investor_aliases",
             "investor_country_name",
             "investor_region_name",
@@ -772,6 +850,20 @@ def _process_sec_investments(data_fpath: Path) -> pd.DataFrame:
             "url",
         ]
     ]
+
+    # Load pension fund labels
+    sec_pension_funds_df = pd.read_csv(pension_fund_labels_fpath)
+
+    # Use labels to assign investor type
+    mapped_sec_df.loc[:, ["investor_type"]] = mapped_sec_df[
+        "investor_name"
+    ].apply(
+        lambda name: (
+            "PENSION FUND"
+            if name.upper() in sec_pension_funds_df["name"].values
+            else "NOT CLASSIFIED"
+        )
+    )
 
     # Define country code mapping
     country_codes = {
@@ -938,6 +1030,7 @@ def _merge_datasets(
                 "investor_type",
                 "investor_cik",
                 "investor_name",
+                "investor_abbreviation",
                 "investor_country_name",
                 "investor_country_code",
                 "investor_region_name",
@@ -1003,6 +1096,8 @@ def _merge_datasets(
         raw_text = (
             safe_get(row, "investor_name")
             + " "
+            + safe_get(row, "investor_abbreviation")
+            + " "
             + safe_get(row, "investor_country_name")
             + " "
             + safe_get(row, "investor_country_code")
@@ -1038,6 +1133,7 @@ def _merge_datasets(
             "investor_type",
             "investor_cik",
             "investor_name",
+            "investor_abbreviation",
             "investor_aliases",
             "investor_country_name",
             "investor_country_code",
@@ -1078,6 +1174,7 @@ def _merge_datasets(
         "investor_type",
         "investor_cik",
         "investor_name",
+        "investor_abbreviation",
         "investor_country_name",
         "investor_country_code",
         "investor_region_name",
@@ -1127,6 +1224,9 @@ def _merge_datasets(
         json.dumps
     )
 
+    # Add last accesssed date
+    final_df.loc[:, "last_accessed_date"] = "2025-12-18"
+
     return final_df
 
 
@@ -1163,6 +1263,7 @@ def main() -> None:
     )
     currency_map_fpath = input_dir / "currency_country_map.json"
     sec_fpath = input_dir / "current_investments.csv"
+    pension_fund_labels_fpath = input_dir / "sec_pension_funds.csv"
     output_fpath = output_dir / "merged_data.csv"
 
     # Load and clean NBIM investments
@@ -1177,7 +1278,7 @@ def main() -> None:
 
     # Load and clean SEC investments
     logger.info("Processing SEC Form 13F investments.")
-    sec_df = _process_sec_investments(sec_fpath)
+    sec_df = _process_sec_investments(sec_fpath, pension_fund_labels_fpath)
 
     # Merge datasets
     logger.info("Merging datasets.")

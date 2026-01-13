@@ -1,15 +1,23 @@
+/**
+ * The application configuration.
+ */
 export const SITE_CONFIG = Object.freeze({
   title: "Shareholder Tracker",
   subtitle:
     "Discover institutional investments disclosed in national pension funds and SEC 13F filings",
-  description:
+  description: [
     "This database compiles the latest disclosures from 18 national pension \
           funds, as well as quarterly shareholdings reported by investors to the \
-          U.S. Securities and Exchange Commission. To search for a company’s \
-          shareholders, type the name of the company or its ticker symbol or \
-          CUSIP number in the search bar. You can also search for shareholders \
-          by name. All search results can be sorted in ascending or descending \
-          order by clicking on the select column heading.",
+          U.S. Securities and Exchange Commission. It is updated once per quarter.",
+    'To search for a company’s shareholders, type the company\'s name or CUSIP number \
+          in the search bar. You can also search investments more broadly by country, \
+          sector, or security identifier (e.g., ticker, CUSIP, ISIN, FIGI). The search \
+          results can be viewed as a data table (default) or as a list of cards \
+          with more detailed information summarized in text format. Sort the results \
+          in ascending or descending order for a given column by using the "Sort by" \
+          dropdown. Double click on a row in the table view or a link icon in the \
+          card view to navigate to the original data source for that investment.',
+  ],
   acknowledgments:
     "This resource was developed through a partnership with Inclusive Development \
     International and the University of Chicago Data Science Institute in 2025, with \
@@ -19,42 +27,34 @@ export const SITE_CONFIG = Object.freeze({
       {
         key: "investor_name",
         label: "Investor",
-        allowsSorting: true,
       },
       {
         key: "issuer_name",
         label: "Issuer",
-        allowsSorting: true,
       },
       {
         key: "stock_ticker",
         label: "Ticker",
-        allowsSorting: false,
       },
       {
         key: "security_cusip",
         label: "CUSIP",
-        allowsSorting: false,
       },
       {
         key: "security_market_value_amount_usd",
         label: "Market Value (USD)",
-        allowsSorting: true,
       },
       {
         key: "stock_number_of_shares",
         label: "Total Shares",
-        allowsSorting: true,
       },
       {
         key: "document_report_date",
         label: "Report Date",
-        allowsSorting: true,
       },
       {
         key: "investor_type",
         label: "Investor Type",
-        allowsSorting: false,
       },
     ],
     loading: {
@@ -65,17 +65,76 @@ export const SITE_CONFIG = Object.freeze({
       ],
     },
     pageSizes: {
-      default: 10,
-      options: [10, 25, 50, 100],
+      default: "10",
+      options: [
+        {
+          label: "10",
+          value: "10",
+        },
+        {
+          label: "25",
+          value: "25",
+        },
+        {
+          label: "50",
+          value: "50",
+        },
+        {
+          label: "100",
+          value: "100",
+        },
+      ],
       label: "Rows per page:",
     },
     search: {
       placeholder: "E.g., AngloGold Ashanti",
+      submitLabel: "Search",
     },
     sort: {
       default: {
-        column: "issuer_name",
+        column: "investor_name",
         direction: "ascending",
+      },
+      dropdown: {
+        label: "Sort by:",
+        columnName: {
+          default: "investor_name",
+          options: [
+            {
+              label: "Investor",
+              value: "investor_name",
+            },
+            {
+              label: "Issuer",
+              value: "issuer_name",
+            },
+            {
+              label: "Market Value (USD)",
+              value: "security_market_value_amount_usd",
+            },
+            {
+              label: "Total Shares",
+              value: "stock_number_of_shares",
+            },
+            {
+              label: "Report Date",
+              value: "document_report_date",
+            },
+          ],
+        },
+        direction: {
+          default: "ascending",
+          options: [
+            {
+              label: "Ascending",
+              value: "ascending",
+            },
+            {
+              label: "Descending",
+              value: "descending",
+            },
+          ],
+        },
       },
     },
   },

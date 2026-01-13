@@ -5,12 +5,12 @@ import React from "react";
 
 // Third-party imports
 import { Link } from "@heroui/react";
+import Image from "next/image";
 
 // Application imports
 import { GitHubIcon } from "@/components/icons";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { SITE_CONFIG } from "@/config/site";
-import Image from "next/image";
 
 /**
  * A component that renders a navbar with a link to the Github repository and a theme switcher.
@@ -20,7 +20,7 @@ import Image from "next/image";
 export const Navbar: React.FC = () => {
   return (
     <div className="m-auto flex w-full flex-row justify-center pt-4">
-      <div className="flex w-full max-w-6xl flex-row items-start justify-between px-8">
+      <div className="flex w-full max-w-7xl flex-row items-start justify-between px-8">
         <div>
           <Image
             className="light:block cursor-pointer hover:opacity-90 dark:hidden"

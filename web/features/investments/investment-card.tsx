@@ -15,13 +15,13 @@ import {
 import { Investment } from "./interfaces";
 import { InvestmentSummaryBuilder } from "./investment-summary";
 
-type OrganizationTitleProps = {
+type OrganizationNameWithFlagProps = {
   name: string;
   countryCode: string;
 };
 
 /**
- * A span element that displays an organization name with a country flag icon.
+ * A span element that displays an organization's name and country flag.
  *
  * @param props - The component props.
  * @param props.name - The name of the organization.
@@ -29,7 +29,7 @@ type OrganizationTitleProps = {
  *
  * @returns The JSX element.
  */
-const OrganizationTitle: React.FC<OrganizationTitleProps> = ({
+const OrganizationNameWithFlag: React.FC<OrganizationNameWithFlagProps> = ({
   name,
   countryCode,
 }) => {
@@ -48,7 +48,7 @@ const OrganizationTitle: React.FC<OrganizationTitleProps> = ({
   );
 };
 
-type InvestmentHeaderProps = {
+type InvestmentTitleProps = {
   reportDate: string;
   investorName: string;
   investorCountryCode: string;
@@ -57,7 +57,7 @@ type InvestmentHeaderProps = {
 };
 
 /**
- * A component that displays the report date, investor name, and issuer name.
+ * A div element that displays an investment's report date, investor name, and issuer name.
  *
  * @param props - The component props.
  * @param props.reportDate - The report date of the investment.
@@ -68,7 +68,7 @@ type InvestmentHeaderProps = {
  *
  * @returns The JSX element.
  */
-const InvestmentHeader: React.FC<InvestmentHeaderProps> = ({
+const InvestmentTitle: React.FC<InvestmentTitleProps> = ({
   reportDate,
   investorName,
   investorCountryCode,
@@ -85,21 +85,23 @@ const InvestmentHeader: React.FC<InvestmentHeaderProps> = ({
   return (
     <div className="font-bebas-neue flex flex-col items-start text-2xl uppercase lg:flex-row lg:items-start">
       <span>{parsedReportDate}</span>{" "}
-      <div className="border border-1 border-black" />
       <span className="hidden lg:inline">|</span>{" "}
       <span>
-        <OrganizationTitle
+        <OrganizationNameWithFlag
           name={investorName}
           countryCode={investorCountryCode}
         />{" "}
         investment in{" "}
-        <OrganizationTitle name={issuerName} countryCode={issuerCountryCode} />
+        <OrganizationNameWithFlag
+          name={issuerName}
+          countryCode={issuerCountryCode}
+        />
       </span>{" "}
     </div>
   );
 };
 
-type SecurityMetadataHeaderProps = {
+type SecurityMetadataLineProps = {
   ticker: string;
   cusip: string;
   figi: string;
@@ -107,7 +109,7 @@ type SecurityMetadataHeaderProps = {
 };
 
 /**
- * A div element that displays security metadata for an investment.
+ * A div element that displays the ticker, CUSIP, FIGI, and/or ISIN of the security if availble.
  *
  * @param props.ticker - The ticker symbol of the investment.
  * @param props.cusip - The CUSIP number of the investment.
@@ -116,7 +118,7 @@ type SecurityMetadataHeaderProps = {
  *
  * @returns The JSX element.
  */
-const SecurityMetadataHeader: React.FC<SecurityMetadataHeaderProps> = ({
+const SecurityMetadataLine: React.FC<SecurityMetadataLineProps> = ({
   ticker,
   cusip,
   figi,
@@ -195,14 +197,18 @@ const InvestmentCardHeader: React.FC<InvestmentCardHeaderProps> = ({
 }) => {
   return (
     <div className="flex w-full flex-col gap-2 p-3 lg:gap-0">
+      {/** FIRST ROW - TITLE AND DATA SOURCE LINK */}
       <div className="lg: flex flex-col justify-between lg:flex-row lg:items-center">
-        <InvestmentHeader
+        {/** TITLE */}
+        <InvestmentTitle
           investorName={investorName}
           investorCountryCode={investorCountryCode}
           issuerName={issuerName}
           issuerCountryCode={issuerCountryCode}
           reportDate={reportDate}
         />
+
+        {/** DESKTOP-ONLY LINK */}
         <Link
           href={url}
           className="font-montserrat hidden font-bold text-green-700 hover:text-orange-400 md:block dark:text-green-500 dark:hover:text-orange-200"
@@ -211,12 +217,16 @@ const InvestmentCardHeader: React.FC<InvestmentCardHeaderProps> = ({
           anchorIcon={<LinkIcon strokeWidth={2.5} />}
           size="lg"
         ></Link>
+
+        {/** MOBILE-ONLY LINK */}
         <div className="font-montserrat flex flex-row items-center gap-2 font-bold text-green-700 hover:text-orange-400 md:hidden dark:text-green-200 dark:hover:text-orange-200">
           <p>Go to data source</p>
           <ArrowUpRightFromSquareIcon size={20} />
         </div>
       </div>
-      <SecurityMetadataHeader
+
+      {/** SECOND ROW - SECURITY CODES */}
+      <SecurityMetadataLine
         ticker={ticker}
         cusip={cusip}
         figi={figi}
@@ -226,17 +236,93 @@ const InvestmentCardHeader: React.FC<InvestmentCardHeaderProps> = ({
   );
 };
 
-type InvestmentCardProps = {
+type InvestmentCardBodyProps = {
   investment: Investment;
 };
 
-export const InvestmentCard: React.FC<InvestmentCardProps> = ({
+/**
+ * A component for displaying the investment body content.
+ * Takes an investment object and creates a summary string,
+ * as well as a footnote detailing the conversion rate of the
+ * investment value to USD when applicable.
+ *
+ * @param props - The component props.
+ * @param props.investment - The investment object.
+ *
+ * @returns The JSX element.
+ */
+const InvestmentCardBody: React.FC<InvestmentCardBodyProps> = ({
   investment,
 }) => {
   const summaryBuilder = new InvestmentSummaryBuilder(investment);
   return (
+    <div className="font-montserrat flex flex-col gap-4 px-3 pt-3 pb-5 uppercase lg:text-left">
+      <p className="text-sm">{summaryBuilder.summary}</p>
+      {summaryBuilder.marketValueAsterisk && (
+        <p className="text-xs font-bold text-green-700 dark:font-normal dark:text-green-200">
+          {summaryBuilder.conversionRateFootnote}
+        </p>
+      )}
+    </div>
+  );
+};
+
+type InvestmentCardFooterProps = {
+  dataSource: string;
+  lastAccessed: string;
+};
+
+/**
+ * A div that displays the data source of the investment and the last accessed date.
+ *
+ * @param props - The component props.
+ * @param props.dataSource - The name of the investment data source (e.g., "U.S. Securities and Exchange Commission").
+ * @param props.lastAccessed - The date the data source was accessed for data collection. Formatted as "YYYY-mm-dd".
+ *
+ * @returns The JSX element.
+ */
+const InvestmentCardFooter: React.FC<InvestmentCardFooterProps> = ({
+  dataSource,
+  lastAccessed,
+}) => {
+  const parsedAccessDate = new Date(
+    lastAccessed + "T00:00:00",
+  ).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return (
+    <div className="font-montserrat dark:bg-default-200 flex flex-col gap-4 rounded-b-xl bg-neutral-100 p-3 text-left text-xs uppercase lg:flex-row lg:justify-between">
+      <p className="flex flex-col lg:flex-row lg:gap-1">
+        <span className="font-bold lg:font-normal">Source:</span>
+        <span>{dataSource}</span>
+      </p>
+      <p className="flex flex-col lg:flex-row lg:gap-1">
+        <span className="font-bold lg:font-normal">Last Accessed:</span>
+        <span>{parsedAccessDate}</span>
+      </p>
+    </div>
+  );
+};
+
+type InvestmentCardProps = {
+  investment: Investment;
+};
+
+/**
+ * A card summarizing an {@link Investment} object. Contains a header, body, and footer.
+ *
+ * @param props - The component props.
+ * @param props.investment - The investment.
+ *
+ * @returns The JSX element.
+ */
+export const InvestmentCard: React.FC<InvestmentCardProps> = ({
+  investment,
+}) => {
+  return (
     <div className="border-default-200 flex w-full flex-col rounded-xl border border-2">
-      {/** HEADER */}
       <InvestmentCardHeader
         reportDate={investment.document_report_date}
         investorName={investment.investor_name}
@@ -249,30 +335,11 @@ export const InvestmentCard: React.FC<InvestmentCardProps> = ({
         isin={investment.security_isin}
         url={investment.url}
       />
-
-      {/** BODY */}
-      <div className="font-montserrat flex flex-col gap-4 px-3 pt-3 pb-5 uppercase lg:text-left">
-        <p className="text-sm">{summaryBuilder.summary}</p>
-        {summaryBuilder.marketValueAsterisk && (
-          <p className="text-xs font-bold text-green-700 dark:font-normal dark:text-green-200">
-            *Converted from {summaryBuilder.originalAmount} at a rate of{" "}
-            {investment.security_market_value_conversion_rate} for the given
-            report date of {investment.document_report_date}
-          </p>
-        )}
-      </div>
-
-      {/** FOOTER */}
-      <div className="font-montserrat dark:bg-default-200 flex flex-col gap-4 rounded-b-xl bg-neutral-100 p-3 text-left text-xs uppercase lg:flex-row lg:justify-between">
-        <p className="flex flex-col lg:flex-row lg:gap-1">
-          <span className="font-bold lg:font-normal">Source:</span>
-          <span>{investment.source}</span>
-        </p>
-        <p className="flex flex-col lg:flex-row lg:gap-1">
-          <span className="font-bold lg:font-normal">Last Accessed:</span>
-          <span>December 18, 2025</span>
-        </p>
-      </div>
+      <InvestmentCardBody investment={investment} />
+      <InvestmentCardFooter
+        dataSource={investment.source}
+        lastAccessed={investment.last_accessed_date}
+      />
     </div>
   );
 };

@@ -4,7 +4,6 @@
 export interface DataColumn {
   key: string;
   label: string;
-  allowsSorting: boolean;
 }
 
 /**
@@ -46,6 +45,7 @@ export interface Investment {
   stock_voting_auth_shared: number | null;
   stock_voting_auth_none: number | null;
   url: string;
+  last_accessed_date: string;
 }
 
 /**

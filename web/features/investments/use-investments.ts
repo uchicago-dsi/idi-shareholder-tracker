@@ -3,16 +3,19 @@
 // Standard library imports
 import React, { useEffect, useState } from "react";
 
-// Third-party imports
-import { SortDescriptor } from "@heroui/table";
-
-// Application imports
+// Feature imports
 import {
   Investment,
   InvestmentSearchRequest,
   InvestmentSearchResult,
 } from "./interfaces";
 import { investmentService } from "./services";
+
+type UseInvestmentsParams = {
+  defaultPageSize: number;
+  defaultSortColumn: string;
+  defaultSortDirection: "ascending" | "descending";
+};
 
 type UseInvestmentsReturn = {
   isLoading: boolean;
@@ -22,16 +25,18 @@ type UseInvestmentsReturn = {
   totalPages: number;
   totalRecords: number;
   currentQuery: string;
-  sortObj: SortDescriptor;
+  sortColumn: string;
+  sortDirection: "ascending" | "descending";
   pageSize: number;
   currentView: "table" | "cards";
   setCurrentView: (value: "table" | "cards") => void;
   onSearchQueryChange: (value: string) => void;
   onSearchQuerySubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onSearchQueryClear: () => void;
-  onPageSizeChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onPageSizeChange: (value: number) => void;
   onPageChange: (page: number) => void;
-  onSortChange: (item: SortDescriptor) => void;
+  onSortColumnChange: (column: string) => void;
+  onSortDirectionChange: (direction: "ascending" | "descending") => void;
 };
 
 /**
@@ -42,10 +47,11 @@ type UseInvestmentsReturn = {
  *
  * @returns An object containing the state and callbacks for the hook.
  */
-export const useInvestments = (
-  defaultPageSize: number,
-  defaultSort: SortDescriptor,
-): UseInvestmentsReturn => {
+export const useInvestments = ({
+  defaultPageSize,
+  defaultSortColumn,
+  defaultSortDirection,
+}: UseInvestmentsParams): UseInvestmentsReturn => {
   // Initialize state
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -54,9 +60,14 @@ export const useInvestments = (
   const [pageSize, setPageSize] = useState<number>(defaultPageSize);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [currentQuery, setCurrentQuery] = useState<string>("");
-  const [sortObj, setSortObj] = useState<SortDescriptor>(defaultSort);
   const [isNewSearch, setIsNewSearch] = useState<boolean>(true);
   const [currentView, setCurrentView] = useState<"table" | "cards">("table");
+  const [sortDirection, setSortDirection] = useState<
+    "ascending" | "descending"
+  >(defaultSortDirection);
+  const [sortColumn, setSortColumn] = useState<string>(
+    String(defaultSortColumn),
+  );
 
   // Initialize derived state
   const totalPages = totalRecords ? Math.ceil(totalRecords / pageSize) : 0;
@@ -72,8 +83,8 @@ export const useInvestments = (
         query: currentQuery ?? null,
         limit: pageSize,
         offset: (currentPage - 1) * pageSize,
-        sortColumn: String(sortObj.column),
-        sortDirection: sortObj.direction === "ascending" ? "ASC" : "DESC",
+        sortColumn: sortColumn,
+        sortDirection: sortDirection === "ascending" ? "ASC" : "DESC",
       };
 
       // Post search request and parse response
@@ -91,7 +102,14 @@ export const useInvestments = (
     };
 
     if (isNewSearch) updateData();
-  }, [currentQuery, currentPage, sortObj, pageSize, isNewSearch]);
+  }, [
+    currentQuery,
+    currentPage,
+    sortColumn,
+    sortDirection,
+    pageSize,
+    isNewSearch,
+  ]);
 
   // Define callback function for updating a search query
   const onSearchQueryChange = (value: string) => setCurrentQuery(value);
@@ -111,9 +129,9 @@ export const useInvestments = (
   };
 
   // Define callback function for updating the page size
-  const onPageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const onPageSizeChange = (value: number) => {
     setIsNewSearch(true);
-    setPageSize(parseInt(event.target.value));
+    setPageSize(value);
     setCurrentPage(1);
   };
 
@@ -123,10 +141,17 @@ export const useInvestments = (
     setIsNewSearch(true);
   };
 
-  // Define callback function for updating the sorting scheme
-  const onSortChange = (item: SortDescriptor) => {
+  // Define callback function for updating the sorted column
+  const onSortColumnChange = (name: string) => {
     setCurrentPage(1);
-    setSortObj(item);
+    setSortColumn(name);
+    setIsNewSearch(true);
+  };
+
+  // Define ccallback function for updating the sort direction
+  const onSortDirectionChange = (direction: "ascending" | "descending") => {
+    setCurrentPage(1);
+    setSortDirection(direction);
     setIsNewSearch(true);
   };
 
@@ -139,7 +164,8 @@ export const useInvestments = (
     currentPage,
     totalPages,
     pageSize,
-    sortObj,
+    sortColumn,
+    sortDirection,
     currentView,
     setCurrentView,
     onSearchQueryChange,
@@ -147,6 +173,7 @@ export const useInvestments = (
     onSearchQueryClear,
     onPageSizeChange,
     onPageChange,
-    onSortChange,
+    onSortColumnChange,
+    onSortDirectionChange,
   };
 };

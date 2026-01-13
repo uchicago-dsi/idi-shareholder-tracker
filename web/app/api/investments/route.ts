@@ -4,12 +4,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Application imports
+import { sql } from "@/lib/db";
+
+// Feature imports
 import {
   Investment,
   InvestmentSearchRequest,
   InvestmentSearchResult,
 } from "@/features/investments/interfaces";
-import { sql } from "@/lib/db";
 
 /**
  * The maximum number of seconds the route can be executed on Vercel.
@@ -34,10 +36,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const searchParams: InvestmentSearchRequest = await request.json();
 
   // Prepare variables for dynamic SQL query
-  const tsquerySearchPhrase = searchParams.query
-    ?.replace(/\s+/g, " ")
-    ?.trim()
-    ?.replace(/\s+/g, " & ");
+  const tsquerySearchPhrase = searchParams.query?.replace(/\s+/g, " ")?.trim();
 
   // Execute raw query
   const searchResults: Investment[] = await sql`
@@ -76,10 +75,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         stock_voting_auth_sole,
         stock_voting_auth_shared,
         stock_voting_auth_none,
-        url
+        url,
+        last_accessed_date
     FROM investment ${
       searchParams.query
-        ? sql`WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
+        ? sql`WHERE document @@ websearch_to_tsquery(${tsquerySearchPhrase + ":*"})`
         : sql``
     }
     ORDER BY ${sql(searchParams.sortColumn)} ${sql.unsafe(searchParams.sortDirection)}
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       SELECT COUNT(*)
       FROM investment ${
         searchParams.query
-          ? sql`WHERE document @@ to_tsquery(${tsquerySearchPhrase + ":*"})`
+          ? sql`WHERE document @@ websearch_to_tsquery(${tsquerySearchPhrase + ":*"})`
           : sql``
       }
     `;

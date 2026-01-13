@@ -3,7 +3,7 @@
 // Standard library imports
 import React from "react";
 
-//  Third-party imports
+// Third-party imports
 import {
   Table,
   TableHeader,
@@ -11,21 +11,20 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  SortDescriptor,
 } from "@heroui/table";
 
 // Application imports
-import { DataColumn, Investment } from "./interfaces";
 import { ResponsivePagination } from "@/components/pagination";
+
+// Feature imports
+import { DataColumn, Investment } from "./interfaces";
 
 type DataTableProps = {
   columns: DataColumn[];
   investments: Investment[];
   currentPage: number;
   totalPages: number;
-  currentSort: SortDescriptor;
   onPageChange: (page: number) => void;
-  onSortChange: (item: SortDescriptor) => void;
 };
 
 /**
@@ -37,9 +36,7 @@ type DataTableProps = {
  * @param props.investments - The page of investments.
  * @param props.currentPage - The number of the current page.
  * @param props.totalPages - The total number of pages available.
- * @param props.currentSort - The current sorting scheme (i.e., column and direction).
  * @param props.onPageChange - The callback function to use for page number changes.
- * @param props.onSortChange - The callback function for sorting changes.
  *
  * @returns The JSX element for the table component.
  */
@@ -48,9 +45,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   investments,
   currentPage,
   totalPages,
-  currentSort,
   onPageChange,
-  onSortChange,
 }) => {
   return (
     <Table
@@ -66,27 +61,22 @@ export const DataTable: React.FC<DataTableProps> = ({
       className="font-montserrat uppercase"
       aria-label="Investments data table."
       bottomContent={
-        investments.length > 0 ? (
-          <ResponsivePagination
-            showControls
-            page={currentPage}
-            total={totalPages}
-            onChange={onPageChange}
-          />
-        ) : null
+        <ResponsivePagination
+          showControls
+          page={currentPage}
+          total={totalPages}
+          onChange={onPageChange}
+        />
       }
       bottomContentPlacement="outside"
-      sortDescriptor={currentSort}
-      onSortChange={onSortChange}
     >
       <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn key={column.key} allowsSorting={column.allowsSorting}>
-            {column.label}
-          </TableColumn>
-        )}
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
       </TableHeader>
-      <TableBody emptyContent="No rows to display." items={investments}>
+      <TableBody
+        emptyContent={<p className="text-center">No rows to display.</p>}
+        items={investments}
+      >
         {(item: Investment) => (
           <TableRow
             key={item.id}

@@ -8,12 +8,13 @@ import { HeroUIProvider } from "@heroui/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 /**
- * Context providers to use at the root of the application.
+ * Context providers to inject at the root of the application.
  * Includes {@link HeroUIProvider} and {@link NextThemesProvider}.
  *
- * @param {children} - The children of the component.
+ * @param props - The component props.
+ * @param props.children - The children of the component.
  *
- * @returns {JSX.Element} - The wrapped component.
+ * @returns The wrapped component.
  */
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (

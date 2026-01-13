@@ -10,10 +10,15 @@ import Image from "next/image";
 // Application imports
 import { SITE_CONFIG } from "@/config/site";
 
+/**
+ * A footer component that displays site acknowledgments, quick links, and partner logos.
+ *
+ * @returns A JSX element representing the footer.
+ */
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-forest flex flex-col gap-4 text-white">
-      <div className="flex flex-col items-center gap-10 p-6 lg:mx-auto lg:mt-5 lg:grid lg:max-w-6xl lg:grid-cols-3 lg:flex-row lg:items-start">
+      <div className="flex flex-col items-center gap-10 p-6 lg:mx-auto lg:mt-5 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:flex-row lg:items-start">
         {/** ACKNOWLEDGMENTS */}
         <div className="flex flex-col items-center gap-4 text-center">
           <h4 className="bg-seagreen font-bebas-neue px-4 py-2 text-xl uppercase">
