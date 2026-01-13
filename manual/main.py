@@ -365,10 +365,11 @@ def _process_pension_funds(
     )
 
     # Correct vintage year column
-    pension_funds_df.loc[:, ["security_vintage_year"]] = (
+    pension_funds_df["security_vintage_year"] = (
         pension_funds_df["security_vintage_year"]
-        .apply(lambda year: "" if pd.isna(year) else str(year)[:4])
+        .fillna("")
         .astype(str)
+        .str[:4]
     )
 
     # Define country name mapping
@@ -1134,7 +1135,6 @@ def _merge_datasets(
             "investor_cik",
             "investor_name",
             "investor_abbreviation",
-            "investor_aliases",
             "investor_country_name",
             "investor_country_code",
             "investor_region_name",
@@ -1218,11 +1218,6 @@ def _merge_datasets(
         "stock_voting_auth_none",
     ):
         final_df.loc[final_df[col] == 0, [col]] = np.nan
-
-    # Correct data types for JSON columns
-    final_df.loc[:, ["investor_aliases"]] = final_df["investor_aliases"].apply(
-        json.dumps
-    )
 
     # Add last accesssed date
     final_df.loc[:, "last_accessed_date"] = "2025-12-18"

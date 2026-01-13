@@ -16,7 +16,6 @@ export interface Investment {
   investor_type: string;
   investor_cik: string;
   investor_name: string;
-  investor_aliases: string;
   investor_country_name: string;
   investor_country_code: string;
   investor_region_name: string;

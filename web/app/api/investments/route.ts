@@ -47,7 +47,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         investor_type,
         investor_cik,
         investor_name,
-        investor_aliases,
         investor_country_name,
         investor_country_code,
         investor_region_name,
