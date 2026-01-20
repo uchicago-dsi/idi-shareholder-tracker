@@ -71,18 +71,18 @@ const About: React.FC = () => {
             quarterly basis, when they are required to be filed.
           </li>
           <li>
-            The shareholdings of 16 European pension funds that do not report to
+            The shareholdings of 17 European pension funds that do not report to
             the U.S. Securities and Exchange Commission. This database compiles
             information disclosed by the pension funds on their websites. The
-            pension funds are: PME pensioenfonds, BPL Pensioen, PFZW, Tredje AP
-            – Fonden, Sjunde AP-fonden, KPA Pensions, Pensionskassernes
-            Administration, Pension Danmark, Sampension, Danica, Fjärde AP –
-            Fonden, Stichting Pensioenfonds ABP, Andra AP-Fonden, bpf BOUW,
-            Pensioenfonds Vervoer, and AMF Pension.
+            pension funds are: Norges Bank Investment Management, PME
+            pensioenfonds, BPL Pensioen, PFZW, Tredje AP – Fonden, Sjunde
+            AP-fonden, KPA Pensions, Pensionskassernes Administration, Pension
+            Danmark, Sampension, Danica, Fjärde AP – Fonden, Stichting
+            Pensioenfonds ABP, Andra AP-Fonden, bpf BOUW, Pensioenfonds Vervoer,
+            and AMF Pension.
           </li>
         </ul>
         <p>
-          {" "}
           This tool is a part of an open-source initiative at the Data Science
           Institute and will continue to be maintained by the DSI and
           contributors from around the world.
