@@ -117,7 +117,6 @@ export const LargePagination: React.FC<PaginationProps> = ({
  * @param props - The component props.
  * @param props.page - The current/active page number.
  * @param props.total - The total number of pages available.
- * @param props.showControls - A boolean indicating whether to show the previous and next page controls.
  * @param props.onChange - A callback function to use when the page number changes.
  *
  * @returns The JSX element for the small pagination component.
@@ -125,13 +124,12 @@ export const LargePagination: React.FC<PaginationProps> = ({
 export const SmallPagination: React.FC<PaginationProps> = ({
   page,
   total,
-  showControls,
   onChange,
 }) => {
   const { activePage, setPage, onNext, onPrevious } = usePagination({
     page,
     total,
-    showControls,
+    showControls: true,
     onChange,
     siblings: 1,
     boundaries: 0,
@@ -198,7 +196,6 @@ export const SmallPagination: React.FC<PaginationProps> = ({
  *
  * @param page - The current page number.
  * @param total - The total number of pages available.
- * @param showControls - A boolean indicating whether to show the previous and next page controls.
  * @param onChange - The callback function to use when the page number changes.
  *
  * @returns The JSX element for the responsive pagination component.
@@ -206,23 +203,12 @@ export const SmallPagination: React.FC<PaginationProps> = ({
 export const ResponsivePagination: React.FC<PaginationProps> = ({
   page,
   total,
-  showControls,
   onChange,
 }) => {
   return (
     <div className="flex">
-      <SmallPagination
-        page={page}
-        total={total}
-        showControls={showControls}
-        onChange={onChange}
-      />
-      <LargePagination
-        page={page}
-        total={total}
-        showControls={showControls}
-        onChange={onChange}
-      />
+      <SmallPagination page={page} total={total} onChange={onChange} />
+      <LargePagination page={page} total={total} onChange={onChange} />
     </div>
   );
 };

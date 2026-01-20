@@ -45,7 +45,6 @@ export const PageToolbar: React.FC<PageToolbarProps> = ({
       />
       <div className="flex w-full flex-row justify-center lg:justify-end">
         <ResponsivePagination
-          showControls
           page={currentPage}
           total={totalPages}
           onChange={onPageChange}
