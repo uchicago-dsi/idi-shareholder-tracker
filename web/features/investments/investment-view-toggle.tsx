@@ -26,7 +26,6 @@ export const InvestmentViewButtonRow: React.FC<
 > = ({ value, onSelect }) => {
   return (
     <div className="hidden flex-row items-center gap-4 lg:flex">
-      <p className="font-montserrat font-bold">Data View:</p>
       <div className="flex flex-row items-center">
         <Button
           isIconOnly

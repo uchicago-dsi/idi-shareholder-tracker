@@ -53,11 +53,11 @@ export class InvestmentSummaryBuilder {
   /**
    * Generates an asterisk when the market value has been converted to USD and an empty string otherwise.
    */
-  get marketValueAsterisk() {
-    return this._inv.security_market_value_conversion_rate == 0 ||
+  get hasConvertedMarketValue() {
+    return !(
+      this._inv.security_market_value_conversion_rate == 0 ||
       this._inv.security_market_value_conversion_rate == 1
-      ? ""
-      : "*";
+    );
   }
 
   /**
@@ -65,7 +65,7 @@ export class InvestmentSummaryBuilder {
    */
   get marketValue() {
     return this._inv.security_market_value_amount_usd
-      ? `$${this._inv.security_market_value_amount_usd.toLocaleString()} USD${this.marketValueAsterisk}`
+      ? `$${this._inv.security_market_value_amount_usd.toLocaleString()} USD`
       : "";
   }
 
@@ -92,7 +92,7 @@ export class InvestmentSummaryBuilder {
   /**
    * Generates a statement about the voting authority of the shares.
    */
-  get investmentAuthority() {
+  get investmentAuthoritySentence() {
     const statements = [];
     if (this._inv.stock_voting_auth_sole) {
       statements.push(
@@ -163,7 +163,7 @@ export class InvestmentSummaryBuilder {
   /**
    * Generates a summary of the investment from its properties.
    */
-  get summary() {
+  get summarySentence() {
     const phrases = [
       this._inv.investor_name,
       this.investorLocation,
@@ -172,7 +172,17 @@ export class InvestmentSummaryBuilder {
       this.issuerLocation,
       this.issuerSector,
       ".",
-      this.investmentAuthority,
+    ];
+    return phrases
+      .filter((phrase) => phrase !== "")
+      .join(" ")
+      .replace(/\s+\./, ".")
+      .replace(/\s+,/, ",");
+  }
+
+  get votingAuthoritySentence() {
+    const phrases = [
+      this.investmentAuthoritySentence,
       this.stockPercentage,
       this.vintageYear,
     ];
@@ -188,7 +198,7 @@ export class InvestmentSummaryBuilder {
    */
   get conversionRateFootnote() {
     return (
-      `*Converted from ${this.originalAmount} at a rate of ` +
+      `The market value was converted from ${this.originalAmount} at a rate of ` +
       `${this._inv.security_market_value_conversion_rate} for the given ` +
       `report date of ${this._inv.document_report_date}.`
     );

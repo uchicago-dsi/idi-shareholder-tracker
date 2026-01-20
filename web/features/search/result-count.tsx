@@ -33,7 +33,7 @@ export const ResultCount: React.FC<ResultCountProps> = ({
   ) : (
     <h3 className="font-montserrat text-center text-xl font-bold">
       Showing {start.toLocaleString()} - {end.toLocaleString()} of{" "}
-      <span className="font-bold text-green-600 dark:text-green-400">
+      <span className="font-bold text-orange-600 dark:text-orange-300">
         {totalRecords.toLocaleString()}
       </span>{" "}
       result{totalRecords === 1 ? "" : "s"}

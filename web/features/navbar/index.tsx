@@ -5,12 +5,9 @@ import React from "react";
 
 // Third-party imports
 import { Link } from "@heroui/react";
-import Image from "next/image";
 
-// Application imports
-import { GitHubIcon } from "@/components/icons";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { SITE_CONFIG } from "@/config/site";
+// Feature imports
+import { DesktopMenu, MobileMenu } from "./menu";
 
 /**
  * A component that renders a navbar with a link to the Github repository and a theme switcher.
@@ -20,39 +17,17 @@ import { SITE_CONFIG } from "@/config/site";
 export const Navbar: React.FC = () => {
   return (
     <div className="m-auto flex w-full flex-row justify-center pt-4">
-      <div className="flex w-full max-w-7xl flex-row items-start justify-between px-8">
-        <div>
-          <Image
-            className="light:block cursor-pointer hover:opacity-90 dark:hidden"
-            alt="IDI Logo"
-            src="/idi-logo-light.webp"
-            height={125}
-            width={125}
-            onClick={() => window.open(SITE_CONFIG.footerLinks.idi, "_blank")}
-          />
-          <Image
-            className="hidden cursor-pointer hover:opacity-90 dark:block"
-            alt="IDI Logo"
-            src="/idi-logo-dark.webp"
-            height={125}
-            width={125}
-            onClick={() => window.open(SITE_CONFIG.footerLinks.idi, "_blank")}
-          />
-        </div>
-        <div className="flex flex-row items-center">
+      <div className="flex w-full max-w-7xl flex-row items-center justify-between px-8 lg:items-start">
+        <div className="flex flex-col gap-0">
           <Link
-            aria-label="Github"
-            href={SITE_CONFIG.navbarLinks.github}
-            target="_blank"
-            underline="none"
+            className="font-bebas-neue bg-seagreen rounded-md px-2 pt-2 pb-1 text-4xl text-white"
+            href="/"
           >
-            <GitHubIcon
-              className="hover:opacity-0.7 text-neutral-400"
-              size={30}
-            />
+            ST
           </Link>
-          <ThemeSwitcher />
         </div>
+        <DesktopMenu />
+        <MobileMenu />
       </div>
     </div>
   );

@@ -56,6 +56,7 @@ export interface InvestmentSearchRequest {
   offset: number;
   sortColumn: string;
   sortDirection: "ASC" | "DESC";
+  filter: "Pension Funds" | "Institutional Investors" | "All Records";
 }
 
 /**

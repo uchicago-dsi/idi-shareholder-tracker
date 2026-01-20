@@ -1,27 +1,7 @@
 /**
- * The application configuration.
+ * The search configuration.
  */
-export const SITE_CONFIG = Object.freeze({
-  title: "Shareholder Tracker",
-  subtitle:
-    "Discover institutional investments disclosed in national pension funds and SEC 13F filings",
-  description: [
-    "This database compiles the latest disclosures from 18 national pension \
-          funds, as well as quarterly shareholdings reported by investors to the \
-          U.S. Securities and Exchange Commission. It is updated once per quarter.",
-    'To search for a company’s shareholders, type the company\'s name or CUSIP number \
-          in the search bar. You can also search investments more broadly by country, \
-          sector, or security identifier (e.g., ticker, CUSIP, ISIN, FIGI). The search \
-          results can be viewed as a data table (default) or as a list of cards \
-          with more detailed information summarized in text format. Sort the results \
-          in ascending or descending order for a given column by using the "Sort by" \
-          dropdown. Double click on a row in the table view or a link icon in the \
-          card view to navigate to the original data source for that investment.',
-  ],
-  acknowledgments:
-    "This resource was developed through a partnership with Inclusive Development \
-    International and the University of Chicago Data Science Institute in 2025, with \
-    funding generously provided by the 11th Hour Project of the Schmidt Family Foundation.",
+export const SEARCH_CONFIG = Object.freeze({
   table: {
     columns: [
       {
@@ -30,7 +10,7 @@ export const SITE_CONFIG = Object.freeze({
       },
       {
         key: "issuer_name",
-        label: "Issuer",
+        label: "Company",
       },
       {
         key: "stock_ticker",
@@ -57,6 +37,26 @@ export const SITE_CONFIG = Object.freeze({
         label: "Investor Type",
       },
     ],
+    filter: {
+      investorType: {
+        default: "All Records",
+        label: "Filter:",
+        options: [
+          {
+            label: "All Data",
+            value: "All Records",
+          },
+          {
+            label: "Pension Funds",
+            value: "Pension Fund",
+          },
+          {
+            label: "Institutional Investors",
+            value: "Institutional Investor",
+          },
+        ],
+      },
+    },
     loading: {
       messages: [
         "Loading investments...",
@@ -66,24 +66,7 @@ export const SITE_CONFIG = Object.freeze({
     },
     pageSizes: {
       default: "10",
-      options: [
-        {
-          label: "10",
-          value: "10",
-        },
-        {
-          label: "25",
-          value: "25",
-        },
-        {
-          label: "50",
-          value: "50",
-        },
-        {
-          label: "100",
-          value: "100",
-        },
-      ],
+      options: [10, 25, 50, 100],
       label: "Rows per page:",
     },
     search: {
@@ -138,27 +121,6 @@ export const SITE_CONFIG = Object.freeze({
       },
     },
   },
-  navbarLinks: {
-    github: "https://github.com/uchicago-dsi/idi-shareholder-tracker",
-  },
-  footerLinks: {
-    idi: "https://www.inclusivedevelopment.net/",
-    uchicagoDsi: "https://datascience.uchicago.edu/",
-    quick: [
-      {
-        text: "DeBIT",
-        url: "https://debit.datascience.uchicago.edu/",
-      },
-      {
-        text: "PalmWatch",
-        url: "https://palmwatch.inclusivedevelopment.net/",
-      },
-      {
-        text: "Contribute",
-        url: "https://github.com/uchicago-dsi/idi-shareholder-tracker",
-      },
-    ],
-  },
 });
 
-export type SiteConfig = typeof SITE_CONFIG;
+export type SearchConfig = typeof SEARCH_CONFIG;

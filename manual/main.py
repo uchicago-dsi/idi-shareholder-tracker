@@ -1,6 +1,8 @@
 # Standard library imports
-import json
 import logging
+import re
+import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Third-party imports
@@ -32,7 +34,6 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
     nbim_df["investor_abbreviation"] = "NBIM"
     nbim_df["investor_cik"] = ""
     nbim_df["investor_name"] = "NORGES BANK"
-    nbim_df["investor_aliases"] = [[] for _ in range(len(nbim_df))]
     nbim_df["investor_country_name"] = "NORWAY"
     nbim_df["investor_country_code"] = "NO"
     nbim_df["investor_region_name"] = "OSLO"
@@ -181,7 +182,6 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
             "investor_cik",
             "investor_name",
             "investor_abbreviation",
-            "investor_aliases",
             "investor_country_name",
             "investor_country_code",
             "investor_region_name",
@@ -251,23 +251,28 @@ def _process_pension_funds(
     ].index
     pension_funds_df = pension_funds_df.drop(index=invalid_rows_idx)
 
-    # Drop rows with invalid issuers
-    invalid_rows_idx = pension_funds_df[
-        pension_funds_df["Issuer - Name"].apply(
-            lambda val: not pd.isna(val)
-            and isinstance(val, str)
-            and val
-            in (
-                "BØRSNOTEREDE KAPITALANDELE I ALT",
-                "UNOTEREDE KAPITALANDELE I ALT",
-            )
-        )
-    ].index
-    pension_funds_df = pension_funds_df.drop(index=invalid_rows_idx)
+    # Drop pension funds with missing or invalid issuer names
+    excluded_issuers = [
+        "BØRSNOTEREDE KAPITALANDELE I ALT",
+        "UNOTEREDE KAPITALANDELE",
+    ]
+    pension_funds_df = pension_funds_df.query(
+        "(`Issuer - Name` == `Issuer - Name`) & (`Issuer - Name` not in @excluded_issuers)"
+    )
 
     # Drop rows with corporate bonds
     pension_funds_df = pension_funds_df.query(
         "`Security - Type` != 'CORPORATE BOND'"
+    )
+
+    # Drop pension sources that have not been properly verified
+    excluded_sources = [
+        "Pensioenfonds Detailhandel",
+        "PMT pensioenfonds",
+        "Pensioenfonds Rail & OV",
+    ]
+    pension_funds_df = pension_funds_df.query(
+        "`Shareholder - Name` not in @excluded_sources"
     )
 
     # Rename columns
@@ -298,9 +303,6 @@ def _process_pension_funds(
 
     # Add constant columns
     pension_funds_df.loc[:, ["investor_type"]] = "Pension Fund"
-    pension_funds_df["investor_aliases"] = [
-        [] for _ in range(len(pension_funds_df))
-    ]
     for col in (
         "investor_cik",
         "investor_region_name",
@@ -340,6 +342,11 @@ def _process_pension_funds(
     pension_funds_df.loc[:, ["investor_abbreviation"]] = pension_funds_df[
         "source"
     ].map(investor_abbreviation_map)
+
+    # Correct issuer names
+    pension_funds_df.loc[:, "issuer_name"] = pension_funds_df[
+        "issuer_name"
+    ].str.replace("ΜΟΝΕΤΑ MONEY BANK AS", "MONETA MONEY BANK AS")
 
     # Correct security types
     def correct_security_type(row: pd.Series) -> str:
@@ -760,6 +767,62 @@ def _process_sec_investments(
         f"SELECT * FROM read_csv_auto('{data_fpath.as_posix()}', encoding='ISO_8859_1')"
     ).df()
 
+    # Perform initial clean of stock issuer column to prepare for filtering
+    sec_df.loc[:, "stock_issuer"] = sec_df["stock_issuer"].apply(
+        lambda val: re.sub(r"\s{2,}", " ", val.strip())
+    )
+
+    # Define values that represent new, missing, or confidential issuers
+    new_issuer = ["NEW ISSUER"]
+    missing_issuer = [
+        "0",
+        "N/A",
+        "NA",
+        "NO SECURITIES",
+        "NONE",
+        "NO REMAINING HOLDINGS",
+        "-",
+        "NULL",
+        "",
+        "NONE TO REPORT",
+        "NIL",
+        "ISSUER",
+        "NONE",
+        "",
+        "---",
+        "#N/A INVALID SECURITY",
+    ]
+    confidential_issuer = ["CONFIDENTIAL", "CONFIDENTIAL TREATMENT REQUESTED"]
+
+    # Drop rows representative of empty submissions
+    has_empty_cusip = sec_df["stock_cusip"] == "000000000"
+    has_missing_issuer = sec_df["stock_issuer"].isin(missing_issuer)
+    sec_df = sec_df[~(has_empty_cusip & has_missing_issuer)]
+
+    # Standardize remaining CUSIP values
+    sec_df["stock_cusip"] = sec_df["stock_cusip"].str.replace("000000000", "")
+
+    # Standardize stock issuer values
+    def standardize_stock_issuer(value: str) -> str:
+        """Maps a stock issue value to a special category if applicable.
+
+        Args:
+            value: The raw value.
+
+        Returns:
+            The mapped value.
+        """
+        if value in new_issuer or value in missing_issuer:
+            return "NOT DISCLOSED"
+        elif value in confidential_issuer:
+            return "CONFIDENTIAL"
+        else:
+            return value
+
+    sec_df.loc[:, "stock_issuer"] = sec_df["stock_issuer"].apply(
+        standardize_stock_issuer
+    )
+
     # Rename columns
     mapped_sec_df = sec_df.rename(
         columns={
@@ -767,7 +830,6 @@ def _process_sec_investments(
             "form_filing_date": "document_filing_date",
             "investor_country": "investor_country_name",
             "investor_region": "investor_region_name",
-            "investor_former_names": "investor_aliases",
             "stock_title_class": "security_type",
             "stock_figi": "security_figi",
             "stock_cusip": "security_cusip",
@@ -823,7 +885,6 @@ def _process_sec_investments(
             "investor_cik",
             "investor_name",
             "investor_abbreviation",
-            "investor_aliases",
             "investor_country_name",
             "investor_region_name",
             "investor_region_code",
@@ -862,7 +923,7 @@ def _process_sec_investments(
         lambda name: (
             "PENSION FUND"
             if name.upper() in sec_pension_funds_df["name"].values
-            else "NOT CLASSIFIED"
+            else "INSTITUTIONAL INVESTOR"
         )
     )
 
@@ -979,11 +1040,6 @@ def _process_sec_investments(
             {None: "", np.nan: ""}
         )
 
-    # Clean investor aliases by removing invalid entries
-    mapped_sec_df.loc[:, ["investor_aliases"]] = mapped_sec_df[
-        "investor_aliases"
-    ].apply(lambda alias: [a for a in json.loads(alias) if a])
-
     # Drop erroneous records
     mapped_sec_df = mapped_sec_df.query("issuer_name != 'NULL'")
 
@@ -1050,7 +1106,6 @@ def _merge_datasets(
         )
         .agg(
             {
-                "investor_aliases": "sum",
                 "security_vintage_year": "first",
                 "security_principal_amount_currency_code": "first",
                 "security_principal_amount": "sum",
@@ -1259,7 +1314,9 @@ def main() -> None:
     currency_map_fpath = input_dir / "currency_country_map.json"
     sec_fpath = input_dir / "current_investments.csv"
     pension_fund_labels_fpath = input_dir / "sec_pension_funds.csv"
-    output_fpath = output_dir / "merged_data.csv"
+
+    # Record date of processing
+    timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d")
 
     # Load and clean NBIM investments
     logger.info("Processing NBIM securities.")
@@ -1279,9 +1336,35 @@ def main() -> None:
     logger.info("Merging datasets.")
     final_df = _merge_datasets(sec_df, pension_funds_df, nbim_df)
 
-    # Write output dataset to disk
-    logger.info("Writing output dataset to disk.")
-    final_df.to_csv(output_fpath, sep="|", index=False, na_rep="NULL")
+    # Write output dataset to disk as CSV file
+    logger.info("Writing output dataset to CSV file.")
+    final_df.to_csv(
+        output_dir / f"shareholder_tracker_release_{timestamp}.csv",
+        sep="|",
+        index=False,
+        na_rep="NULL",
+    )
+
+    # Write output dataset to disk as Parquet file
+    logger.info("Writing output dataset to Parquet file.")
+    final_df.to_parquet(
+        output_dir / f"shareholder_tracker_release_{timestamp}.parquet",
+        index=False,
+    )
+
+    # Write output dataset to SQLite database
+    logger.info("Writing output dataset to SQLite database.")
+    conn = sqlite3.connect(
+        output_dir / f"shareholder_tracker_release_{timestamp}.sqlite"
+    )
+    final_df.to_sql(
+        name="investments",
+        con=conn,
+        if_exists="replace",
+        index=False,
+    )
+    conn.commit()
+    conn.close()
 
 
 if __name__ == "__main__":

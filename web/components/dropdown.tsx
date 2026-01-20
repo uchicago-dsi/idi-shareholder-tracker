@@ -1,5 +1,5 @@
 // Standard library imports
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 // Third-party imports
 import { Button, Listbox, ListboxItem, Selection } from "@heroui/react";
@@ -95,7 +95,7 @@ const useStackedDropdown = (): UseStackedDropdownReturn => {
 };
 
 type StackedDropdownProps = {
-  label: string;
+  label: ReactNode;
   menus: StackedDropdownMenuProps[];
 };
 
@@ -121,22 +121,18 @@ export const StackedDropdown: React.FC<StackedDropdownProps> = ({
     )
     .join(" ");
   return (
-    <div
-      ref={dropdownRef}
-      className="font-montserrat relative flex flex-col font-bold"
-    >
-      <div className="flex flex-row items-center gap-1">
-        <p className="flex flex-row gap-2">
-          {label}
-          <span className="hidden lg:inline">{displayValue}</span>
-        </p>
-        <Button isIconOnly className="bg-transparent" onPress={toggleDropdown}>
-          <ChevronDownIcon size={18} />
-        </Button>
-      </div>
+    <div ref={dropdownRef} className="font-montserrat relative flex flex-col">
+      <Button
+        className="flex w-auto min-w-0 flex-row bg-transparent p-0 text-base"
+        onPress={toggleDropdown}
+      >
+        {label}
+        <span className="hidden lg:inline dark:text-white">{displayValue}</span>
+        <ChevronDownIcon className="stroke-default-600 hidden h-4 w-4 lg:block dark:stroke-white" />
+      </Button>
       {isOpen && (
         <div
-          className={`font-montserrat border-default-300 absolute top-full right-0 z-10 mt-1 flex flex-col gap-0 border-1 bg-white`}
+          className={`font-montserrat border-default-300 absolute top-full left-0 z-10 mt-1 flex flex-col gap-0 border-1 bg-white`}
         >
           {menus.map((menu, idx) => (
             <StackedDropdownMenu

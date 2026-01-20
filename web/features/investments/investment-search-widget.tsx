@@ -3,22 +3,26 @@
 // Standard library imports
 import React from "react";
 
+// Third-party imports
+import { ArrowDownUpIcon, FunnelIcon } from "lucide-react";
+
 // Application imports
-import { SiteConfig } from "@/config/site";
+import { ErrorMessage } from "@/components/error-message";
 import { StackedDropdown } from "@/components/dropdown";
-import { ResultCount } from "@/components/result-count";
-import { SearchBar } from "@/components/search-bar";
+import { LoadingSpinner } from "@/components/loading";
+import { SearchConfig } from "@/config/site";
 
 // Feature imports
-import { PaginatedInvestmentCardList } from "./investment-card-list";
+import { ResultCount } from "@/features/search/result-count";
+import { SearchBar } from "@/features/search/search-bar";
+import { InvestmentCardList } from "./investment-card-list";
 import { DataTable } from "./investment-table";
 import { InvestmentViewButtonRow } from "./investment-view-toggle";
+import { PageToolbar } from "../pagination/toolbar";
 import { useInvestments } from "./use-investments";
-import { LoadingSpinner } from "@/components/loading";
-import { ErrorMessage } from "@/components/error-message";
 
 type InvestmentSearchWidgetProps = {
-  tableConfig: SiteConfig["table"];
+  tableConfig: SearchConfig["table"];
 };
 
 /**
@@ -44,6 +48,7 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
     sortColumn,
     sortDirection,
     currentView,
+    filter,
     setCurrentView,
     onSearchQueryChange,
     onSearchQuerySubmit,
@@ -52,12 +57,17 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
     onPageChange,
     onSortColumnChange,
     onSortDirectionChange,
+    onFilterChange,
   } = useInvestments({
     defaultPageSize: parseInt(tableConfig.pageSizes.default),
     defaultSortColumn: tableConfig.sort.default.column,
     defaultSortDirection: tableConfig.sort.default.direction as
       | "ascending"
       | "descending",
+    defaultFilter: tableConfig.filter.investorType.default as
+      | "Pension Funds"
+      | "Institutional Investors"
+      | "All Records",
   });
 
   if (isLoading) {
@@ -81,20 +91,14 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
           totalRecords={totalRecords}
         />
         <div className="flex flex-row justify-between">
-          <div className="flex w-full flex-row justify-between lg:w-auto lg:items-center lg:gap-4">
+          <div className="flex w-full flex-row justify-start gap-4 lg:w-auto lg:items-center lg:justify-between lg:gap-6">
             <StackedDropdown
-              label={tableConfig.pageSizes.label}
-              menus={[
-                {
-                  value: String(pageSize),
-                  options: tableConfig.pageSizes.options,
-                  onChange: (value: string) =>
-                    onPageSizeChange(parseInt(value)),
-                },
-              ]}
-            />
-            <StackedDropdown
-              label={tableConfig.sort.dropdown.label}
+              label={
+                <ArrowDownUpIcon
+                  className="text-seagreen dark:text-green-300"
+                  strokeWidth={2}
+                />
+              }
               menus={[
                 {
                   value: sortColumn,
@@ -109,41 +113,60 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
                 },
               ]}
             />
+            <StackedDropdown
+              label={
+                <FunnelIcon
+                  className="text-seagreen dark:text-green-300"
+                  strokeWidth={2}
+                />
+              }
+              menus={[
+                {
+                  value: filter,
+                  options: tableConfig.filter.investorType.options,
+                  onChange: (value: string) =>
+                    onFilterChange(
+                      value as
+                        | "Pension Funds"
+                        | "Institutional Investors"
+                        | "All Records",
+                    ),
+                },
+              ]}
+            />
           </div>
-
           <InvestmentViewButtonRow
             value={currentView}
             onSelect={setCurrentView}
           />
         </div>
-        {currentView === "cards" ? (
-          <PaginatedInvestmentCardList
-            investments={investments}
+        <div
+          className={`flex flex-col ${currentView === "cards" ? "gap-8" : "gap-0"}`}
+        >
+          {currentView === "cards" ? (
+            <InvestmentCardList investments={investments} />
+          ) : (
+            <>
+              <div className="hidden lg:flex">
+                <DataTable
+                  columns={tableConfig.columns}
+                  investments={investments}
+                />
+              </div>
+              <div className="flex lg:hidden">
+                <InvestmentCardList investments={investments} />
+              </div>
+            </>
+          )}
+          <PageToolbar
+            currentPageSize={pageSize}
+            pageSizes={tableConfig.pageSizes.options}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
           />
-        ) : (
-          <>
-            <div className="hidden lg:flex">
-              <DataTable
-                columns={tableConfig.columns}
-                investments={investments}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={onPageChange}
-              />
-            </div>
-            <div className="flex lg:hidden">
-              <PaginatedInvestmentCardList
-                investments={investments}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={onPageChange}
-              />
-            </div>
-          </>
-        )}
+        </div>
       </div>
     );
   }

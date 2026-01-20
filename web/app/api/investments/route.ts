@@ -36,7 +36,40 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const searchParams: InvestmentSearchRequest = await request.json();
 
   // Prepare variables for dynamic SQL query
-  const tsquerySearchPhrase = searchParams.query?.replace(/\s+/g, " ")?.trim();
+  const tsquerySearchPhrase =
+    searchParams.query?.replace(/\s+/g, " ")?.trim() || "";
+
+  // Assess whether user query is likely a stop word
+  const isLikelyStopWord =
+    tsquerySearchPhrase && tsquerySearchPhrase.length <= 3;
+
+  // Assess whether user query contains special characters
+  const hasSpecialChars = /[&|!():*'"]/.test(tsquerySearchPhrase || "");
+
+  // Prepare search clause
+  const searchClause =
+    isLikelyStopWord || hasSpecialChars
+      ? sql`text ILIKE ${"%" + tsquerySearchPhrase + "%"}`
+      : sql`document @@ websearch_to_tsquery(${tsquerySearchPhrase + ":*"})`;
+
+  // Prepare filter clause
+  const filterClause = sql`investor_type ILIKE ${searchParams.filter}`;
+
+  // Prepare WHERE clause
+  let whereClause = sql``;
+  if (
+    searchParams.query &&
+    searchParams.filter &&
+    searchParams.filter !== "All Records"
+  ) {
+    whereClause = sql`WHERE ${searchClause} AND ${filterClause}`;
+  } else if (searchParams.query) {
+    whereClause = sql`WHERE ${searchClause}`;
+  } else if (searchParams.filter && searchParams.filter !== "All Records") {
+    whereClause = sql`WHERE ${filterClause}`;
+  } else {
+    whereClause = sql``;
+  }
 
   // Execute raw query
   const searchResults: Investment[] = await sql`
@@ -76,11 +109,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         stock_voting_auth_none,
         url,
         last_accessed_date
-    FROM investment ${
-      searchParams.query
-        ? sql`WHERE document @@ websearch_to_tsquery(${tsquerySearchPhrase + ":*"})`
-        : sql``
-    }
+    FROM investment ${whereClause}
     ORDER BY ${sql(searchParams.sortColumn)} ${sql.unsafe(searchParams.sortDirection)}
     LIMIT ${searchParams.limit} OFFSET ${searchParams.offset};
     `;
@@ -105,11 +134,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // Query database for total number of records with search phrase
   const tallyResult = await sql`
       SELECT COUNT(*)
-      FROM investment ${
-        searchParams.query
-          ? sql`WHERE document @@ websearch_to_tsquery(${tsquerySearchPhrase + ":*"})`
-          : sql``
-      }
+      FROM investment ${whereClause}
     `;
 
   // Parse result

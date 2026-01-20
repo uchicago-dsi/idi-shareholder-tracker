@@ -33,6 +33,6 @@ export const geistMono = Geist_Mono({
  * See: https://fonts.google.com/specimen/Montserrat
  */
 export const montserrat = Montserrat({
-  weight: "400",
+  weight: ["400", "700", "800"],
   variable: "--font-montserrat",
 });

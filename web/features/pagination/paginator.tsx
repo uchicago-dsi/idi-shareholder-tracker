@@ -13,8 +13,8 @@ import {
 type PaginationProps = {
   page: number;
   total: number;
-  showControls: boolean;
   onChange: (page: number) => void;
+  boundaries?: number;
 };
 
 /**
@@ -24,24 +24,25 @@ type PaginationProps = {
  * @param props - The component props.
  * @param props.page - The current/active page number.
  * @param props.total - The total number of pages available.
- * @param props.showControls - A boolean indicating whether to show the previous and next page controls.
  * @param props.onChange - A callback function to use when the page number changes.
+ * @param props.boundaries - The number of pages to show at the start or end of the pagination. Defaults to 1.
  *
  * @returns The JSX element for the large pagination component.
  */
 export const LargePagination: React.FC<PaginationProps> = ({
   page,
   total,
-  showControls,
   onChange,
+  boundaries = 1,
 }) => {
   const { activePage, range, setPage, onNext, onPrevious, dotsJump } =
     usePagination({
       page,
       total,
-      showControls,
       onChange,
+      showControls: true,
       siblings: 1,
+      boundaries: boundaries,
     });
 
   return (
@@ -80,9 +81,12 @@ export const LargePagination: React.FC<PaginationProps> = ({
             <Button
               key={idx}
               size="sm"
-              onPress={() => setPage(activePage + dotsJump)}
+              onPress={() => {
+                const jumpDirection = idx == boundaries + 1 ? -1 : 1;
+                setPage(activePage + dotsJump * jumpDirection);
+              }}
               aria-label="page-ellipsis"
-              className="border-default-200 border-1/2 hover:bg-default-200 dark:hover:bg-default-200 rounded-none border bg-white font-bold text-black dark:bg-black dark:text-white"
+              className="border-default-200 border-1/2 dark:hover:bg-default-300 rounded-none border bg-white font-bold text-black hover:bg-neutral-300 dark:bg-black dark:text-white"
             >
               ...
             </Button>
@@ -94,7 +98,7 @@ export const LargePagination: React.FC<PaginationProps> = ({
               size="sm"
               onPress={() => setPage(page)}
               aria-label={`page ${page}`}
-              className={`font-montserrat border-default-200 border-1/2 hover:bg-default-200 dark:hover:bg-default-200 rounded-none border bg-white text-sm font-bold text-black disabled:pointer-events-none dark:bg-black dark:text-white ${activePage === page && "dark:bg-default-200 bg-neutral-100"}`}
+              className={`font-montserrat border-default-200 border-1/2 dark:hover:bg-default-300 rounded-none border bg-white text-sm font-bold text-black hover:bg-neutral-300 disabled:pointer-events-none dark:bg-black dark:text-white ${activePage === page && "dark:bg-default-300 bg-neutral-300"}`}
               disabled={activePage === page}
             >
               {page.toLocaleString()}
@@ -155,12 +159,14 @@ export const SmallPagination: React.FC<PaginationProps> = ({
       >
         <ChevronLeft />
       </Button>
-      <div className="font-montserrat flex flex-col items-center px-5 text-center font-bold">
-        <p className="text-xs text-neutral-500 uppercase">Page</p>
-        <p>
-          {activePage.toLocaleString()} of {total.toLocaleString()}
-        </p>
-      </div>
+      {total > 0 && (
+        <div className="font-montserrat flex flex-col items-center px-5 text-center font-bold">
+          <p className="text-xs text-neutral-500 uppercase">Page</p>
+          <p>
+            {activePage.toLocaleString()} of {total.toLocaleString()}
+          </p>
+        </div>
+      )}
       <Button
         size="md"
         onPress={onNext}
@@ -204,7 +210,7 @@ export const ResponsivePagination: React.FC<PaginationProps> = ({
   onChange,
 }) => {
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex">
       <SmallPagination
         page={page}
         total={total}

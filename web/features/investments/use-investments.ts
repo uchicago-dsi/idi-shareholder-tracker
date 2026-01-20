@@ -15,6 +15,7 @@ type UseInvestmentsParams = {
   defaultPageSize: number;
   defaultSortColumn: string;
   defaultSortDirection: "ascending" | "descending";
+  defaultFilter: "Pension Funds" | "Institutional Investors" | "All Records";
 };
 
 type UseInvestmentsReturn = {
@@ -29,6 +30,7 @@ type UseInvestmentsReturn = {
   sortDirection: "ascending" | "descending";
   pageSize: number;
   currentView: "table" | "cards";
+  filter: "Pension Funds" | "Institutional Investors" | "All Records";
   setCurrentView: (value: "table" | "cards") => void;
   onSearchQueryChange: (value: string) => void;
   onSearchQuerySubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -37,6 +39,9 @@ type UseInvestmentsReturn = {
   onPageChange: (page: number) => void;
   onSortColumnChange: (column: string) => void;
   onSortDirectionChange: (direction: "ascending" | "descending") => void;
+  onFilterChange: (
+    filter: "Pension Funds" | "Institutional Investors" | "All Records",
+  ) => void;
 };
 
 /**
@@ -51,6 +56,7 @@ export const useInvestments = ({
   defaultPageSize,
   defaultSortColumn,
   defaultSortDirection,
+  defaultFilter,
 }: UseInvestmentsParams): UseInvestmentsReturn => {
   // Initialize state
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -68,6 +74,9 @@ export const useInvestments = ({
   const [sortColumn, setSortColumn] = useState<string>(
     String(defaultSortColumn),
   );
+  const [filter, setFilter] = useState<
+    "Pension Funds" | "Institutional Investors" | "All Records"
+  >(defaultFilter);
 
   // Initialize derived state
   const totalPages = totalRecords ? Math.ceil(totalRecords / pageSize) : 0;
@@ -85,6 +94,7 @@ export const useInvestments = ({
         offset: (currentPage - 1) * pageSize,
         sortColumn: sortColumn,
         sortDirection: sortDirection === "ascending" ? "ASC" : "DESC",
+        filter: filter,
       };
 
       // Post search request and parse response
@@ -109,6 +119,7 @@ export const useInvestments = ({
     sortDirection,
     pageSize,
     isNewSearch,
+    filter,
   ]);
 
   // Define callback function for updating a search query
@@ -130,9 +141,9 @@ export const useInvestments = ({
 
   // Define callback function for updating the page size
   const onPageSizeChange = (value: number) => {
-    setIsNewSearch(true);
     setPageSize(value);
     setCurrentPage(1);
+    setIsNewSearch(true);
   };
 
   // Define callback function for updating the page number
@@ -155,6 +166,14 @@ export const useInvestments = ({
     setIsNewSearch(true);
   };
 
+  const onFilterChange = (
+    filter: "Pension Funds" | "Institutional Investors" | "All Records",
+  ) => {
+    setCurrentPage(1);
+    setFilter(filter);
+    setIsNewSearch(true);
+  };
+
   return {
     isLoading,
     error,
@@ -167,6 +186,7 @@ export const useInvestments = ({
     sortColumn,
     sortDirection,
     currentView,
+    filter,
     setCurrentView,
     onSearchQueryChange,
     onSearchQuerySubmit,
@@ -175,5 +195,6 @@ export const useInvestments = ({
     onPageChange,
     onSortColumnChange,
     onSortDirectionChange,
+    onFilterChange,
   };
 };

@@ -19,7 +19,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <HeroUIProvider>
-      <NextThemesProvider attribute="class" defaultTheme="light">
+      <NextThemesProvider attribute="class" defaultTheme="dark">
         {children}
       </NextThemesProvider>
     </HeroUIProvider>

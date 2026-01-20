@@ -22,7 +22,7 @@ type LoadingSpinnerProps = {
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ messages }) => {
   const { item: message } = useDelayedItem(messages);
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center justify-center gap-2">
       <Spinner size="lg" color="success" />
       <span className="text-muted font-montserrat text-xl">{message}</span>
     </div>

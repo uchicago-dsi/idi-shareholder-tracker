@@ -1,0 +1,29 @@
+/**
+ * The download/release configuration.
+ */
+export const DOWNLOAD_CONFIG = [
+  {
+    date: "December 18, 2025",
+    notes:
+      "The initial release. Companies have not been standardized/deduped through record linkage at this time.",
+    files: [
+      {
+        type: "CSV",
+        url: "https://shareholder-tracker.cdn.uchicago-dsi.org/shareholder_tracker_release_20251218.zip",
+        size: "122 MB",
+      },
+      {
+        type: "PARQUET",
+        url: "https://shareholder-tracker.cdn.uchicago-dsi.org/shareholder_tracker_release_20251218.parquet",
+        size: "154 MB",
+      },
+      {
+        type: "SQLITE",
+        url: "https://shareholder-tracker.cdn.uchicago-dsi.org/shareholder_tracker_release_20251218.sqlite.gz",
+        size: "150 MB",
+      },
+    ],
+  },
+];
+
+export type DownloadConfig = typeof DOWNLOAD_CONFIG;

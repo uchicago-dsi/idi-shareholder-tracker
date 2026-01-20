@@ -3,7 +3,7 @@ import React from "react";
 
 // Third-party imports
 import { Button, Input } from "@heroui/react";
-import { SearchIcon } from "lucide-react";
+import { ArrowRightIcon, SearchIcon } from "lucide-react";
 
 type SearchBarProps = {
   placeholder: string;
@@ -39,28 +39,32 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className="mx-auto w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-7xl">
       <form
         onSubmit={onSubmit}
-        className="flex w-full flex-col items-center gap-4 lg:flex-row lg:gap-0"
+        className="flex w-full flex-row items-center gap-0"
       >
         <Input
-          size="lg"
           className="font-montserrat w-full"
           classNames={{
-            inputWrapper: ["lg:rounded-r-none"],
+            inputWrapper: ["rounded-r-none", "h-8", "lg:h-12"],
+            input: ["lg:text-base"],
           }}
           value={currentQuery}
           onValueChange={onValueChange}
           onClear={onClear}
           placeholder={placeholder}
           startContent={
-            <SearchIcon className="text-default-400 text-seagreen pointer-events-none flex-shrink-0" />
+            <SearchIcon className="text-default-400 text-seagreen pointer-events-none hidden flex-shrink-0 lg:inline" />
           }
         />
         <Button
-          className="bg-seagreen font-montserrat font-bold text-white uppercase lg:rounded-l-none"
-          size="lg"
+          className="bg-seagreen h-10 w-10 min-w-3 rounded-l-none font-bold text-white uppercase lg:h-12 lg:w-25"
           type="submit"
         >
-          {submitLabel}
+          <span className="font-montserrat hidden lg:inline">
+            {submitLabel}
+          </span>
+          <span className="inline lg:hidden">
+            <ArrowRightIcon />
+          </span>
         </Button>
       </form>
     </div>

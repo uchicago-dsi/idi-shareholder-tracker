@@ -34,7 +34,7 @@ const OrganizationNameWithFlag: React.FC<OrganizationNameWithFlagProps> = ({
   countryCode,
 }) => {
   return (
-    <span className="text-seagreen">
+    <span className="dark:text-white">
       {hasFlag(countryCode) &&
         React.createElement(flags[countryCode as keyof typeof flags], {
           style: {
@@ -83,7 +83,7 @@ const InvestmentTitle: React.FC<InvestmentTitleProps> = ({
     day: "numeric",
   });
   return (
-    <div className="font-bebas-neue flex flex-col items-start text-2xl uppercase lg:flex-row lg:items-start">
+    <div className="font-bebas-neue text-seagreen flex flex-col items-start text-2xl uppercase lg:flex-row lg:items-start dark:text-white">
       <span>{parsedReportDate}</span>{" "}
       <span className="hidden lg:inline">|</span>{" "}
       <span>
@@ -91,12 +91,23 @@ const InvestmentTitle: React.FC<InvestmentTitleProps> = ({
           name={investorName}
           countryCode={investorCountryCode}
         />{" "}
-        investment in{" "}
+        <span className="text-seagreen dark:text-white">investment in</span>{" "}
         <OrganizationNameWithFlag
           name={issuerName}
           countryCode={issuerCountryCode}
-        />
-      </span>{" "}
+        />{" "}
+        <Link
+          className="inline-flex lg:hidden"
+          isExternal
+          showAnchorIcon
+          anchorIcon={
+            <ArrowUpRightFromSquareIcon
+              size={18}
+              className="stroke-3 text-green-700 dark:text-green-300"
+            />
+          }
+        ></Link>
+      </span>
     </div>
   );
 };
@@ -140,10 +151,8 @@ const SecurityMetadataLine: React.FC<SecurityMetadataLineProps> = ({
             {id}{" "}
             {idx < identifiers.length - 1 && (
               <CircleSmall
-                fill="green"
                 size={12}
-                strokeWidth={0}
-                className="hidden lg:block"
+                className="fill-seagreen hidden stroke-0 lg:block dark:fill-green-300"
               />
             )}
           </span>
@@ -214,15 +223,14 @@ const InvestmentCardHeader: React.FC<InvestmentCardHeaderProps> = ({
           className="font-montserrat hidden font-bold text-green-700 hover:text-orange-400 md:block dark:text-green-500 dark:hover:text-orange-200"
           isExternal
           showAnchorIcon
-          anchorIcon={<LinkIcon strokeWidth={2.5} />}
+          anchorIcon={
+            <ArrowUpRightFromSquareIcon
+              size={20}
+              className="stroke-2.5 stroke-seagreen dark:stroke-green-200"
+            />
+          }
           size="lg"
         ></Link>
-
-        {/** MOBILE-ONLY LINK */}
-        <div className="font-montserrat flex flex-row items-center gap-2 font-bold text-green-700 hover:text-orange-400 md:hidden dark:text-green-200 dark:hover:text-orange-200">
-          <p>Go to data source</p>
-          <ArrowUpRightFromSquareIcon size={20} />
-        </div>
       </div>
 
       {/** SECOND ROW - SECURITY CODES */}
@@ -256,13 +264,20 @@ const InvestmentCardBody: React.FC<InvestmentCardBodyProps> = ({
 }) => {
   const summaryBuilder = new InvestmentSummaryBuilder(investment);
   return (
-    <div className="font-montserrat flex flex-col gap-4 px-3 pt-3 pb-5 uppercase lg:text-left">
-      <p className="text-sm">{summaryBuilder.summary}</p>
-      {summaryBuilder.marketValueAsterisk && (
-        <p className="text-xs font-bold text-green-700 dark:font-normal dark:text-green-200">
-          {summaryBuilder.conversionRateFootnote}
-        </p>
-      )}
+    <div className="font-montserrat flex flex-col gap-4 px-3 pb-5 uppercase lg:text-left">
+      <ul className="marker:text-seagreen list-disc px-4 text-sm marker:text-lg dark:marker:text-green-300">
+        <li>{summaryBuilder.summarySentence}</li>
+        {summaryBuilder.hasConvertedMarketValue && (
+          <li>{summaryBuilder.conversionRateFootnote}</li>
+        )}
+        {summaryBuilder.investmentAuthoritySentence && (
+          <li>{summaryBuilder.investmentAuthoritySentence}</li>
+        )}
+        {summaryBuilder.stockPercentage && (
+          <li>{summaryBuilder.stockPercentage}</li>
+        )}
+        {summaryBuilder.vintageYear && <li>{summaryBuilder.vintageYear}</li>}
+      </ul>
     </div>
   );
 };
@@ -293,13 +308,13 @@ const InvestmentCardFooter: React.FC<InvestmentCardFooterProps> = ({
     day: "numeric",
   });
   return (
-    <div className="font-montserrat dark:bg-default-200 flex flex-col gap-4 rounded-b-xl bg-neutral-100 p-3 text-left text-xs uppercase lg:flex-row lg:justify-between">
+    <div className="font-montserrat dark:bg-forest flex flex-col gap-4 rounded-b-xl bg-neutral-100 p-3 text-left text-xs uppercase lg:flex-row lg:justify-between dark:font-bold dark:text-white">
       <p className="flex flex-col lg:flex-row lg:gap-1">
-        <span className="font-bold lg:font-normal">Source:</span>
+        <span>Source:</span>
         <span>{dataSource}</span>
       </p>
       <p className="flex flex-col lg:flex-row lg:gap-1">
-        <span className="font-bold lg:font-normal">Last Accessed:</span>
+        <span>Last Accessed:</span>
         <span>{parsedAccessDate}</span>
       </p>
     </div>
@@ -322,7 +337,7 @@ export const InvestmentCard: React.FC<InvestmentCardProps> = ({
   investment,
 }) => {
   return (
-    <div className="border-default-200 flex w-full flex-col rounded-xl border border-2">
+    <div className="dark:bg-default-100 border-default-300 dark:shadow-default-600 flex w-full flex-col rounded-xl border border-1 shadow-sm">
       <InvestmentCardHeader
         reportDate={investment.document_report_date}
         investorName={investment.investor_name}

@@ -13,18 +13,12 @@ import {
   TableCell,
 } from "@heroui/table";
 
-// Application imports
-import { ResponsivePagination } from "@/components/pagination";
-
 // Feature imports
 import { DataColumn, Investment } from "./interfaces";
 
 type DataTableProps = {
   columns: DataColumn[];
   investments: Investment[];
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
 };
 
 /**
@@ -34,23 +28,18 @@ type DataTableProps = {
  * @param props - The component props.
  * @param props.columns - The configured columns to display.
  * @param props.investments - The page of investments.
- * @param props.currentPage - The number of the current page.
- * @param props.totalPages - The total number of pages available.
- * @param props.onPageChange - The callback function to use for page number changes.
  *
  * @returns The JSX element for the table component.
  */
 export const DataTable: React.FC<DataTableProps> = ({
   columns,
   investments,
-  currentPage,
-  totalPages,
-  onPageChange,
 }) => {
   return (
     <Table
       isStriped
       classNames={{
+        wrapper: ["rounded-b-none"],
         th: [
           "bg-seagreen",
           "text-white",
@@ -60,15 +49,6 @@ export const DataTable: React.FC<DataTableProps> = ({
       }}
       className="font-montserrat uppercase"
       aria-label="Investments data table."
-      bottomContent={
-        <ResponsivePagination
-          showControls
-          page={currentPage}
-          total={totalPages}
-          onChange={onPageChange}
-        />
-      }
-      bottomContentPlacement="outside"
     >
       <TableHeader columns={columns}>
         {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
