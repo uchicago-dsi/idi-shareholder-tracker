@@ -65,7 +65,7 @@ export const SEARCH_CONFIG = Object.freeze({
       ],
     },
     pageSizes: {
-      default: "10",
+      default: "25",
       options: [10, 25, 50, 100],
       label: "Rows per page:",
     },

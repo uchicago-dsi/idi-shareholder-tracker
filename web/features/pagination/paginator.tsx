@@ -56,7 +56,7 @@ export const LargePagination: React.FC<PaginationProps> = ({
               onPress={onNext}
               isIconOnly={true}
               aria-label="next page"
-              className="bg-seagreen border-seagreen border-1/2 rounded-none border text-white disabled:pointer-events-none"
+              className="bg-seagreen border-default-200 border-1/2 rounded-none border text-white disabled:pointer-events-none"
               disabled={activePage === total || total === 0}
             >
               <ChevronRight />
@@ -70,7 +70,7 @@ export const LargePagination: React.FC<PaginationProps> = ({
               onPress={onPrevious}
               isIconOnly={true}
               aria-label="previous page"
-              className="bg-seagreen border-seagreen border-1/2 rounded-none border text-white disabled:pointer-events-none"
+              className="bg-seagreen border-default-200 border-1/2 rounded-none border text-white disabled:pointer-events-none"
               disabled={activePage === 1 || total === 0}
             >
               <ChevronLeft />

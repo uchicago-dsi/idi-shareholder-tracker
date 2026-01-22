@@ -5,7 +5,7 @@ import React from "react";
 
 // Third-party imports
 import { Button, Link } from "@heroui/react";
-import { DownloadCloudIcon, ExternalLink } from "lucide-react";
+import { DownloadCloudIcon, DownloadIcon, ExternalLink } from "lucide-react";
 
 // Application imports
 import { DOWNLOAD_CONFIG } from "@/config/downloads";
@@ -18,6 +18,7 @@ interface File {
 
 interface Release {
   date: string;
+  dataDictionaryUrl: string;
   notes: string;
   files: File[];
 }
@@ -35,21 +36,33 @@ type DataReleaseCardProps = {
  * @param props.release.files - A list of file objects containing the type, url, and size of the file.
  */
 const DataReleaseCard: React.FC<DataReleaseCardProps> = ({ release }) => {
+  const getButtonColor = (type: string) => {
+    if (type === "CSV") {
+      return "primary";
+    } else if (type === "PARQUET") {
+      return "warning";
+    } else {
+      return "success";
+    }
+  };
   return (
     <div className="font-montserrat bg-default-100 flex flex-col gap-8 p-4">
       <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <h2 className="text-lg font-bold">Snapshot | {release.date}</h2>
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <h2 className="text-lg font-bold">{release.date}</h2>
+          <Button
+            className="text-seagreen flex flex-row gap-2 bg-transparent p-0 font-bold uppercase dark:text-green-300"
+            onPress={() => window.open(release.dataDictionaryUrl, "_blank")}
+            startContent={<DownloadIcon className="inline h-5 stroke-3" />}
+          >
+            Data Dictionary
+          </Button>
+        </div>
         <div className="flex flex-col gap-2 font-bold lg:flex-row">
           {release.files.map((file, idx) => (
             <Button
               key={idx}
-              color={
-                file.type === "CSV"
-                  ? "primary"
-                  : file.type === "PARQUET"
-                    ? "warning"
-                    : "success"
-              }
+              color={getButtonColor(file.type)}
               size="lg"
               className="font-bold"
               variant="flat"

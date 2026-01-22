@@ -3,6 +3,10 @@
 // Standard library imports
 import React, { useEffect, useState } from "react";
 
+// Third-party imports
+import { Parser } from "@json2csv/plainjs";
+import { saveAs } from "file-saver";
+
 // Feature imports
 import {
   Investment,
@@ -20,6 +24,7 @@ type UseInvestmentsParams = {
 
 type UseInvestmentsReturn = {
   isLoading: boolean;
+  isDownloading: boolean;
   error: Error | null;
   investments: Investment[];
   currentPage: number;
@@ -42,6 +47,7 @@ type UseInvestmentsReturn = {
   onFilterChange: (
     filter: "Pension Funds" | "Institutional Investors" | "All Records",
   ) => void;
+  handleDownload: () => void;
 };
 
 /**
@@ -60,6 +66,7 @@ export const useInvestments = ({
 }: UseInvestmentsParams): UseInvestmentsReturn => {
   // Initialize state
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -95,6 +102,7 @@ export const useInvestments = ({
         sortColumn: sortColumn,
         sortDirection: sortDirection === "ascending" ? "ASC" : "DESC",
         filter: filter,
+        isDownload: false,
       };
 
       // Post search request and parse response
@@ -159,13 +167,14 @@ export const useInvestments = ({
     setIsNewSearch(true);
   };
 
-  // Define ccallback function for updating the sort direction
+  // Define callback function for updating the sort direction
   const onSortDirectionChange = (direction: "ascending" | "descending") => {
     setCurrentPage(1);
     setSortDirection(direction);
     setIsNewSearch(true);
   };
 
+  // Define callback function for updating the filter
   const onFilterChange = (
     filter: "Pension Funds" | "Institutional Investors" | "All Records",
   ) => {
@@ -174,8 +183,41 @@ export const useInvestments = ({
     setIsNewSearch(true);
   };
 
+  // Define callback function for handling downloads
+  const handleDownload = () => {
+    // Compose API request
+    const request: InvestmentSearchRequest = {
+      query: currentQuery ?? null,
+      limit: pageSize,
+      offset: (currentPage - 1) * pageSize,
+      sortColumn: sortColumn,
+      sortDirection: sortDirection === "ascending" ? "ASC" : "DESC",
+      filter: filter,
+      isDownload: true,
+    };
+
+    // Set status to downloading
+    setIsDownloading(true);
+
+    // Post search request and parse response
+    investmentService
+      .search(request)
+      .then((result: InvestmentSearchResult) => {
+        const parser = new Parser();
+        const csv = parser.parse(result.data);
+        const blob = new Blob([csv], { type: "text/csv" });
+        const timestamp = new Date().toISOString();
+        saveAs(blob, `shareholder_tracker_investments_${timestamp}.csv`);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => setIsDownloading(false));
+  };
+
   return {
     isLoading,
+    isDownloading,
     error,
     currentQuery,
     investments,
@@ -196,5 +238,6 @@ export const useInvestments = ({
     onSortColumnChange,
     onSortDirectionChange,
     onFilterChange,
+    handleDownload,
   };
 };

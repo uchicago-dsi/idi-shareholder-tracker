@@ -4,6 +4,7 @@
 import React from "react";
 
 // Third-party imports
+import { Chip } from "@heroui/chip";
 import {
   Table,
   TableHeader,
@@ -12,6 +13,7 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/table";
+import { CalendarIcon, LandmarkIcon } from "lucide-react";
 
 // Feature imports
 import { DataColumn, Investment } from "./interfaces";
@@ -37,14 +39,16 @@ export const DataTable: React.FC<DataTableProps> = ({
 }) => {
   return (
     <Table
+      isCompact
       isStriped
       classNames={{
         wrapper: ["rounded-b-none"],
         th: [
-          "bg-seagreen",
+          "bg-forest",
           "text-white",
           "data-[sortable=true]:hover:text-orange-200",
         ],
+        td: ["lg:text-xs"],
         sortIcon: ["text-white", "hover:text-orange-200"],
       }}
       className="font-montserrat uppercase"
@@ -67,7 +71,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             <TableCell>{item.issuer_name}</TableCell>
             <TableCell>{item.stock_ticker || "—"}</TableCell>
             <TableCell>{item.security_cusip || "—"}</TableCell>
-            <TableCell>
+            <TableCell className="font-bold text-green-600 dark:text-green-500">
               {item.security_market_value_amount_usd
                 ? `$${item.security_market_value_amount_usd.toLocaleString()}`
                 : "—"}
@@ -79,11 +83,31 @@ export const DataTable: React.FC<DataTableProps> = ({
             </TableCell>
             <TableCell>{item.document_report_date}</TableCell>
             <TableCell>
-              <p
-                className={`text-xs font-bold ${item.investor_type === "PENSION FUND" ? "text-seagreen dark:text-green-400" : "text-orange-500 dark:text-orange-300"}`}
-              >
-                {item.investor_type}
-              </p>
+              {item.investor_type === "INSTITUTIONAL INVESTOR" ? (
+                <Chip
+                  color="warning"
+                  variant="light"
+                  className="p-3"
+                  startContent={<LandmarkIcon size={16} />}
+                >
+                  <span className="text-xs font-bold normal-case">
+                    Institutional Investor
+                  </span>
+                </Chip>
+              ) : (
+                <Chip
+                  color="primary"
+                  variant="light"
+                  className="p-3"
+                  startContent={
+                    <CalendarIcon size={16} className="stroke-blue-400" />
+                  }
+                >
+                  <span className="text-xs font-bold text-blue-400 normal-case">
+                    Pension Fund
+                  </span>
+                </Chip>
+              )}
             </TableCell>
           </TableRow>
         )}

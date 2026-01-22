@@ -5,11 +5,7 @@ import React from "react";
 import { hasFlag } from "country-flag-icons";
 import * as flags from "country-flag-icons/react/3x2";
 import { Link } from "@heroui/react";
-import {
-  ArrowUpRightFromSquareIcon,
-  CircleSmall,
-  LinkIcon,
-} from "lucide-react";
+import { ArrowUpRightFromSquareIcon, CircleSmall } from "lucide-react";
 
 // Feature imports
 import { Investment } from "./interfaces";
@@ -226,7 +222,7 @@ const InvestmentCardHeader: React.FC<InvestmentCardHeaderProps> = ({
           anchorIcon={
             <ArrowUpRightFromSquareIcon
               size={20}
-              className="stroke-2.5 stroke-seagreen dark:stroke-green-200"
+              className="stroke-seagreen stroke-3 dark:stroke-green-200 dark:stroke-2"
             />
           }
           size="lg"
@@ -267,16 +263,18 @@ const InvestmentCardBody: React.FC<InvestmentCardBodyProps> = ({
     <div className="font-montserrat flex flex-col gap-4 px-3 pb-5 uppercase lg:text-left">
       <ul className="marker:text-seagreen list-disc px-4 text-sm marker:text-lg dark:marker:text-green-300">
         <li>{summaryBuilder.summarySentence}</li>
-        {summaryBuilder.hasConvertedMarketValue && (
-          <li>{summaryBuilder.conversionRateFootnote}</li>
+        {summaryBuilder.conversionRateSentence && (
+          <li>{summaryBuilder.conversionRateSentence}</li>
         )}
         {summaryBuilder.investmentAuthoritySentence && (
           <li>{summaryBuilder.investmentAuthoritySentence}</li>
         )}
-        {summaryBuilder.stockPercentage && (
-          <li>{summaryBuilder.stockPercentage}</li>
+        {summaryBuilder.stockPercentageSentence && (
+          <li>{summaryBuilder.stockPercentageSentence}</li>
         )}
-        {summaryBuilder.vintageYear && <li>{summaryBuilder.vintageYear}</li>}
+        {summaryBuilder.vintageYearSentence && (
+          <li>{summaryBuilder.vintageYearSentence}</li>
+        )}
       </ul>
     </div>
   );

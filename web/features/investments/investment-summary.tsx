@@ -5,7 +5,9 @@ import { Investment } from "./interfaces";
  * A class for building investment summary strings.
  */
 export class InvestmentSummaryBuilder {
-  /** The investment being summarized. */
+  /**
+   * A private reference to the investment being summarized.
+   */
   private readonly _inv: Investment;
 
   /**
@@ -18,9 +20,36 @@ export class InvestmentSummaryBuilder {
   }
 
   /**
-   * Generates a statement about the location of the investor.
+   * Determines whether the investment was successfully converted to USD during processing.
    */
-  get investorLocation() {
+  private get hasConvertedMarketValue(): boolean {
+    return !(
+      !this._inv.security_market_value_conversion_rate ||
+      this._inv.security_market_value_conversion_rate == 0 ||
+      this._inv.security_market_value_conversion_rate == 1
+    );
+  }
+
+  /**
+   * Generates a phrase about the action taken by the investor. Uses the investment type and value.
+   */
+  private get investorActionPhrase(): string {
+    if (this._inv.security_type === "PRIVATE EQUITY FUND") {
+      return `invested ${this.marketValuePhrase} in private equity fund`;
+    } else if (
+      this._inv.security_market_value_amount_usd &&
+      this._inv.security_market_value_amount_usd > 0
+    ) {
+      return `purchased ${this.numberOfSharesPhrase} share${this._inv.stock_number_of_shares === 1 ? "" : "s"} with a total market value of  ${this.marketValuePhrase} in`;
+    } else {
+      return `purchased ${this.numberOfSharesPhrase} share${this._inv.stock_number_of_shares === 1 ? "" : "s"} in`;
+    }
+  }
+
+  /**
+   * Generates a phrase about the location of the investor.
+   */
+  private get investorLocationPhrase(): string {
     if (this._inv.investor_country_name && this._inv.investor_region_name) {
       return `(${this._inv.investor_region_name}, ${this._inv.investor_country_name})`;
     } else if (this._inv.investor_country_name) {
@@ -31,68 +60,92 @@ export class InvestmentSummaryBuilder {
   }
 
   /**
-   * Generates a statement about the location of the issuer.
+   * Generates a phrase about the location of the issuer.
    */
-  get issuerLocation() {
-    if (this._inv.issuer_country_name) {
-      return `(${this._inv.issuer_country_name})`;
-    } else {
-      return "";
-    }
-  }
-
-  /**
-   * Generates a statement about the number of shares purchased.
-   */
-  get financialAmount() {
-    return this._inv.stock_number_of_shares
-      ? `${this._inv.stock_number_of_shares.toLocaleString()}`
+  private get issuerLocationPhrase(): string {
+    return this._inv.issuer_country_name
+      ? `(${this._inv.issuer_country_name})`
       : "";
   }
 
   /**
-   * Generates an asterisk when the market value has been converted to USD and an empty string otherwise.
+   * Generates a phrase about the economic sector of the stock issuer.
    */
-  get hasConvertedMarketValue() {
-    return !(
-      this._inv.security_market_value_conversion_rate == 0 ||
-      this._inv.security_market_value_conversion_rate == 1
-    );
-  }
-
-  /**
-   * Generates a statement about the market value of the shares.
-   */
-  get marketValue() {
-    return this._inv.security_market_value_amount_usd
-      ? `$${this._inv.security_market_value_amount_usd.toLocaleString()} USD`
-      : "";
-  }
-
-  /**
-   * Generates a statement about the economic sector of the stock issuer.
-   */
-  get issuerSector() {
+  private get issuerSectorPhrase(): string {
     return this._inv.issuer_sector
       ? `, a company within the ${this._inv.issuer_sector} sector`
       : "";
   }
 
   /**
-   * Generates a statement about the original market value of the shares prior to their conversion to USD.
+   * Generates a phrase about the market value of the security.
    */
-  get originalAmount() {
-    return this._inv.security_market_value_amount &&
-      this._inv.security_market_value_currency_code &&
-      this._inv.security_market_value_currency_code !== "USD"
-      ? `${this._inv.security_market_value_amount.toLocaleString()} ${this._inv.security_market_value_currency_code}`
+  private get marketValuePhrase(): string {
+    return this._inv.security_market_value_amount_usd
+      ? `$${this._inv.security_market_value_amount_usd.toLocaleString()} USD`
       : "";
   }
 
   /**
-   * Generates a statement about the voting authority of the shares.
+   * Generates a phrase about the number of shares purchased.
    */
-  get investmentAuthoritySentence() {
+  private get numberOfSharesPhrase(): string {
+    return this._inv.stock_number_of_shares
+      ? `${this._inv.stock_number_of_shares.toLocaleString()}`
+      : "";
+  }
+
+  /**
+   * Generates a phrase about the original market value of the shares prior to their conversion to USD.
+   */
+  get originalMarketValuePhrase(): string {
+    return this._inv.security_market_value_amount &&
+      this._inv.security_market_value_currency_code &&
+      this._inv.security_market_value_currency_code !== "USD"
+      ? `${(this._inv.security_market_value_amount * this.parsedMultiplier).toLocaleString()} ${this._inv.security_market_value_currency_code}`
+      : "";
+  }
+
+  /**
+   * Converts the security market value multiplier from a string to an integer.
+   * If the multiplier is not recognized, throws an error.
+   */
+  private get parsedMultiplier(): number {
+    switch (this._inv.security_market_value_multiplier) {
+      case "x1":
+        return 1;
+      case "x100":
+        return 100;
+      case "x1_000":
+        return 1000;
+      case "x10_000":
+        return 10_000;
+      case "x100_000":
+        return 100_000;
+      case "x1_000_000":
+        return 1_000_000;
+      default:
+        throw Error(
+          `Unknown multiplier: ${this._inv.security_market_value_multiplier}.`,
+        );
+    }
+  }
+
+  /**
+   * Generates a sentence about the conversion of the market value to USD.
+   */
+  get conversionRateSentence(): string {
+    return this.hasConvertedMarketValue
+      ? `The market value was converted from ${this.originalMarketValuePhrase} at a rate of ` +
+          `${this._inv.security_market_value_conversion_rate} for the given ` +
+          `report date of ${this._inv.document_report_date}.`
+      : "";
+  }
+
+  /**
+   * Generates a sentence about the voting authority of the shares.
+   */
+  get investmentAuthoritySentence(): string {
     const statements = [];
     if (this._inv.stock_voting_auth_sole) {
       statements.push(
@@ -121,9 +174,29 @@ export class InvestmentSummaryBuilder {
   }
 
   /**
-   * Generates a statement about the percentage ownership and percentage voting power of the shares.
+   * Generates a sentence summarizing the basic details of the investment.
    */
-  get stockPercentage() {
+  get summarySentence(): string {
+    const phrases = [
+      this._inv.investor_name,
+      this.investorLocationPhrase,
+      this.investorActionPhrase,
+      this._inv.issuer_name,
+      this.issuerLocationPhrase,
+      this.issuerSectorPhrase,
+      ".",
+    ];
+    return phrases
+      .filter((phrase) => phrase !== "")
+      .join(" ")
+      .replace(/\s+\./, ".")
+      .replace(/\s+,/, ",");
+  }
+
+  /**
+   * Generates a sentence about the percentage ownership and percentage voting power of the shares.
+   */
+  get stockPercentageSentence(): string {
     if (
       this._inv.stock_percent_ownership &&
       this._inv.stock_percent_voting_power
@@ -139,68 +212,27 @@ export class InvestmentSummaryBuilder {
   }
 
   /**
-   * Generates a statement about the action taken by the investor using the investment type and value.
+   * Generates a sentence about the vintage year of a private equity fund.
    */
-  get investorAction() {
-    if (this._inv.security_type === "PRIVATE EQUITY FUND") {
-      return `invested ${this.marketValue} in private equity fund`;
-    } else {
-      return `purchased ${this.financialAmount} share${this._inv.stock_number_of_shares === 1 ? "" : "s"} with a total market value of  ${this.marketValue} in`;
-    }
+  get vintageYearSentence(): string {
+    return this._inv.security_vintage_year
+      ? `The fund had a vintage year of ${this._inv.security_vintage_year}.`
+      : "";
   }
 
   /**
-   * Generates a statement about the vintage year of a private equity fund.
+   * Generates a sentence about the authority of the investment.
    */
-  get vintageYear() {
-    if (this._inv.security_vintage_year) {
-      return `The fund had a vintage year of ${this._inv.security_vintage_year}.`;
-    } else {
-      return "";
-    }
-  }
-
-  /**
-   * Generates a summary of the investment from its properties.
-   */
-  get summarySentence() {
-    const phrases = [
-      this._inv.investor_name,
-      this.investorLocation,
-      this.investorAction,
-      this._inv.issuer_name,
-      this.issuerLocation,
-      this.issuerSector,
-      ".",
-    ];
-    return phrases
-      .filter((phrase) => phrase !== "")
-      .join(" ")
-      .replace(/\s+\./, ".")
-      .replace(/\s+,/, ",");
-  }
-
-  get votingAuthoritySentence() {
+  get votingAuthoritySentence(): string {
     const phrases = [
       this.investmentAuthoritySentence,
-      this.stockPercentage,
-      this.vintageYear,
+      this.stockPercentageSentence,
+      this.vintageYearSentence,
     ];
     return phrases
       .filter((phrase) => phrase !== "")
       .join(" ")
       .replace(/\s+\./, ".")
       .replace(/\s+,/, ",");
-  }
-
-  /**
-   * Generates a footnote about the conversion of the market value to USD.
-   */
-  get conversionRateFootnote() {
-    return (
-      `The market value was converted from ${this.originalAmount} at a rate of ` +
-      `${this._inv.security_market_value_conversion_rate} for the given ` +
-      `report date of ${this._inv.document_report_date}.`
-    );
   }
 }

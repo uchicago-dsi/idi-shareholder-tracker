@@ -44,8 +44,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         <Input
           className="font-montserrat w-full"
           classNames={{
-            inputWrapper: ["rounded-r-none", "h-8", "lg:h-12"],
-            input: ["lg:text-base"],
+            inputWrapper: ["rounded-r-none", "h-8", "lg:h-10"],
+            input: ["lg:text-sm"],
           }}
           value={currentQuery}
           onValueChange={onValueChange}
@@ -56,7 +56,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           }
         />
         <Button
-          className="bg-seagreen h-10 w-10 min-w-3 rounded-l-none font-bold text-white uppercase lg:h-12 lg:w-25"
+          className="bg-seagreen h-10 w-10 min-w-3 rounded-l-none font-bold text-white uppercase lg:h-10 lg:w-25"
           type="submit"
         >
           <span className="font-montserrat hidden lg:inline">

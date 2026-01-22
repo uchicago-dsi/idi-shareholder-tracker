@@ -28,23 +28,25 @@ export const InvestmentViewButtonRow: React.FC<
     <div className="hidden flex-row items-center gap-4 lg:flex">
       <div className="flex flex-row items-center">
         <Button
+          aria-label="Table view button"
           isIconOnly
-          className={`rounded-full ${value === "table" ? "bg-seagreen" : "bg-transparent"}`}
+          className={`rounded-full ${value === "table" ? "bg-seagreen dark:bg-green-300" : "bg-transparent"}`}
           onPress={() => onSelect("table")}
         >
           <Sheet
-            color={value === "table" ? "white" : "gray"}
             strokeWidth={1.5}
+            className={`${value === "table" ? "stroke-white dark:stroke-black" : "stroke-default-400"}`}
           />
         </Button>
         <Button
+          aria-label="Card view button"
           isIconOnly
-          className={`rounded-full ${value === "cards" ? "bg-seagreen" : "bg-transparent"}`}
+          className={`rounded-full ${value === "cards" ? "bg-seagreen dark:bg-green-300" : "bg-transparent"}`}
           onPress={() => onSelect("cards")}
         >
           <StretchHorizontal
-            color={value === "cards" ? "white" : "gray"}
             strokeWidth={1.5}
+            className={`${value === "cards" ? "stroke-white dark:stroke-black" : "stroke-default-400"}`}
           />
         </Button>
       </div>

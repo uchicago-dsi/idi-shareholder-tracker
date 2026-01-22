@@ -127,7 +127,9 @@ export const StackedDropdown: React.FC<StackedDropdownProps> = ({
         onPress={toggleDropdown}
       >
         {label}
-        <span className="hidden lg:inline dark:text-white">{displayValue}</span>
+        <span className="hidden font-bold lg:inline dark:text-white">
+          {displayValue}
+        </span>
         <ChevronDownIcon className="stroke-default-600 hidden h-4 w-4 lg:block dark:stroke-white" />
       </Button>
       {isOpen && (

@@ -20,6 +20,7 @@ import { DataTable } from "./investment-table";
 import { InvestmentViewButtonRow } from "./investment-view-toggle";
 import { PageToolbar } from "../pagination/toolbar";
 import { useInvestments } from "./use-investments";
+import { InvestmentDownloadButton } from "./investment-download-button";
 
 type InvestmentSearchWidgetProps = {
   tableConfig: SearchConfig["table"];
@@ -38,6 +39,7 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
 }) => {
   const {
     isLoading,
+    isDownloading,
     error,
     currentQuery,
     investments,
@@ -58,6 +60,7 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
     onSortColumnChange,
     onSortDirectionChange,
     onFilterChange,
+    handleDownload,
   } = useInvestments({
     defaultPageSize: parseInt(tableConfig.pageSizes.default),
     defaultSortColumn: tableConfig.sort.default.column,
@@ -135,10 +138,16 @@ export const InvestmentSearchWidget: React.FC<InvestmentSearchWidgetProps> = ({
               ]}
             />
           </div>
-          <InvestmentViewButtonRow
-            value={currentView}
-            onSelect={setCurrentView}
-          />
+          <div className="flex flex-row gap-4">
+            <InvestmentViewButtonRow
+              value={currentView}
+              onSelect={setCurrentView}
+            />
+            <InvestmentDownloadButton
+              isDownloading={isDownloading}
+              handleDownload={handleDownload}
+            />
+          </div>
         </div>
         <div
           className={`flex flex-col ${currentView === "cards" ? "gap-8" : "gap-0"}`}

@@ -30,7 +30,7 @@ export interface Investment {
   security_principal_amount: number | null;
   security_market_value_currency_code: string;
   security_market_value_amount: number | null;
-  security_market_value_multiplier: number | null;
+  security_market_value_multiplier: string;
   security_market_value_conversion_rate: number | null;
   security_market_value_amount_usd: number | null;
   security_isin: string;
@@ -57,6 +57,7 @@ export interface InvestmentSearchRequest {
   sortColumn: string;
   sortDirection: "ASC" | "DESC";
   filter: "Pension Funds" | "Institutional Investors" | "All Records";
+  isDownload: boolean;
 }
 
 /**

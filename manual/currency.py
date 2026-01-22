@@ -182,6 +182,7 @@ class CurrencyConverter:
         countries available through the IMF API.
 
         References:
+        - https://data.imf.org/en/Data-Explorer?datasetUrn=IMF.STA:ER(4.0.1)
         - https://portal.api.imf.org/api-details#api=idata-sdmx-api-3-0&operation=get-data-context-agencyid-resourceid-version-key
 
         Args:

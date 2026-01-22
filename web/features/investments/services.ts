@@ -1,3 +1,5 @@
+"server only";
+
 // Feature imports
 import { InvestmentSearchRequest, InvestmentSearchResult } from "./interfaces";
 
@@ -15,7 +17,9 @@ export const investmentService = {
       body: JSON.stringify(request),
     });
     if (!r.ok) {
-      throw Error("Failed to search investments.");
+      throw Error(
+        `Failed to ${request.isDownload ? "download" : "search"} investments.`,
+      );
     }
     return await r.json();
   },

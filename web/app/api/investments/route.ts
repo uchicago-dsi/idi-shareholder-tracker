@@ -12,17 +12,13 @@ import {
   InvestmentSearchRequest,
   InvestmentSearchResult,
 } from "@/features/investments/interfaces";
+import { InvestmentSearchRequestSchema } from "@/features/investments/schemas";
 
 /**
  * The maximum number of seconds the route can be executed on Vercel.
  * Up to 300 seconds is permitted on the Pro tier.
  */
 export const maxDuration = 300;
-
-/**
- * Forces dynamic rendering (i.e., the route is always rendered for each user at request time).
- */
-export const dynamic = "force-dynamic";
 
 /**
  * Fetches a page of investments matching a search query.
@@ -34,6 +30,12 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest): Promise<NextResponse> {
   // Parse JSON request body
   const searchParams: InvestmentSearchRequest = await request.json();
+
+  // Validate request body
+  const validation = InvestmentSearchRequestSchema.safeParse(searchParams);
+  if (!validation.success) {
+    return NextResponse.json(validation.error.message, { status: 400 });
+  }
 
   // Prepare variables for dynamic SQL query
   const tsquerySearchPhrase =
@@ -70,6 +72,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } else {
     whereClause = sql``;
   }
+
+  // Determine limit based on download flag
+  const effectiveLimit = searchParams.isDownload ? 10_000 : searchParams.limit;
+
+  // Determine offset (downloads always start from 0)
+  const effectiveOffset = searchParams.isDownload ? 0 : searchParams.offset;
 
   // Execute raw query
   const searchResults: Investment[] = await sql`
@@ -110,32 +118,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         url,
         last_accessed_date
     FROM investment ${whereClause}
-    ORDER BY ${sql(searchParams.sortColumn)} ${sql.unsafe(searchParams.sortDirection)}
-    LIMIT ${searchParams.limit} OFFSET ${searchParams.offset};
+    ORDER BY ${sql(searchParams.sortColumn)} ${sql.unsafe(searchParams.sortDirection)} NULLS LAST
+    LIMIT ${effectiveLimit} OFFSET ${effectiveOffset};
     `;
 
   // Parse BigInt DB fields in search results to JS Number instances
-  const parsedData = searchResults.map((r) => {
-    r["security_principal_amount"] = Number(r["security_principal_amount"]);
-    r["security_market_value_amount"] = Number(
-      r["security_market_value_amount"],
-    );
-    r["security_market_value_amount_usd"] = Number(
+  const parsedData = searchResults.map((r) => ({
+    ...r,
+    security_principal_amount: Number(r["security_principal_amount"]),
+    security_market_value_amount: Number(r["security_market_value_amount"]),
+    security_market_value_amount_usd: Number(
       r["security_market_value_amount_usd"],
-    );
-    r["stock_number_of_shares"] = Number(r["stock_number_of_shares"]);
-    r["stock_voting_auth_sole"] = Number(r["stock_voting_auth_sole"]);
-    r["stock_voting_auth_shared"] = Number(r["stock_voting_auth_shared"]);
-    r["stock_voting_auth_none"] = Number(r["stock_voting_auth_none"]);
-
-    return r;
-  });
+    ),
+    stock_number_of_shares: Number(r["stock_number_of_shares"]),
+    stock_voting_auth_sole: Number(r["stock_voting_auth_sole"]),
+    stock_voting_auth_shared: Number(r["stock_voting_auth_shared"]),
+    stock_voting_auth_none: Number(r["stock_voting_auth_none"]),
+  }));
 
   // Query database for total number of records with search phrase
-  const tallyResult = await sql`
-      SELECT COUNT(*)
-      FROM investment ${whereClause}
-    `;
+  const tallyResult = await sql`SELECT COUNT(*) FROM investment ${whereClause}`;
 
   // Parse result
   const count = Number(tallyResult[0]["count"]);

@@ -31,9 +31,9 @@ export const ResultCount: React.FC<ResultCountProps> = ({
       0 Results Found
     </h3>
   ) : (
-    <h3 className="font-montserrat text-center text-xl font-bold">
+    <h3 className="font-montserrat text-center text-base font-bold lg:text-xl">
       Showing {start.toLocaleString()} - {end.toLocaleString()} of{" "}
-      <span className="font-bold text-orange-600 dark:text-orange-300">
+      <span className="font-bold text-orange-400 dark:text-orange-300">
         {totalRecords.toLocaleString()}
       </span>{" "}
       result{totalRecords === 1 ? "" : "s"}

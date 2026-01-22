@@ -26,6 +26,7 @@ export const MobileThemeSwitcher: React.FC = () => {
   return (
     mounted && (
       <Switch
+        aria-label="Mobile site theme toggle"
         isSelected={isSelected}
         onValueChange={(value) => {
           setIsSelected(value);
@@ -81,7 +82,10 @@ export const DesktopThemeSwitcher: React.FC = () => {
 
   return (
     mounted && (
-      <div className="hidden flex-row items-center lg:flex">
+      <div
+        className="hidden flex-row items-center lg:flex"
+        aria-label="Desktop site theme toggle"
+      >
         <Button
           isIconOnly
           className="h-8 w-8 min-w-8 rounded-full bg-transparent"
