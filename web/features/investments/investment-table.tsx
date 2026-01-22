@@ -18,14 +18,14 @@ import { CalendarIcon, LandmarkIcon } from "lucide-react";
 // Feature imports
 import { DataColumn, Investment } from "./interfaces";
 
-type DataTableProps = {
+type InvestmentTableProps = {
   columns: DataColumn[];
   investments: Investment[];
 };
 
 /**
  * A table component for displaying investments data.
- * Customizes a HeroUI Table component under the hood.
+ * Customizes a HeroUI {@link Table} component under the hood.
  *
  * @param props - The component props.
  * @param props.columns - The configured columns to display.
@@ -33,7 +33,7 @@ type DataTableProps = {
  *
  * @returns The JSX element for the table component.
  */
-export const DataTable: React.FC<DataTableProps> = ({
+export const InvestmentTable: React.FC<InvestmentTableProps> = ({
   columns,
   investments,
 }) => {

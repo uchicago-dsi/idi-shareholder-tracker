@@ -5,7 +5,7 @@ import React from "react";
 import { Button } from "@heroui/react";
 import { Sheet, StretchHorizontal } from "lucide-react";
 
-type InvestmentViewButtonRowProps = {
+type InvestmentViewToggleProps = {
   value: "table" | "cards";
   onSelect: (value: "table" | "cards") => void;
 };
@@ -21,9 +21,10 @@ type InvestmentViewButtonRowProps = {
  *
  * @returns The JSX element.
  */
-export const InvestmentViewButtonRow: React.FC<
-  InvestmentViewButtonRowProps
-> = ({ value, onSelect }) => {
+export const InvestmentViewToggle: React.FC<InvestmentViewToggleProps> = ({
+  value,
+  onSelect,
+}) => {
   return (
     <div className="hidden flex-row items-center gap-4 lg:flex">
       <div className="flex flex-row items-center">

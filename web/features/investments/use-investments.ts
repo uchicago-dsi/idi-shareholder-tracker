@@ -53,8 +53,11 @@ type UseInvestmentsReturn = {
 /**
  * A custom React hook for fetching and managing a page of investments data from the API.
  *
- * @param defaultPageSize - The default number of records to show per page.
- * @param defaultSort - The default sorting scheme (i.e., column and direction).
+ * @param props - The component props.
+ * @param props.defaultPageSize - The default number of records to show per page.
+ * @param props.defaultSortColumn - The default column to sort on.
+ * @param props.defaultSortDirection - The default sort direction.
+ * @param props.defaultFilter - The default filter to apply.
  *
  * @returns An object containing the state and callbacks for the hook.
  */

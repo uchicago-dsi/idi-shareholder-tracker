@@ -19,7 +19,6 @@ interface File {
 interface Release {
   date: string;
   dataDictionaryUrl: string;
-  notes: string;
   files: File[];
 }
 
@@ -32,8 +31,8 @@ type DataReleaseCardProps = {
  *
  * @param props - The component props.
  * @param props.release - The release data object containing the date and a list of files.
- * @param props.release.date - The date of the release.
- * @param props.release.files - A list of file objects containing the type, url, and size of the file.
+ *
+ * @returns The JSX element.
  */
 const DataReleaseCard: React.FC<DataReleaseCardProps> = ({ release }) => {
   const getButtonColor = (type: string) => {

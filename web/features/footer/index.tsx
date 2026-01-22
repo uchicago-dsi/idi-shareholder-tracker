@@ -10,7 +10,7 @@ import Image from "next/image";
 /**
  * A footer component that displays site acknowledgments, quick links, and partner logos.
  *
- * @returns A JSX element representing the footer.
+ * @returns The JSX element.
  */
 export const Footer: React.FC = () => {
   return (

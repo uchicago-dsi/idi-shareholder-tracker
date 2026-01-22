@@ -24,9 +24,6 @@ export const InvestmentSearchRequestSchema = z.object({
   isDownload: z.boolean(),
 });
 
-/**
- * A type representing an investment search request.
- */
 export type InvestmentSearchRequest = z.infer<
   typeof InvestmentSearchRequestSchema
 >;

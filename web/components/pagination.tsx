@@ -10,6 +10,44 @@ import {
   ChevronsRight,
 } from "lucide-react";
 
+type PageSizerProps = {
+  currentValue: number;
+  options: number[];
+  onChange: (value: number) => void;
+};
+
+/**
+ * A component that renders a row of page sizes as buttons.
+ *
+ * @param props - The component props.
+ * @param props.currentValue - The currently-selected value.
+ * @param props.options - The list of page sizes to display.
+ * @param props.onChange - The function to call when a button is clicked.
+ *
+ * @returns The JSX element for the button row component.
+ */
+export const PageSizer: React.FC<PageSizerProps> = ({
+  currentValue,
+  options,
+  onChange,
+}) => {
+  return (
+    <div className="flex flex-row gap-0">
+      {options.map((opt, idx) => (
+        <Button
+          key={idx}
+          disabled={opt === currentValue}
+          onPress={() => onChange(opt)}
+          aria-label="page-ellipsis"
+          className={`font-montserrat border-default-200 dark:hover:bg-default-300 border-1/2 h-8 rounded-none border bg-white font-bold text-black hover:bg-neutral-300 dark:bg-black dark:font-bold dark:text-white ${opt === currentValue ? "dark:bg-default-300 bg-neutral-300 disabled:pointer-events-none" : ""}`}
+        >
+          {opt}
+        </Button>
+      ))}
+    </div>
+  );
+};
+
 type PaginationProps = {
   page: number;
   total: number;
@@ -209,6 +247,55 @@ export const ResponsivePagination: React.FC<PaginationProps> = ({
     <div className="flex">
       <SmallPagination page={page} total={total} onChange={onChange} />
       <LargePagination page={page} total={total} onChange={onChange} />
+    </div>
+  );
+};
+
+type PaginationToolbarProps = {
+  pageSizes: number[];
+  currentPageSize: number;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+};
+
+/**
+ * A component that displays a toolbar for pagination controls.
+ * The toolbar includes a page size selector and a responsive pagination component.
+ *
+ * @param props - The component props.
+ * @param props.pageSizes - The list of page sizes to display.
+ * @param props.currentPageSize - The currently-selected page size.
+ * @param props.currentPage - The currently-selected page number.
+ * @param props.totalPages - The total number of pages available.
+ * @param props.onPageChange - The function to call when the page number changes.
+ * @param props.onPageSizeChange - The function to call when the page size changes.
+ *
+ * @returns The JSX element for the page toolbar component.
+ */
+export const PaginationToolbar: React.FC<PaginationToolbarProps> = ({
+  pageSizes,
+  currentPageSize,
+  currentPage,
+  totalPages,
+  onPageChange,
+  onPageSizeChange,
+}) => {
+  return (
+    <div className="lg:bg-default-100 flex w-full flex-col items-center justify-center gap-4 rounded-b-lg p-3 pt-5 lg:flex-row lg:justify-between lg:shadow-sm dark:bg-transparent">
+      <PageSizer
+        currentValue={currentPageSize}
+        options={pageSizes}
+        onChange={onPageSizeChange}
+      />
+      <div className="flex w-full flex-row justify-center lg:justify-end">
+        <ResponsivePagination
+          page={currentPage}
+          total={totalPages}
+          onChange={onPageChange}
+        />
+      </div>
     </div>
   );
 };

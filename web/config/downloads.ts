@@ -4,8 +4,6 @@
 export const DOWNLOAD_CONFIG = [
   {
     date: "December 18, 2025",
-    notes:
-      "The initial release. Companies have not been standardized/deduped through record linkage at this time.",
     dataDictionaryUrl:
       "https://shareholder-tracker.cdn.uchicago-dsi.org/shareholder_tracker_data_dictionary_20251218.pdf",
     files: [

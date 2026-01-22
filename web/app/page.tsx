@@ -6,9 +6,6 @@ import React from "react";
 // Third-party imports
 import { Link } from "@heroui/react";
 
-// Application imports
-import { SEARCH_CONFIG } from "@/config/site";
-
 // Feature imports
 import { InvestmentSearchWidget } from "@/features/investments";
 
@@ -72,7 +69,7 @@ const Home: React.FC = () => {
       </div>
 
       {/** SEARCH WIDGET */}
-      <InvestmentSearchWidget tableConfig={SEARCH_CONFIG.table} />
+      <InvestmentSearchWidget />
     </div>
   );
 };

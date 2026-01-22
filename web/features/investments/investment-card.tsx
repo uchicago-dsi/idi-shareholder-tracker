@@ -9,7 +9,7 @@ import { ArrowUpRightFromSquareIcon, CircleSmall } from "lucide-react";
 
 // Feature imports
 import { Investment } from "./interfaces";
-import { InvestmentSummaryBuilder } from "./investment-summary";
+import { InvestmentSummaryBuilder } from "./utils";
 
 type OrganizationNameWithFlagProps = {
   name: string;
