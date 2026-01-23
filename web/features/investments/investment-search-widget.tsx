@@ -74,7 +74,7 @@ export const InvestmentDatasetToolbar: React.FC<
         <StackedDropdown
           label={
             <ArrowDownUpIcon
-              className="text-seagreen dark:text-green-300"
+              className="text-seagreen dark:text-white"
               strokeWidth={2}
             />
           }
@@ -95,7 +95,7 @@ export const InvestmentDatasetToolbar: React.FC<
         <StackedDropdown
           label={
             <FunnelIcon
-              className="text-seagreen dark:text-green-300"
+              className="text-seagreen dark:text-white"
               strokeWidth={2}
             />
           }

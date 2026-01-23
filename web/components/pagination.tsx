@@ -94,7 +94,7 @@ export const LargePagination: React.FC<PaginationProps> = ({
               onPress={onNext}
               isIconOnly={true}
               aria-label="next page"
-              className="bg-seagreen border-default-200 border-1/2 rounded-none border text-white disabled:pointer-events-none"
+              className="bg-seagreen border-default-200 border-1/2 dark:bg-forest rounded-none border text-white disabled:pointer-events-none"
               disabled={activePage === total || total === 0}
             >
               <ChevronRight />
@@ -108,7 +108,7 @@ export const LargePagination: React.FC<PaginationProps> = ({
               onPress={onPrevious}
               isIconOnly={true}
               aria-label="previous page"
-              className="bg-seagreen border-default-200 border-1/2 rounded-none border text-white disabled:pointer-events-none"
+              className="bg-seagreen border-default-200 border-1/2 dark:bg-forest rounded-none border text-white disabled:pointer-events-none"
               disabled={activePage === 1 || total === 0}
             >
               <ChevronLeft />
@@ -180,7 +180,7 @@ export const SmallPagination: React.FC<PaginationProps> = ({
         onPress={() => setPage(1)}
         isIconOnly={true}
         aria-label="next page"
-        className="bg-seagreen rounded-none border border-1 border-white text-white disabled:pointer-events-none"
+        className="bg-seagreen dark:bg-forest rounded-none border border-1 border-white text-white disabled:pointer-events-none"
         disabled={activePage === 1}
       >
         <ChevronsLeft />
@@ -190,7 +190,7 @@ export const SmallPagination: React.FC<PaginationProps> = ({
         onPress={onPrevious}
         isIconOnly={true}
         aria-label="previous page"
-        className="bg-seagreen rounded-none border border-1 border-white text-white disabled:pointer-events-none"
+        className="bg-seagreen dark:bg-forest rounded-none border border-1 border-white text-white disabled:pointer-events-none"
         disabled={activePage === 1}
       >
         <ChevronLeft />
@@ -208,7 +208,7 @@ export const SmallPagination: React.FC<PaginationProps> = ({
         onPress={onNext}
         isIconOnly={true}
         aria-label="next page"
-        className="bg-seagreen rounded-none border border-1 border-white text-white disabled:pointer-events-none"
+        className="bg-seagreen dark:bg-forest rounded-none border border-1 border-white text-white disabled:pointer-events-none"
         disabled={activePage === total || total === 0}
       >
         <ChevronRight />
@@ -218,7 +218,7 @@ export const SmallPagination: React.FC<PaginationProps> = ({
         onPress={() => setPage(total)}
         isIconOnly={true}
         aria-label="next page"
-        className="bg-seagreen rounded-none border border-1 border-white text-white disabled:pointer-events-none"
+        className="bg-seagreen dark:bg-forest rounded-none border border-1 border-white text-white disabled:pointer-events-none"
         disabled={activePage === total || total === 0}
       >
         <ChevronsRight />

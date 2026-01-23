@@ -31,13 +31,13 @@ export const ResultCount: React.FC<ResultCountProps> = ({
   const start = (currentPage - 1) * recordsPerPage + 1;
   const end = Math.min(totalRecords, currentPage * recordsPerPage);
   return totalRecords === 0 ? (
-    <h3 className="font-montserrat text-center text-xl font-bold">
+    <h3 className="font-montserrat text-center text-base font-bold">
       0 Results Found
     </h3>
   ) : (
-    <h3 className="font-montserrat text-center text-base font-bold lg:text-xl">
+    <h3 className="font-montserrat text-center text-base">
       Showing {start.toLocaleString()} - {end.toLocaleString()} of{" "}
-      <span className="font-bold text-orange-400 dark:text-orange-300">
+      <span className="text-seagreen font-bold dark:text-white">
         {totalRecords.toLocaleString()}
       </span>{" "}
       result{totalRecords === 1 ? "" : "s"}
@@ -96,7 +96,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           }
         />
         <Button
-          className="bg-seagreen h-10 w-10 min-w-3 rounded-l-none font-bold text-white uppercase lg:h-10 lg:w-25"
+          className="bg-seagreen dark:bg-forest h-10 w-10 min-w-3 rounded-l-none font-bold text-white uppercase lg:h-10 lg:w-25 dark:text-white"
           type="submit"
         >
           <span className="font-montserrat hidden lg:inline">

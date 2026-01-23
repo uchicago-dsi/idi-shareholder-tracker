@@ -97,7 +97,7 @@ const DownloadsPage: React.FC = () => {
           <Link
             isExternal
             href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
-            className="decoration-seagreen inline text-sm font-bold text-black underline underline-offset-4 lg:text-base dark:text-white dark:decoration-green-300"
+            className="decoration-seagreen inline text-base font-bold text-black underline underline-offset-4 dark:text-white dark:decoration-green-300"
           >
             CC BY-NC
             <ExternalLink className="inline h-3.5" />

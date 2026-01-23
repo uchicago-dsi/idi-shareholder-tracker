@@ -255,6 +255,7 @@ def _process_pension_funds(
     excluded_issuers = [
         "BØRSNOTEREDE KAPITALANDELE I ALT",
         "UNOTEREDE KAPITALANDELE",
+        "--- Page 9 Data ---",
     ]
     pension_funds_df = pension_funds_df.query(
         "(`Issuer - Name` == `Issuer - Name`) & (`Issuer - Name` not in @excluded_issuers)"
@@ -608,16 +609,16 @@ def _process_pension_funds(
     url_map = {
         "Copy of AMF": "https://www.amf.se/globalassets/pdf/rapporter/innehav_2024.pdf",
         "Copy of BPL": "https://www.bplpensioen.nl/sites/default/files/documenten/beleggingsoverzicht.pdf",
-        "Copy of Fjarde AP Foreignshares": "https://www.ap4.se/globalassets/rapporter-och-innehav/2025/ap4-listed-shares-and-participations-2025-06-30.pdf",
-        "Copy of Fjarde APswedishshares": "https://www.ap4.se/globalassets/rapporter-och-innehav/2025/ap4-listed-shares-and-participations-2025-06-30.pdf",
+        "Copy of Fjarde AP Foreignshares": "https://www.ap4.se/globalassets/rapporter-och-innehav/2024/listed-shares-and-participations-2024-12-31.pdf",
+        "Copy of Fjarde APswedishshares": "https://www.ap4.se/globalassets/rapporter-och-innehav/2024/listed-shares-and-participations-2024-12-31.pdf",
         "Copy of KPA": "https://www.kpa.se/globalassets/trycksaker/hallbarhet/kpa-innehav-30-oktober-2025.pdf",
         "Copy of PFZW": "https://www.pfzw.nl/over-pfzw/beleggen-voor-een-goed-pensioen/soorten-beleggingen.html",
         "Copy of PKA": "https://pka.dk/globalassets/_2-ansvarlighed/ansvarlige-investeringer/politikker-og-rapporter/beholdningsliste.pdf",
         "Copy of PME": "https://www.pmepensioen.nl/en/investments/we-do-invest-in",
         "Copy of PMT": "https://www.pmt.nl/over-pmt/zo-beleggen-we/waar-beleggen-we-in/aandelen-en-obligaties",
         "Copy of Sjunde AP": "https://www.ap7.se/english/ap7-equity-fund/",
-        "Copy of ap2 foreignequity": "https://ap2.se/wp-content/uploads/2025/08/2025_6_30_Utlandska_Aktier_Hemsidan.pdf",
-        "Copy of ap2swedishequity": "https://ap2.se/wp-content/uploads/2025/08/2025_6_30_Svenska_Aktier_Hemsidan.pdf",
+        "Copy of ap2 foreignequity": "https://ap2.se/wp-content/uploads/2025/02/2024_12_31_Utlandska_Aktier_Hemsidan.pdf",
+        "Copy of ap2swedishequity": "https://ap2.se/wp-content/uploads/2025/02/2024_12_31_Svenska_Aktier_Hemsidan.pdf",
         "Copy of ap3foreignequity": "https://a.storyblok.com/f/257759/x/21eb85d815/ap3-foreign-equity-holdings-30-june-2025.pdf",
         "Copy of ap3privateequity": "https://a.storyblok.com/f/257759/x/61b8d40700/ap3-private-equity-investments-june-30-2025.pdf",
         "Copy of ap3swedishequity": "https://a.storyblok.com/f/257759/x/1000eb0ade/ap3-swedish-equity-holdings-30-june-2025.pdf",

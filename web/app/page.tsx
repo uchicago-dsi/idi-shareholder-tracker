@@ -22,7 +22,7 @@ const Home: React.FC = () => {
           <h1 className="font-bebas-neue text-4xl lg:text-6xl">
             Shareholder Tracker
           </h1>
-          <h2 className="font-montserrat text-zinc-500 lg:text-xl dark:text-zinc-400">
+          <h2 className="font-montserrat text-lg text-zinc-500 lg:text-xl dark:text-zinc-400">
             Search for the shareholders of publicly traded companies
           </h2>
         </div>

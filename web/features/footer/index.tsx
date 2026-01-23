@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
           <h4 className="bg-seagreen font-bebas-neue px-4 py-2 text-xl uppercase">
             Acknowledgments
           </h4>
-          <p className="font-montserrat text-sm">
+          <p className="font-montserrat">
             The Shareholder Tracker was developed in 2025 through a partnership
             between Inclusive Development International and the University of
             Chicago Data Science Institute, with funding generously provided by

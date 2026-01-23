@@ -19,13 +19,13 @@ const About: React.FC = () => {
       </div>
 
       {/** DESCRIPTION */}
-      <div className="font-montserrat flex flex-col gap-4 text-left text-sm lg:text-base">
+      <div className="font-montserrat flex flex-col gap-4 text-left text-base">
         <p>
           The Shareholder Tracker is a collaborative project between{" "}
           <Link
             isExternal
             href="https://www.inclusivedevelopment.net/"
-            className="decoration-seagreen inline text-sm font-bold text-black underline underline-offset-4 lg:text-base dark:text-white dark:decoration-green-300"
+            className="decoration-seagreen inline text-base font-bold text-black underline underline-offset-4 dark:text-white dark:decoration-green-300"
           >
             Inclusive Development International (IDI)
             <ExternalLink className="inline h-3.5" />
@@ -34,7 +34,7 @@ const About: React.FC = () => {
           <Link
             isExternal
             href="https://datascience.uchicago.edu/"
-            className="decoration-seagreen inline text-sm font-bold text-black underline underline-offset-4 lg:text-base dark:text-white dark:decoration-green-300"
+            className="decoration-seagreen inline text-base font-bold text-black underline underline-offset-4 dark:text-white dark:decoration-green-300"
           >
             University of Chicago Data Science Institute (DSI)
             <ExternalLink className="inline h-3.5" />
@@ -51,7 +51,7 @@ const About: React.FC = () => {
           <Link
             isExternal
             href="https://www.followingthemoney.org/"
-            className="decoration-seagreen inline text-sm font-bold text-black underline underline-offset-4 lg:text-base dark:text-white dark:decoration-green-300"
+            className="decoration-seagreen inline text-base font-bold text-black underline underline-offset-4 dark:text-white dark:decoration-green-300"
           >
             Follow the Money to Justice
             <ExternalLink className="inline h-3.5 p-0" />

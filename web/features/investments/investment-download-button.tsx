@@ -42,7 +42,7 @@ export const InvestmentDownloadButton: React.FC<
       >
         <FileDownIcon
           size={32}
-          className="stroke-seagreen stroke-[1.5px] dark:stroke-green-300"
+          className="stroke-seagreen stroke-[1.5px] dark:stroke-white"
         />
       </Button>
     </Tooltip>

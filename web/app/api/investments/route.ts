@@ -46,7 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     tsquerySearchPhrase && tsquerySearchPhrase.length <= 3;
 
   // Assess whether user query contains special characters
-  const hasSpecialChars = /[&|!():*'"]/.test(tsquerySearchPhrase || "");
+  const hasSpecialChars = /[&|!():*'"-]/.test(tsquerySearchPhrase || "");
 
   // Prepare search clause
   const searchClause =

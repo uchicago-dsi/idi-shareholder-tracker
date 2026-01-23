@@ -31,23 +31,23 @@ export const InvestmentViewToggle: React.FC<InvestmentViewToggleProps> = ({
         <Button
           aria-label="Table view button"
           isIconOnly
-          className={`rounded-full ${value === "table" ? "bg-seagreen dark:bg-green-300" : "bg-transparent"}`}
+          className={`rounded-full ${value === "table" ? "bg-seagreen dark:bg-white" : "bg-transparent"}`}
           onPress={() => onSelect("table")}
         >
           <Sheet
             strokeWidth={1.5}
-            className={`${value === "table" ? "stroke-white dark:stroke-black" : "stroke-default-400"}`}
+            className={`${value === "table" ? "dark:stroke-forest stroke-white" : "stroke-default-400"}`}
           />
         </Button>
         <Button
           aria-label="Card view button"
           isIconOnly
-          className={`rounded-full ${value === "cards" ? "bg-seagreen dark:bg-green-300" : "bg-transparent"}`}
+          className={`rounded-full ${value === "cards" ? "bg-seagreen dark:bg-white" : "bg-transparent"}`}
           onPress={() => onSelect("cards")}
         >
           <StretchHorizontal
             strokeWidth={1.5}
-            className={`${value === "cards" ? "stroke-white dark:stroke-black" : "stroke-default-400"}`}
+            className={`${value === "cards" ? "dark:stroke-forest stroke-white" : "stroke-default-400"}`}
           />
         </Button>
       </div>
