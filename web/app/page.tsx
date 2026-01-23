@@ -1,243 +1,77 @@
-// @ts-nocheck
 "use client";
 
-import {
-  LinkIcon,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from "@nextui-org/react";
-import { useEffect, useMemo, useState } from "react";
+// Standard library imports
 import React from "react";
-import Link from "next/link";
-import { Input } from "@nextui-org/input";
-import { Spinner } from "@nextui-org/react";
-import { debounce } from "lodash";
 
-import { investmentService } from "./services";
+// Third-party imports
+import { Link } from "@heroui/react";
 
-import { title, subtitle } from "@/components/primitives";
-import { Investment } from "@/types";
-import { InvestmentSearchRequest } from "@/types";
-import { SearchIcon } from "@/components/icons";
+// Feature imports
+import { InvestmentSearchWidget } from "@/features/investments";
 
-export default function Home() {
-  const [investmentsLoading, setInvestmentsLoading] = useState(true);
-  const [investments, setInvestments] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortObj, setSortObj] = useState({
-    column: "investor_name",
-    direction: "ascending",
-  });
-  const [recordsPerPage, setRecordsPerPage] = useState(
-    parseInt(process.env.NEXT_PUBLIC_DEFAULT_TABLE_ROWS ?? "")
-  );
-  const [isNewSearch, setIsNewSearch] = useState(false);
-
-  const totalPages = useMemo(() => {
-    return totalRecords ? Math.ceil(totalRecords / recordsPerPage) : 0;
-  }, [totalRecords, recordsPerPage]);
-
-  useEffect(() => {
-    setInvestmentsLoading(true);
-    let request: InvestmentSearchRequest = {
-      cik: null,
-      cusip: null,
-      ticker: null,
-      issuer: null,
-      investor: null,
-      document: searchTerm ?? null,
-      limit: recordsPerPage,
-      page: currentPage,
-      sortColumn: sortObj["column"],
-      sortDirection: sortObj["direction"],
-    };
-
-    investmentService.search(request).then((results) => {
-      setTotalRecords(results["total"]);
-      setInvestments(results["data"]);
-      setInvestmentsLoading(false);
-      setIsNewSearch(false);
-    });
-  }, [currentPage, sortObj, isNewSearch, recordsPerPage]);
-
-  const onSearchChange = () => {
-    setCurrentPage(1);
-    setIsNewSearch(true);
-  };
-
+/**
+ * The application homepage. Renders a navigation bar, title and subtitle, description, search widget, and footer.
+ */
+const Home: React.FC = () => {
   return (
-    <div>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-4xl text-center justify-center">
-          <span className={title()}>Shareholder Tracker</span>
-          <div className={subtitle({ class: "mt-4" })}>
-            Discover institutional investments disclosed in SEC 13F filings
-          </div>
-        </div>
-        <div className="inline-block max-w-4xl">
-          This database compiles the latest quarterly shareholdings disclosed by
-          investors to the U.S. Securities and Exchange Commission. To search
-          for a company’s shareholders, type the name of the company or its
-          ticker symbol or CUSIP number in the search bar. You can also search
-          for shareholders by name. All search results can be sorted in
-          ascending or descending order by clicking on the select column
-          heading. To see the original Form 13F on the Securities and Exchange
-          Commission's website, click on the arrow icon in the "Form Link"
-          column.
-        </div>
-        <div className="inline-block max-w-4xl text-center">
-          <h2 className="py-4 font-bold text-2xl">
-            Disclosures for Quarter 2025-06-30
+    <div className="flex w-full flex-col gap-8">
+      {/** HEADER */}
+      <div className="flex w-full flex-col gap-8">
+        {/** TITLE BLOCK */}
+        <div className="flex flex-col items-center text-center">
+          <h1 className="font-bebas-neue text-4xl lg:text-6xl">
+            Shareholder Tracker
+          </h1>
+          <h2 className="font-montserrat text-lg text-zinc-500 lg:text-xl dark:text-zinc-400">
+            Search for the shareholders of publicly traded companies
           </h2>
-          <Input
-            isClearable
-            placeholder="Search investments by keyword..."
-            size={"lg"}
-            startContent={<SearchIcon />}
-            type="text"
-            value={searchTerm}
-            onClear={() => onSearchChange()}
-            onValueChange={(val) => {
-              setSearchTerm(val);
-              debounce(() => onSearchChange(), 1500)();
-            }}
-          />
-          <div className="w-screen font-bold" />
         </div>
-        <div className="text-center">
-          {investmentsLoading ? (
-            <div className="py-8">
-              <Spinner color="primary" label="Loading..." size="lg" />
-            </div>
-          ) : (
-            <>
-              <h3 className="font-bold py-4 text-lg">
-                <span className="font-bold text-green-600">
-                  {totalRecords.toLocaleString()}
-                </span>{" "}
-                total record(s) found.
-                <br />
-                Viewing results{" "}
-                {((currentPage - 1) * recordsPerPage + 1).toLocaleString()}-
-                {Math.min(
-                  totalRecords,
-                  currentPage * recordsPerPage
-                ).toLocaleString()}
-                .
-              </h3>
-              <div className="flex justify-between items-center pb-4">
-                <label className="flex items-center text-default-400 text-small">
-                  Rows per page:
-                  <select
-                    className="bg-transparent outline-none text-default-400 text-small"
-                    value={recordsPerPage}
-                    onChange={(e) => {
-                      setRecordsPerPage(parseInt(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
-                </label>
-              </div>
-              <Table
-                aria-label=""
-                bottomContent={
-                  investments.length > 0 ? (
-                    <div className="flex w-full justify-center">
-                      <Pagination
-                        isCompact
-                        showControls
-                        showShadow
-                        color="primary"
-                        page={currentPage}
-                        size="lg"
-                        total={totalPages}
-                        onChange={(page) => setCurrentPage(page)}
-                      />
-                    </div>
-                  ) : null
-                }
-                bottomContentPlacement="outside"
-                sortDescriptor={sortObj}
-                onSortChange={(item) => {
-                  setCurrentPage(1);
-                  setSortObj(item);
-                }}
-              >
-                <TableHeader>
-                  <TableColumn key="stock_issuer" allowsSorting>
-                    COMPANY
-                  </TableColumn>
-                  <TableColumn key="stock_ticker" allowsSorting>
-                    TICKER
-                  </TableColumn>
-                  <TableColumn key="stock_cusip" allowsSorting>
-                    CUSIP
-                  </TableColumn>
-                  <TableColumn key="investor_name" allowsSorting>
-                    SHAREHOLDER
-                  </TableColumn>
-                  <TableColumn>OTHER SHAREHOLDERS</TableColumn>
-                  <TableColumn key="stock_shares_prn_amt" allowsSorting>
-                    STAKE
-                  </TableColumn>
-                  <TableColumn key="form_report_date" allowsSorting>
-                    REPORT DATE
-                  </TableColumn>
-                  <TableColumn key="form_filing_date" allowsSorting>
-                    FILING DATE
-                  </TableColumn>
-                  <TableColumn>FORM LINK</TableColumn>
-                </TableHeader>
-                <TableBody
-                  emptyContent={
-                    investmentsLoading ? "Loading..." : "No rows to display."
-                  }
-                  items={investments}
-                >
-                  {(item: Investment) => (
-                    <TableRow key={item.stock_id}>
-                      <TableCell>{item.stock_issuer}</TableCell>
-                      <TableCell>{item?.stock_ticker ?? "-"}</TableCell>
-                      <TableCell>{item?.stock_cusip ?? "-"}</TableCell>
-                      <TableCell>{item?.investor_name ?? "-"}</TableCell>
-                      <TableCell>
-                        {item.other_investor_names?.join(", ") ?? "-"}
-                      </TableCell>
-                      <TableCell>
-                        {parseInt(item.stock_shares_prn_amt).toLocaleString() +
-                          " " +
-                          item.stock_prn_amt}
-                      </TableCell>
-                      <TableCell>{item.form_report_date}</TableCell>
-                      <TableCell>{item.form_filing_date}</TableCell>
-                      <TableCell>
-                        <Link
-                          className="text-cyan-500 hover:text-indigo-900 font-bold"
-                          href={item.form_url}
-                          target="_blank"
-                        >
-                          <LinkIcon />
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </>
-          )}
+
+        {/** DESCRIPTION */}
+        <div className="font-montserrat flex flex-col gap-2 text-base">
+          <p>
+            This database allows you to see the shareholders of thousands of
+            publicly traded companies based around the world. It compiles public
+            disclosures made by more than 4,200 investors showing the shares
+            that they own. For more information about the database, and the
+            sources it scrapes, see the{" "}
+            <Link
+              href="/about"
+              className="decoration-seagreen inline text-base font-bold text-black underline underline-offset-4 dark:text-white dark:decoration-green-300"
+            >
+              About
+            </Link>{" "}
+            page.
+          </p>
+          <p>
+            To search for a company’s shareholders, type the company&#39;s name
+            or CUSIP number in the search bar. You can also search investments
+            more broadly by country, sector, or security identifier (e.g.,
+            ticker, CUSIP, ISIN, FIGI). The search results can be viewed as a
+            data table (default) or as a list of cards with more detailed
+            information summarized in text format. Sort the results in ascending
+            or descending order for a given column by using the &quot;Sort
+            by&quot; dropdown. Double click on a row in the table view or a link
+            icon in the card view to navigate to the original data source for
+            that investment. Finally, to download your current search results as
+            a CSV file, click on the download button. At this time, a maximum of
+            10,000 records can be downloaded at once through the interface. To
+            access larger selections of data, please visit the{" "}
+            <Link
+              href="/downloads"
+              className="decoration-seagreen inline text-base font-bold text-black underline underline-offset-4 dark:text-white dark:decoration-green-300"
+            >
+              Downloads
+            </Link>{" "}
+            page.
+          </p>
         </div>
-      </section>
+      </div>
+
+      {/** SEARCH WIDGET */}
+      <InvestmentSearchWidget />
     </div>
   );
-}
+};
+
+export default Home;
