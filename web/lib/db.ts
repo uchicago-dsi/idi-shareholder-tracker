@@ -1,4 +1,4 @@
-"server only";
+import "server-only";
 
 // Third-party imports
 import postgres from "postgres";

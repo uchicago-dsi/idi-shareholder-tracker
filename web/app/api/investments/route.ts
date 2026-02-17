@@ -1,5 +1,3 @@
-"server only";
-
 // Third-party imports
 import { NextRequest, NextResponse } from "next/server";
 
