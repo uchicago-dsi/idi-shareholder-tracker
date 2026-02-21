@@ -1,5 +1,6 @@
 // Third-party imports
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 // Style imports
 import "./globals.css";
@@ -53,6 +54,7 @@ export default function RootLayout({
             </div>
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );

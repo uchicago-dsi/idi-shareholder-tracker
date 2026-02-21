@@ -17,6 +17,7 @@
     "@heroui/system": "^2.4.25",
     "@heroui/table": "^2.2.29",
     "@json2csv/plainjs": "^7.0.6",
+    "@vercel/analytics": "^1.6.1",
     "country-flag-icons": "^1.6.4",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.24.0",
