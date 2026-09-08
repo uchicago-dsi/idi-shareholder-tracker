@@ -1,4 +1,5 @@
 # Standard library imports
+import argparse
 import logging
 import re
 import sqlite3
@@ -1048,7 +1049,10 @@ def _process_sec_investments(
 
 
 def _merge_datasets(
-    nbim_df: pd.DataFrame, pension_funds_df: pd.DataFrame, sec_df: pd.DataFrame
+    nbim_df: pd.DataFrame,
+    pension_funds_df: pd.DataFrame,
+    sec_df: pd.DataFrame,
+    last_accessed_date: str,
 ) -> pd.DataFrame:
     """Combines equity datasets from NBIM, the SEC, and various pension funds.
 
@@ -1061,6 +1065,9 @@ def _merge_datasets(
         pension_funds_df: A DataFrame of pension funds data.
 
         sec_df: A DataFrame of SEC data.
+
+        last_accessed_date: The value to use for the
+            release's `last_accessed_date` column.
 
     Returns:
         A DataFrame containing all data from the three sources.
@@ -1276,7 +1283,7 @@ def _merge_datasets(
         final_df.loc[final_df[col] == 0, [col]] = np.nan
 
     # Add last accesssed date
-    final_df.loc[:, "last_accessed_date"] = "2025-12-18"
+    final_df.loc[:, "last_accessed_date"] = last_accessed_date
 
     return final_df
 
@@ -1290,6 +1297,28 @@ def main() -> None:
     Returns:
         `None`
     """
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Merges securities datasets into a combined release file."
+    )
+    parser.add_argument(
+        "--sec-only",
+        action="store_true",
+        help=(
+            "Process only SEC Form 13F investments, skipping "
+            "the NBIM and pension fund input files."
+        ),
+    )
+    parser.add_argument(
+        "--last-accessed-date",
+        default=datetime.now(tz=timezone.utc).strftime("%Y-%m-%d"),
+        help=(
+            "Value for the release's last_accessed_date column. "
+            "Defaults to today's date (UTC)."
+        ),
+    )
+    args = parser.parse_args()
+
     # Instantiate logger
     logger = logging.getLogger("MANUAL DATA MERGE")
     logger.setLevel(logging.INFO)
@@ -1319,23 +1348,35 @@ def main() -> None:
     # Record date of processing
     timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d")
 
-    # Load and clean NBIM investments
-    logger.info("Processing NBIM securities.")
-    nbim_df = _process_nbim_investments(nbim_fpath)
-
-    # Load and clean pension funds
-    logger.info("Processing pension fund securites.")
-    pension_funds_df = _process_pension_funds(
-        data_fpath=pension_funds_fpath, currency_map_fpath=currency_map_fpath
-    )
-
     # Load and clean SEC investments
     logger.info("Processing SEC Form 13F investments.")
     sec_df = _process_sec_investments(sec_fpath, pension_fund_labels_fpath)
 
+    if args.sec_only:
+        # Substitute empty DataFrames for the external sources and add
+        # the columns they would otherwise contribute during concatenation
+        logger.info("Skipping NBIM and pension fund securities (--sec-only).")
+        nbim_df = sec_df.iloc[0:0]
+        pension_funds_df = sec_df.iloc[0:0]
+        sec_df["security_vintage_year"] = ""
+        sec_df["stock_percent_ownership"] = np.nan
+    else:
+        # Load and clean NBIM investments
+        logger.info("Processing NBIM securities.")
+        nbim_df = _process_nbim_investments(nbim_fpath)
+
+        # Load and clean pension funds
+        logger.info("Processing pension fund securites.")
+        pension_funds_df = _process_pension_funds(
+            data_fpath=pension_funds_fpath,
+            currency_map_fpath=currency_map_fpath,
+        )
+
     # Merge datasets
     logger.info("Merging datasets.")
-    final_df = _merge_datasets(sec_df, pension_funds_df, nbim_df)
+    final_df = _merge_datasets(
+        sec_df, pension_funds_df, nbim_df, args.last_accessed_date
+    )
 
     # Write output dataset to disk as CSV file
     logger.info("Writing output dataset to CSV file.")
