@@ -257,9 +257,20 @@ Pension counts must equal Step 0 exactly; SEC count should look plausible for
 the quarter. Spot-check the website immediately — it reads this table live, so
 new data (or a mistake) is user-visible the moment `COMMIT` succeeds.
 
-**Rollback:** `BEGIN; DELETE FROM investment; INSERT INTO investment SELECT *
-FROM investment_backup_YYYYMMDD; COMMIT;` (or scoped by source). Drop old
-backup tables once confident.
+**Rollback:** restore from the Step 0 backup. Name the columns explicitly — the
+same 37 as the `\copy` above. `SELECT *` would also supply the generated `id`
+and `document` columns, which Postgres refuses to insert into (`428C9`), so the
+shorter form fails outright:
+
+```sql
+BEGIN;
+DELETE FROM investment;
+INSERT INTO investment (source, document_report_date, document_filing_date, investor_type, investor_cik, investor_name, investor_abbreviation, investor_country_name, investor_country_code, investor_region_name, investor_region_code, issuer_name, issuer_country_name, issuer_country_code, issuer_sector, security_type, security_vintage_year, security_principal_amount_currency_code, security_principal_amount, security_market_value_currency_code, security_market_value_amount, security_market_value_multiplier, security_market_value_conversion_rate, security_market_value_amount_usd, security_isin, security_cusip, security_figi, stock_ticker, stock_number_of_shares, stock_percent_ownership, stock_percent_voting_power, stock_voting_auth_sole, stock_voting_auth_shared, stock_voting_auth_none, url, text, last_accessed_date) SELECT source, document_report_date, document_filing_date, investor_type, investor_cik, investor_name, investor_abbreviation, investor_country_name, investor_country_code, investor_region_name, investor_region_code, issuer_name, issuer_country_name, issuer_country_code, issuer_sector, security_type, security_vintage_year, security_principal_amount_currency_code, security_principal_amount, security_market_value_currency_code, security_market_value_amount, security_market_value_multiplier, security_market_value_conversion_rate, security_market_value_amount_usd, security_isin, security_cusip, security_figi, stock_ticker, stock_number_of_shares, stock_percent_ownership, stock_percent_voting_power, stock_voting_auth_sole, stock_voting_auth_shared, stock_voting_auth_none, url, text, last_accessed_date FROM investment_backup_YYYYMMDD;
+COMMIT;
+```
+
+Add the same `WHERE source = '…'` to both statements to roll back one source
+only. Drop old backup tables once confident.
 
 ### 2g. Optional — Downloads page (Cloudflare R2)
 
