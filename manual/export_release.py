@@ -152,6 +152,18 @@ def _build_parquet_and_sqlite(
     Returns:
         The DuckDB connection, holding the release in a `release` table.
     """
+    # Reject a CSV whose columns are not the release columns in order:
+    # `columns=` below assigns names positionally, so a reordered export
+    # would be silently mislabeled rather than rejected
+    with open(csv_fpath, encoding="utf-8") as f:
+        header = f.readline().rstrip("\r\n").split("|")
+    if header != COLUMNS:
+        raise ValueError(
+            f"CSV header does not match the release columns.\n"
+            f"  expected: {COLUMNS}\n"
+            f"  found:    {header}"
+        )
+
     # Read numeric columns as doubles so integer-valued decimals such as
     # "1234.0" parse, then cast the integer columns on the way out
     read_types = {
