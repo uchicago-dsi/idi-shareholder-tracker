@@ -12,7 +12,7 @@ Three independent pieces of work, each replacing only its own `source` rows:
 | NBIM | CSV downloaded from nbim.no | § 5 | **Loaded to prod 2026-11-10** (2026-06-30 snapshot, 7,077 rows) |
 | Pension workbook | Google Sheet → `.xlsx` | §§ 2–4, 6 | **Loaded to prod 2026-11-10** (27,114 rows, 15 funds) |
 | SEC-side relabel (PGGM, APG ×2) | one `UPDATE` in prod | § 6a | **Done 2026-11-10** (§ 8.2) |
-| BPL ownership-field correction | one `UPDATE` in prod | § 6a | **Done 2026-11-10** (§ 8.2, UPDATE 1148) |
+| BPL ownership-field correction | one `UPDATE` in prod | § 6a | **Parked** (decision 2026-11-10, commit d3e16ce): not partner-requested; prod BPL values unchanged. Raise with the PKA question. |
 | Downloads page release | `export_release.py` → R2 → `downloads.ts` | § 8.6 | Export built and validated 2026-11-10; R2 upload + PR merge pending |
 | About page | `web/app/about/page.tsx` | § 6b / § 8.7 | Edited on the branch; PR merge pending |
 
