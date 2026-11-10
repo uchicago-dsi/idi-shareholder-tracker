@@ -9,18 +9,20 @@ Three independent pieces of work, each replacing only its own `source` rows:
 
 | Piece | Input | Section | Status (2026-11-10) |
 |---|---|---|---|
-| NBIM | CSV downloaded from nbim.no | § 5 | Code implemented (§ 5b, 2026-11-10); load not yet run |
-| Pension workbook | Google Sheet → `.xlsx` | §§ 2–4, 6 | Code implemented (§ 4, 2026-11-10); dry run (§ 4.5) passes on the 2026-11-10 download; load not yet run |
-| SEC-side relabel (PGGM, APG ×2) | one `UPDATE` in prod | § 6a | Ready to run |
-| BPL ownership-field correction | one `UPDATE` in prod | § 6a | **Not running** — not partner-requested; parked until they confirm |
+| NBIM | CSV downloaded from nbim.no | § 5 | **Loaded to prod 2026-11-10** (2026-06-30 snapshot, 7,077 rows) |
+| Pension workbook | Google Sheet → `.xlsx` | §§ 2–4, 6 | **Loaded to prod 2026-11-10** (27,114 rows, 15 funds) |
+| SEC-side relabel (PGGM, APG ×2) | one `UPDATE` in prod | § 6a | **Done 2026-11-10** (§ 8.2) |
+| BPL ownership-field correction | one `UPDATE` in prod | § 6a | **Done 2026-11-10** (§ 8.2, UPDATE 1148) |
+| Downloads page release | `export_release.py` → R2 → `downloads.ts` | § 8.6 | Export built and validated 2026-11-10; R2 upload + PR merge pending |
+| About page | `web/app/about/page.tsx` | § 6b / § 8.7 | Edited on the branch; PR merge pending |
 
-**To run it all: § 8 is the ordered prod run sheet.**
+**§ 8 is the ordered prod run sheet. § 8.0–8.5 were executed on 2026-11-10 and
+the § 8.5 table matched exactly: 21 sources, 1,980,171 rows.**
 
 Everything below reflects the sheet as re-downloaded on 2026-11-10 and the code
-on branch `issue-17-data-refresh`. Nothing has been run against prod for any of
-it. § 4 and § 5b are implemented and the currency map (§ 4.3) is rebuilt and
-committed; the § 4.5 dry run passes. **The loads (§ 5c, § 6d) have not been
-run.**
+on branch `issue-17-data-refresh`. Pending re-scrapes from the data team:
+Sampension (frozen on its 2025-08-31 rows) and AP4 (loaded without market
+values); each is a single-source reload when the corrected tab arrives.
 
 ---
 
