@@ -14,22 +14,57 @@ import pandas as pd
 # Local imports
 from currency import CurrencyConverter
 
+logger = logging.getLogger("MANUAL DATA MERGE")
 
-def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
-    """Loads, cleans, and standardizes NBIM investments.
+
+def _process_nbim_investments(
+    data_fpath: Path, report_date: str
+) -> pd.DataFrame:
+    """Loads, cleans, and standardizes NBIM (Norges Bank) equity holdings.
+
+    Reads the "total holdings by country" Equity report downloaded from
+    nbim.no: UTF-16 with BOM, semicolon-delimited, one row per company
+    (see PENSION_FUND_REFRESH.md § 5a). The returned frame carries every
+    column `_merge_datasets` expects, so it can be merged on its own.
 
     Args:
-        data_fpath: The path to the NBIM investments file.
+        data_fpath: The path to the NBIM equity report CSV file.
+
+        report_date: The report's snapshot date, formatted as `YYYY-MM-DD`.
+            Used for `document_report_date` and the row URL.
 
     Returns:
         A DataFrame of NBIM investments.
     """
     # Read file
-    nbim_df = pd.read_csv(data_fpath)
+    nbim_df = pd.read_csv(data_fpath, sep=";", encoding="utf-16")
+
+    # Rename columns, keeping only those that are loaded
+    col_map = {
+        "Name": "issuer_name",
+        "Country": "issuer_country_name",
+        "Industry": "issuer_sector",
+        "Market Value(USD)": "security_market_value_amount",
+        "Ownership": "stock_percent_ownership",
+        "Voting": "stock_percent_voting_power",
+    }
+    missing_cols = sorted(set(col_map) - set(nbim_df.columns))
+    if missing_cols:
+        raise ValueError(
+            f"NBIM report {data_fpath.name} is missing expected "
+            f"columns {missing_cols}. Found: {nbim_df.columns.tolist()}"
+        )
+    nbim_df = nbim_df.rename(columns=col_map)[list(col_map.values())]
+
+    # Convert percentage strings (e.g., "1.43%") to floats
+    for col in ("stock_percent_ownership", "stock_percent_voting_power"):
+        nbim_df[col] = pd.to_numeric(
+            nbim_df[col].astype(str).str.strip().str.rstrip("%")
+        ).astype(float)
 
     # Add constant columns
     nbim_df["source"] = "NORGES BANK"
-    nbim_df["document_report_date"] = "2025-06-30"
+    nbim_df["document_report_date"] = report_date
     nbim_df["document_filing_date"] = ""
     nbim_df["investor_type"] = "PENSION FUND"
     nbim_df["investor_abbreviation"] = "NBIM"
@@ -49,18 +84,17 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
     nbim_df["security_figi"] = ""
     nbim_df["stock_ticker"] = ""
     nbim_df["url"] = (
-        "https://www.nbim.no/en/investments/all-investments#/2025-06-30/0-equity"
+        "https://www.nbim.no/en/investments/all-investments"
+        f"#/{report_date}/0-equity"
     )
 
-    # Rename columns
-    col_map = {
-        "company": "issuer_name",
-        "country": "issuer_country_name",
-        "sector": "issuer_sector",
-        "value (USD)": "security_market_value_amount",
-        "ownership": "stock_percent_ownership",
-    }
-    nbim_df = nbim_df.rename(columns=col_map)
+    # Add columns NBIM does not report but the merge expects
+    nbim_df["security_principal_amount_currency_code"] = ""
+    nbim_df["security_principal_amount"] = np.nan
+    nbim_df["stock_number_of_shares"] = np.nan
+    nbim_df["stock_voting_auth_sole"] = np.nan
+    nbim_df["stock_voting_auth_shared"] = np.nan
+    nbim_df["stock_voting_auth_none"] = np.nan
 
     # Make text-based column values uppercase
     for col in ("issuer_name", "issuer_country_name", "issuer_sector"):
@@ -71,7 +105,8 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
         "ARGENTINA": "AR",
         "AUSTRALIA": "AU",
         "AUSTRIA": "AT",
-        "BAMAHAS": "BS",
+        "BAHAMAS": "BS",
+        "BANGLADESH": "BD",
         "BELGIUM": "BE",
         "BERMUDA": "BM",
         "BRAZIL": "BR",
@@ -113,7 +148,9 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
         "ITALY": "IT",
         "JAPAN": "JP",
         "JERSEY": "JE",
+        "JORDAN": "JO",
         "KAZAKHSTAN": "KZ",
+        "KENYA": "KE",
         "KUWAIT": "KW",
         "LIECHTENSTEIN": "LI",
         "LITHUANIA": "LT",
@@ -123,6 +160,7 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
         "MAURITIUS": "MU",
         "MEXICO": "MX",
         "MONACO": "MC",
+        "MOROCCO": "MA",
         "NETHERLANDS": "NL",
         "NEW ZEALAND": "NZ",
         "NIGERIA": "NG",
@@ -154,6 +192,7 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
         "THAILAND": "TH",
         "TRINIDAD AND TOBAGO": "TT",
         "TURKEY": "TR",
+        "TÜRKIYE": "TR",
         "UKRAINE": "UA",
         "UNITED ARAB EMIRATES": "AE",
         "UNITED KINGDOM": "GB",
@@ -167,9 +206,20 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
     nbim_df["issuer_country_code"] = nbim_df["issuer_country_name"].map(
         country_codes
     )
+    unmapped = sorted(
+        nbim_df.loc[
+            nbim_df["issuer_country_code"].isna(), "issuer_country_name"
+        ].unique()
+    )
+    if unmapped:
+        logger.warning(
+            "No country code for NBIM issuer countries %s; add them to the "
+            "map in _process_nbim_investments.",
+            unmapped,
+        )
 
-    # Set USD market value column
-    nbim_df.loc[:, ["security_market_value_amount_usd"]] = nbim_df[
+    # Set USD market value column (values are native USD, x1)
+    nbim_df["security_market_value_amount_usd"] = nbim_df[
         "security_market_value_amount"
     ]
 
@@ -193,6 +243,8 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
             "issuer_sector",
             "security_vintage_year",
             "security_type",
+            "security_principal_amount_currency_code",
+            "security_principal_amount",
             "security_market_value_currency_code",
             "security_market_value_amount",
             "security_market_value_multiplier",
@@ -202,229 +254,527 @@ def _process_nbim_investments(data_fpath: Path) -> pd.DataFrame:
             "security_cusip",
             "security_figi",
             "stock_ticker",
+            "stock_number_of_shares",
+            "stock_percent_ownership",
+            "stock_percent_voting_power",
+            "stock_voting_auth_sole",
+            "stock_voting_auth_shared",
+            "stock_voting_auth_none",
             "url",
         ]
     ]
 
 
+# Metadata for each tab of the pension fund workbook, keyed on the tab name
+# (PENSION_FUND_REFRESH.md § 4.1). `source` strings for funds already in
+# prod are kept verbatim so each load is a clean per-source replace;
+# `investor_name` is the About-page spelling (uppercased on load, like every
+# other investor name in the table) and deliberately does *not* come from
+# the sheet's `Shareholder - Name`, which varies between rows.
+# `multiplier` is used when the tab has no multiplier value; `currency`
+# when it has no currency value; `assert_currency` fails the run if any
+# row's currency differs (AP7's values are SEK whatever the sheet says).
+# Sampension has no tab today (§ 3.3) but keeps its entry so the
+# re-scraped tab loads without a code change.
+PENSION_FUND_TABS: dict[str, dict] = {
+    "AMF (checked)": {
+        "source": "AMF PENSIONSFÖRSÄKRING AB",
+        "investor_abbreviation": "AMF",
+        "investor_name": "AMF Pension",
+        "investor_country_name": "SWEDEN",
+        "investor_country_code": "SE",
+    },
+    "AP2 (checked)": {
+        "source": "ANDRA AP-FONDEN",
+        "investor_abbreviation": "AP2",
+        "investor_name": "Andra AP-Fonden",
+        "investor_country_name": "SWEDEN",
+        "investor_country_code": "SE",
+    },
+    "AP3 (checked)": {
+        "source": "TREDJE AP-FONDEN",
+        "investor_abbreviation": "AP3",
+        "investor_name": "Tredje AP-fonden",
+        "investor_country_name": "SWEDEN",
+        "investor_country_code": "SE",
+    },
+    "AP4 (checked)": {
+        "source": "FJÄRDE AP-FONDEN",
+        "investor_abbreviation": "AP4",
+        "investor_name": "Fjärde AP-fonden",
+        "investor_country_name": "SWEDEN",
+        "investor_country_code": "SE",
+        "map_percent_ownership": True,
+    },
+    "AP7 (checked)": {
+        "source": "SJUNDE AP-FONDEN",
+        "investor_abbreviation": "AP7",
+        "investor_name": "Sjunde AP-fonden",
+        "investor_country_name": "SWEDEN",
+        "investor_country_code": "SE",
+        "multiplier": "x1",
+        "assert_currency": "SEK",
+    },
+    "BPFBOUW (checked)": {
+        "source": "BOUWNIJVERHEID",
+        "investor_abbreviation": "bpfBOUW",
+        "investor_name": "bpfBOUW",
+        "investor_country_name": "NETHERLANDS",
+        "investor_country_code": "NL",
+    },
+    "DANICA (checked)": {
+        "source": "DANICA PENSION LIVSFORSIKRINGS AB",
+        "investor_abbreviation": "",
+        "investor_name": "Danica Pension",
+        "investor_country_name": "DENMARK",
+        "investor_country_code": "DK",
+    },
+    "KPA (checked)": {
+        "source": "KPA PENSIONSFORSAKRING",
+        "investor_abbreviation": "KPA",
+        "investor_name": "KPA Pension",
+        "investor_country_name": "SWEDEN",
+        "investor_country_code": "SE",
+    },
+    "LACERA (checked)": {
+        "source": "LOS ANGELES COUNTY EMPLOYEES RETIREMENT ASSOCIATION",
+        "investor_abbreviation": "LACERA",
+        "investor_name": "Los Angeles County Employees Retirement Association",
+        "investor_country_name": "UNITED STATES",
+        "investor_country_code": "US",
+        "investor_region_name": "CALIFORNIA",
+        "investor_region_code": "US-CA",
+        "multiplier": "x1",
+        "currency": "USD",
+    },
+    "PENSION DANMARK (checked)": {
+        "source": "PENSIONDANMARK PENSIONSFORSIKRING A/S",
+        "investor_abbreviation": "",
+        "investor_name": "PensionDanmark",
+        "investor_country_name": "DENMARK",
+        "investor_country_code": "DK",
+    },
+    "PKA (checked)": {
+        "source": "PENSIONSKASSERNES ADMINISTRATION A/S",
+        "investor_abbreviation": "PKA",
+        "investor_name": "Pensionskassernes Administration",
+        "investor_country_name": "DENMARK",
+        "investor_country_code": "DK",
+        "multiplier": "x1",
+    },
+    "PME (checked)": {
+        "source": "PENSIOENFONDS VAN DE METALEKTRO",
+        "investor_abbreviation": "PME",
+        "investor_name": "PME pensioenfonds",
+        "investor_country_name": "NETHERLANDS",
+        "investor_country_code": "NL",
+        "multiplier": "x1",
+    },
+    "PMT (checked)": {
+        "source": "PENSIOENFONDS METAAL EN TECHNIEK",
+        "investor_abbreviation": "PMT",
+        "investor_name": "Metal and Technology Pension Fund",
+        "investor_country_name": "NETHERLANDS",
+        "investor_country_code": "NL",
+        "multiplier": "x1",
+    },
+    "RAILOV (checked)": {
+        "source": "PENSIOENFONDS RAIL & OV",
+        "investor_abbreviation": "Rail & OV",
+        "investor_name": "Rail & OV",
+        "investor_country_name": "NETHERLANDS",
+        "investor_country_code": "NL",
+        "multiplier": "x1",
+    },
+    "SAMPENSION (checked)": {
+        "source": "SAMPENSION ADMINISTRATIONSSELSKAB A/S",
+        "investor_abbreviation": "",
+        "investor_name": "Sampension",
+        "investor_country_name": "DENMARK",
+        "investor_country_code": "DK",
+        "multiplier": "x1",
+    },
+    "VERVOER (checked)": {
+        "source": "PENSIOENFONDS VERVOER",
+        "investor_abbreviation": "",
+        "investor_name": "Pensioenfonds Vervoer",
+        "investor_country_name": "NETHERLANDS",
+        "investor_country_code": "NL",
+    },
+}
+
+# Workbook tabs that are not fund data
+PENSION_FUND_SKIPPED_TABS = ("SOURCES",)
+
+# Header renames applied to every tab (PENSION_FUND_REFRESH.md § 4.2.1)
+PENSION_FUND_HEADER_RENAMES = {
+    "Security - Market Value": "Security - Market Value - Amount",
+    "Report Date URL": "Data Source URL",
+}
+
+# Header renames applied to one tab only: AP4's country column holds codes
+PENSION_FUND_TAB_HEADER_RENAMES = {
+    "AP4 (checked)": {"Issuer - Country Name": "Issuer - Country Code"},
+}
+
+# Every sheet column the parser reads, mapped to its release column. Tabs
+# missing one of these get it added as empty.
+PENSION_FUND_COLUMNS = {
+    "Issuer - Name": "issuer_name",
+    "Issuer - Country Name": "issuer_country_name",
+    "Issuer - Country Code": "issuer_country_code",
+    "Issuer - Sector": "issuer_sector",
+    "Security - Type": "security_type",
+    "Security - ISIN": "security_isin",
+    "Security - Report Date": "document_report_date",
+    "Security - Market Value - Currency Code": (
+        "security_market_value_currency_code"
+    ),
+    "Security - Market Value - Amount": "security_market_value_amount",
+    "Security - Market Value - Multiplier": (
+        "security_market_value_multiplier"
+    ),
+    "Stock - Ticker": "stock_ticker",
+    "Stock - Number of Shares": "stock_number_of_shares",
+    "Stock - Percent Ownership": "stock_percent_ownership",
+    "Stock - Percent Voting Power": "stock_percent_voting_power",
+    "Data Source URL": "url",
+}
+
+# Issuer names that are really country subtotal lines (bpfBOUW, § 4.2.2)
+PENSION_FUND_SUBTOTAL_ISSUERS = {"Hong Kong", "Saoedi-Arabië", "Zuid Korea"}
+
+# Multiplier spellings after normalisation (lowercase, no `_`/spaces),
+# mapped to the canonical spelling stored in the release, and the factor
+# each applies to a market value
+PENSION_FUND_MULTIPLIERS = {
+    "x1": "x1",
+    "x100": "x100",
+    "x1000": "x1_000",
+    "x1000000": "x1_000_000",
+}
+MULTIPLIER_FACTORS = {
+    "x1": 1,
+    "x100": 100,
+    "x1_000": 1_000,
+    "x1_000_000": 1_000_000,
+}
+
+ISIN_PATTERN = re.compile(r"^[A-Z]{2}[A-Z0-9]{9}[0-9]$")
+
+
+def _parse_number(value: object) -> float:
+    """Parses a sheet cell that should hold a number.
+
+    Handles whitespace used as a digit grouping character (`1 146 640`),
+    `,` as a thousands separator (`1,146,640`), `,` as a decimal mark when
+    there is no `.` and at most two digits follow it (`0,04`), and a
+    trailing `%`. Anything else that is not numeric becomes NaN.
+
+    Args:
+        value: The raw cell value.
+
+    Returns:
+        The parsed number, or NaN.
+    """
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return np.nan
+    if isinstance(value, (int, float, np.integer, np.floating)):
+        return float(value)
+    text = re.sub(r"\s+", "", str(value)).rstrip("%")
+    if "," in text and "." not in text:
+        if re.fullmatch(r"-?\d+,\d{1,2}", text):
+            text = text.replace(",", ".")
+        else:
+            text = text.replace(",", "")
+    else:
+        text = text.replace(",", "")
+    try:
+        return float(text)
+    except ValueError:
+        return np.nan
+
+
+def _parse_report_date(value: object) -> str:
+    """Parses a sheet report date into an ISO `YYYY-MM-DD` string.
+
+    Accepts real dates/timestamps and ISO strings; falls back to
+    day-first parsing for strings such as `31-12-2025` (Danica).
+
+    Args:
+        value: The raw cell value.
+
+    Returns:
+        The date as `YYYY-MM-DD`, or an empty string if blank.
+
+    Raises:
+        ValueError: If the value cannot be read as a date.
+    """
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return ""
+    if isinstance(value, (pd.Timestamp, datetime)):
+        return value.strftime("%Y-%m-%d")
+    text = str(value).strip()
+    if not text:
+        return ""
+    parsed = pd.to_datetime(text, format="%Y-%m-%d", errors="coerce")
+    if pd.isna(parsed):
+        parsed = pd.to_datetime(text, dayfirst=True, errors="coerce")
+    if pd.isna(parsed):
+        raise ValueError(f"Cannot parse report date {value!r}.")
+    return parsed.strftime("%Y-%m-%d")
+
+
+def _canonical_multiplier(value: object, default: str) -> str:
+    """Maps a sheet multiplier to its canonical spelling.
+
+    Normalises spelling variants (`x1_00` → `x100`, `X1 000` → `x1_000`)
+    and fails on anything that is not one of the four known multipliers.
+
+    Args:
+        value: The raw cell value.
+
+        default: The multiplier to use when the cell is blank.
+
+    Returns:
+        One of `x1`, `x100`, `x1_000`, `x1_000_000`.
+
+    Raises:
+        ValueError: If the value is not a recognised multiplier.
+    """
+    raw = "" if value is None or pd.isna(value) else str(value).strip()
+    if not raw:
+        raw = default
+    key = re.sub(r"[\s_,]", "", raw.lower())
+    if key not in PENSION_FUND_MULTIPLIERS:
+        raise ValueError(
+            f"Unknown market value multiplier {value!r}; expected one of "
+            f"{sorted(MULTIPLIER_FACTORS)}."
+        )
+    return PENSION_FUND_MULTIPLIERS[key]
+
+
+def _read_pension_fund_tab(
+    xls: pd.ExcelFile, tab: str, meta: dict
+) -> pd.DataFrame:
+    """Reads and cleans one fund tab of the pension fund workbook.
+
+    Applies the per-tab rules of PENSION_FUND_REFRESH.md § 4.2: header
+    normalisation, row drops (exact duplicates, blank issuers with no
+    ISIN, country subtotal lines), number/date/ISIN/multiplier/currency
+    parsing and the security type rules. Drop and ISIN-blanking counts are
+    logged per tab.
+
+    Args:
+        xls: The open workbook.
+
+        tab: The tab name (a key of `PENSION_FUND_TABS`).
+
+        meta: The tab's entry in `PENSION_FUND_TABS`.
+
+    Returns:
+        The tab's rows with release column names, before investor
+            metadata, country codes and USD conversion are added.
+    """
+    df = xls.parse(tab)
+    n_in = len(df)
+
+    # Normalise headers
+    df.columns = [str(col).strip() for col in df.columns]
+    df = df.rename(columns=PENSION_FUND_HEADER_RENAMES)
+    df = df.rename(columns=PENSION_FUND_TAB_HEADER_RENAMES.get(tab, {}))
+    for col in PENSION_FUND_COLUMNS:
+        if col not in df.columns:
+            df[col] = np.nan
+    df = df[list(PENSION_FUND_COLUMNS)].rename(columns=PENSION_FUND_COLUMNS)
+
+    # Drop exact duplicate rows
+    n_dupes = int(df.duplicated().sum())
+    df = df.drop_duplicates()
+
+    # Tidy text columns
+    for col in (
+        "issuer_name",
+        "issuer_country_name",
+        "issuer_country_code",
+        "issuer_sector",
+        "security_type",
+        "stock_ticker",
+        "security_market_value_currency_code",
+        "url",
+    ):
+        df[col] = df[col].apply(
+            lambda val: (
+                "" if pd.isna(val) else re.sub(r"\s+", " ", str(val)).strip()
+            )
+        )
+
+    # ISIN: truncate glued-on text (AP3), blank anything malformed (LACERA)
+    isin = df["security_isin"].apply(
+        lambda val: "" if pd.isna(val) else str(val).strip().upper()[:12]
+    )
+    malformed = (isin != "") & ~isin.str.match(ISIN_PATTERN)
+    n_bad_isin = int(malformed.sum())
+    df["security_isin"] = isin.where(~malformed, "")
+
+    # Drop rows with no issuer name and no (valid) ISIN
+    blank_issuer = (df["issuer_name"] == "") & (df["security_isin"] == "")
+    n_blank_issuer = int(blank_issuer.sum())
+    df = df[~blank_issuer]
+
+    # Drop country subtotal lines that came through as issuers
+    subtotal = df["issuer_name"].isin(PENSION_FUND_SUBTOTAL_ISSUERS)
+    n_subtotal = int(subtotal.sum())
+    df = df[~subtotal]
+
+    # Numbers
+    df["security_market_value_amount"] = df[
+        "security_market_value_amount"
+    ].apply(_parse_number)
+    df["stock_number_of_shares"] = (
+        df["stock_number_of_shares"].apply(_parse_number).astype("Int64")
+    )
+    for col in ("stock_percent_ownership", "stock_percent_voting_power"):
+        if meta.get("map_percent_ownership"):
+            df[col] = df[col].apply(_parse_number)
+        else:
+            df[col] = np.nan
+
+    # Dates
+    df["document_report_date"] = df["document_report_date"].apply(
+        _parse_report_date
+    )
+
+    # Multiplier (sheet value, else fund override, else x1)
+    df["security_market_value_multiplier"] = (
+        df["security_market_value_multiplier"]
+        .apply(_canonical_multiplier, default=meta.get("multiplier", "x1"))
+    )
+
+    # Currency (sheet value, else fund default)
+    currency = df["security_market_value_currency_code"].str.upper()
+    df["security_market_value_currency_code"] = currency.where(
+        currency != "", meta.get("currency", "")
+    )
+    expected_currency = meta.get("assert_currency")
+    if expected_currency:
+        others = df.loc[
+            df["security_market_value_currency_code"] != expected_currency,
+            "security_market_value_currency_code",
+        ]
+        if len(others):
+            raise ValueError(
+                f"Tab {tab!r}: expected every row's currency to be "
+                f"{expected_currency}, found {sorted(others.unique())} on "
+                f"{len(others)} rows."
+            )
+
+    # Security type
+    has_value = df["security_market_value_amount"].notna()
+    has_isin = df["security_isin"] != ""
+    security_type = pd.Series("STOCKS", index=df.index)
+    is_private_stock = (
+        df["security_type"].str.upper() == "PRIVATE SWEDISH STOCK"
+    )
+    security_type[is_private_stock] = "PRIVATE EQUITY"
+    if tab.startswith("AP3"):
+        security_type[~has_value & ~has_isin] = "PRIVATE EQUITY FUND"
+    df["security_type"] = security_type
+
+    # URL must be present on every row
+    if (df["url"] == "").any():
+        raise ValueError(
+            f"Tab {tab!r}: {int((df['url'] == '').sum())} rows have no "
+            "Data Source URL."
+        )
+
+    logger.info(
+        "Tab %r: %s rows in, %s out (dropped %s exact duplicates, %s blank "
+        "issuers without ISIN, %s country subtotals); %s malformed ISINs "
+        "blanked.",
+        tab,
+        f"{n_in:,}",
+        f"{len(df):,}",
+        n_dupes,
+        n_blank_issuer,
+        n_subtotal,
+        n_bad_isin,
+    )
+    return df
+
+
 def _process_pension_funds(
     data_fpath: Path, currency_map_fpath: Path
 ) -> pd.DataFrame:
-    """Loads, cleans, and standarizes pension fund data.
+    """Loads, cleans, and standardizes the pension fund workbook.
+
+    Reads every fund tab of the workbook described in
+    PENSION_FUND_REFRESH.md § 2 (one tab per fund, named `<FUND> (checked)`),
+    applies the per-tab parsing rules of § 4.2 and the fund metadata of
+    § 4.1, and converts market values to USD. The returned frame carries
+    every column `_merge_datasets` expects, so it can be merged on its own.
 
     Args:
-        data_fpath: The path to the pension funds data file.
+        data_fpath: The path to the pension fund workbook (`.xlsx`).
 
         currency_map_fpath: The path to a mapping between currency
             codes and codes of representative countries.
 
     Returns:
-        A DataFrame of the pension funds data.
+        A DataFrame of pension fund investments.
+
+    Raises:
+        ValueError: If the workbook has a tab that is not in
+            `PENSION_FUND_TABS`, or a tab breaks one of the § 4.2 rules.
     """
-    # Read Excel file
+    # Open workbook and check tab names against the metadata map
     xls = pd.ExcelFile(data_fpath)
-
-    # Concatenate data from all sheets into a single DataFrame
-    pension_funds_df = None
-    for sheet in xls.sheet_names:
-        if sheet not in ("Pension Fund Labeling"):
-            sheet_df = xls.parse(sheet)
-            sheet_df["Source"] = sheet
-            sheet_df.columns = [col.strip() for col in sheet_df.columns]
-            pension_funds_df = (
-                sheet_df
-                if pension_funds_df is None
-                else pd.concat([pension_funds_df, sheet_df])
-            )
-
-    # Drop erroneous records at bottom of sheets
-    pension_funds_df = pension_funds_df.query(
-        "`Shareholder - Name` == `Shareholder - Name`"
-    )
-
-    # Drop rows with invalid share counts
-    invalid_rows_idx = pension_funds_df[
-        pension_funds_df["Stock - Number of Shares"].apply(
-            lambda val: not pd.isna(val)
-            and isinstance(val, str)
-            and ("A" in val or "B" in val)
+    tabs = [t for t in xls.sheet_names if t not in PENSION_FUND_SKIPPED_TABS]
+    unknown_tabs = sorted(set(tabs) - set(PENSION_FUND_TABS))
+    if unknown_tabs:
+        raise ValueError(
+            f"Workbook {data_fpath.name} has tab(s) not in PENSION_FUND_TABS: "
+            f"{unknown_tabs}. Add each fund's metadata before loading it."
         )
-    ].index
-    pension_funds_df = pension_funds_df.drop(index=invalid_rows_idx)
+    missing_tabs = sorted(set(PENSION_FUND_TABS) - set(tabs))
+    if missing_tabs:
+        logger.info(
+            "Tabs in PENSION_FUND_TABS but not in workbook: %s.", missing_tabs
+        )
 
-    # Drop pension funds with missing or invalid issuer names
-    excluded_issuers = [
-        "BØRSNOTEREDE KAPITALANDELE I ALT",
-        "UNOTEREDE KAPITALANDELE",
-        "--- Page 9 Data ---",
-    ]
-    pension_funds_df = pension_funds_df.query(
-        "(`Issuer - Name` == `Issuer - Name`) & (`Issuer - Name` not in @excluded_issuers)"
-    )
-
-    # Drop rows with corporate bonds
-    pension_funds_df = pension_funds_df.query(
-        "`Security - Type` != 'CORPORATE BOND'"
-    )
-
-    # Drop pension sources that have not been properly verified
-    excluded_sources = [
-        "Pensioenfonds Detailhandel",
-        "PMT pensioenfonds",
-        "Pensioenfonds Rail & OV",
-    ]
-    pension_funds_df = pension_funds_df.query(
-        "`Shareholder - Name` not in @excluded_sources"
-    )
-
-    # Rename columns
-    col_map = {
-        "Source": "source",
-        "Shareholder - Name": "investor_name",
-        "Issuer - Name": "issuer_name",
-        "Issuer - Country Name": "issuer_country_name",
-        "Issuer - Country Code": "issuer_country_code",
-        "Issuer - Sector": "issuer_sector",
-        "Security - Type": "security_type",
-        "Security - ISIN": "security_isin",
-        "Security - Report Date": "document_report_date",
-        "Security - Market Value - Currency Code": "security_market_value_currency_code",
-        "Security - Market Value - Amount": "security_market_value_amount",
-        "Security - Market Value - Multiplier": "security_market_value_multiplier",
-        "BB Ticker": "stock_ticker",
-        "Stock - Percent Ownership": "stock_percent_ownership",
-        "Stock - Number of Shares": "stock_number_of_shares",
-        "Stock - Percent Voting Power": "stock_percent_voting_power",
-        "Private Equity - Vintage Year": "security_vintage_year",
-    }
-
-    # Subset columns
-    pension_funds_df = pension_funds_df[list(col_map.keys())].rename(
-        columns=col_map
-    )
+    # Read and clean each tab, then stamp it with the fund's metadata
+    frames = []
+    for tab in tabs:
+        meta = PENSION_FUND_TABS[tab]
+        tab_df = _read_pension_fund_tab(xls, tab, meta)
+        tab_df["source"] = meta["source"]
+        tab_df["investor_name"] = meta["investor_name"].upper()
+        tab_df["investor_abbreviation"] = meta["investor_abbreviation"]
+        tab_df["investor_country_name"] = meta["investor_country_name"]
+        tab_df["investor_country_code"] = meta["investor_country_code"]
+        tab_df["investor_region_name"] = meta.get("investor_region_name", "")
+        tab_df["investor_region_code"] = meta.get("investor_region_code", "")
+        frames.append(tab_df)
+    pension_funds_df = pd.concat(frames, ignore_index=True)
 
     # Add constant columns
-    pension_funds_df.loc[:, ["investor_type"]] = "Pension Fund"
-    for col in (
-        "investor_cik",
-        "investor_region_name",
-        "investor_region_code",
-        "document_filing_date",
-        "security_cusip",
-        "security_figi",
-    ):
-        pension_funds_df.loc[:, [col]] = ""
+    pension_funds_df["investor_type"] = "PENSION FUND"
+    pension_funds_df["document_filing_date"] = ""
+    pension_funds_df["investor_cik"] = ""
+    pension_funds_df["security_vintage_year"] = ""
+    pension_funds_df["security_cusip"] = ""
+    pension_funds_df["security_figi"] = ""
 
-    # Define investor abbreviation mapping
-    investor_abbreviation_map = {
-        "Copy of AMF": "AMF",
-        "Copy of BPL": "BPL",
-        "Copy of Fjarde AP Foreignshares": "AP4",
-        "Copy of Fjarde APswedishshares": "AP4",
-        "Copy of KPA": "KPA",
-        "Copy of PFZW": "PFZW",
-        "Copy of PKA": "PKA",
-        "Copy of PME": "PME",
-        "Copy of PMT": "PMT",
-        "Copy of Sjunde AP": "AP7",
-        "Copy of ap2 foreignequity": "AP2",
-        "Copy of ap2swedishequity": "P2",
-        "Copy of ap3foreignequity": "AP3",
-        "Copy of ap3privateequity": "AP3",
-        "Copy of ap3swedishequity": "AP3",
-        "Copy of bpfbouw": "bpfBOUW",
-        "Copy of danicapension": "",
-        "Copy of detailhandel": "",
-        "Copy of pansiondanmark": "",
-        "Copy of rail+ov": "Rail & OV",
-        "Copy of sampension": "",
-        "Copy of stichting_pensioenfonds": "ABP",
-        "Copy of vervoershares": "",
-    }
-    pension_funds_df.loc[:, ["investor_abbreviation"]] = pension_funds_df[
-        "source"
-    ].map(investor_abbreviation_map)
+    # Add columns the workbook does not carry but the merge expects
+    pension_funds_df["security_principal_amount_currency_code"] = ""
+    pension_funds_df["security_principal_amount"] = np.nan
+    pension_funds_df["stock_voting_auth_sole"] = np.nan
+    pension_funds_df["stock_voting_auth_shared"] = np.nan
+    pension_funds_df["stock_voting_auth_none"] = np.nan
 
-    # Correct issuer names
-    pension_funds_df.loc[:, "issuer_name"] = pension_funds_df[
-        "issuer_name"
-    ].str.replace("ΜΟΝΕΤΑ MONEY BANK AS", "MONETA MONEY BANK AS")
-
-    # Correct security types
-    def correct_security_type(row: pd.Series) -> str:
-        """Corrects a security type field by populating a missing value.
-
-        Args:
-            row: The investment.
-
-        Returns:
-            The corrected security type.
-        """
-        if row["source"] == "Copy of ap3privateequity":
-            return "Private Equity Fund"
-        elif not pd.isna(row["security_type"]) and row["security_type"] in (
-            "FUND EQ"
-        ):
-            return "Equity Fund"
-        else:
-            return "Stocks"
-
-    pension_funds_df.loc[:, ["security_type"]] = pension_funds_df.apply(
-        correct_security_type, axis=1
-    )
-
-    # Correct vintage year column
-    pension_funds_df["security_vintage_year"] = (
-        pension_funds_df["security_vintage_year"]
-        .fillna("")
-        .astype(str)
-        .str[:4]
-    )
-
-    # Define country name mapping
-    country_map = {
-        "": ["Empty"],
-        "Argentina": ["Argentina", "Argentinie"],
-        "British Virgin Islands": ["Britse Maagdeneilanden"],
-        "Bulgaria": ["Bulgarije"],
-        "Chile": ["Chili"],
-        "Czechia": ["Czech Republic", "Tsjechie"],
-        "Egypt": ["Egypt", "Egypte"],
-        "Georgia": ["Georgie"],
-        "Hong Kong": ["Hongkong"],
-        "Hungary": ["Hungry"],
-        "Israel": ["Isreal"],
-        "Luxembourg": ["Luxemburg"],
-        "Russia": ["Rusland"],
-        "Serbia": ["Servie"],
-        "Singapore": ["Singapore "],
-        "Slovakia": ["Slowakije"],
-        "Slovenia": ["Slovenie"],
-        "South Korea": ["Korea Republic of"],
-        "Ukraine": ["Oekra�ne"],
-        "United Kingdom": ["United Kingdom "],
-        "Uzbekistan": ["Oezbekistan"],
-    }
-
-    # Create reverse lookup to standardized country names
-    lookup = {
-        raw_val.upper(): std_val.upper()
-        for std_val, lst in country_map.items()
-        for raw_val in lst
-    }
-
-    # Standardize issuer country names
-    pension_funds_df.loc[:, "issuer_country_name"] = (
-        pension_funds_df["issuer_country_name"]
-        .replace({np.nan: ""})
-        .apply(
-            lambda name: (
-                lookup.get(name.upper())
-                if name.upper() in lookup
-                else name.upper()
-            )
-        )
-    )
+    # Make text-based column values uppercase
+    for col in ("issuer_name", "issuer_country_name", "issuer_sector"):
+        pension_funds_df[col] = pension_funds_df[col].str.upper()
 
     # Define country code mapping
     country_codes = {
@@ -470,11 +820,14 @@ def _process_pension_funds(
         "JAPAN": "JP",
         "JERSEY": "JE",
         "KAZAKHSTAN": "KZ",
+        "KOREA": "KR",
         "KUWAIT": "KW",
+        "LIECHTENSTEIN": "LI",
         "LITHUANIA": "LT",
         "LUXEMBOURG": "LU",
         "MACAU": "MO",
         "MALAYSIA": "MY",
+        "MALTA": "MT",
         "MAURITIUS": "MU",
         "MEXICO": "MX",
         "NETHERLANDS": "NL",
@@ -515,238 +868,134 @@ def _process_pension_funds(
         "VIETNAM": "VN",
     }
 
-    # Correct issuer country codes
-    pension_funds_df.loc[:, ["issuer_country_code"]] = pension_funds_df.apply(
-        lambda row: (
-            country_codes.get(row["issuer_country_name"], "")
-            if row["issuer_country_name"] in country_codes
-            else row["issuer_country_name"]
-        ),
-        axis=1,
-    )
-
-    # Add investor country name and code
-    investor_country_name_map = {
-        "Copy of AMF": "SWEDEN",
-        "Copy of BPL": "NETHERLANDS",
-        "Copy of Fjarde AP Foreignshares": "SWEDEN",
-        "Copy of Fjarde APswedishshares": "SWEDEN",
-        "Copy of KPA": "SWEDEN",
-        "Copy of PFZW": "NETHERLANDS",
-        "Copy of PKA": "DENMARK",
-        "Copy of PME": "NETHERLANDS",
-        "Copy of PMT": "NETHERLANDS",
-        "Copy of Sjunde AP": "SWEDEN",
-        "Copy of ap2 foreignequity": "SWEDEN",
-        "Copy of ap2swedishequity": "SWEDEN",
-        "Copy of ap3foreignequity": "SWEDEN",
-        "Copy of ap3privateequity": "SWEDEN",
-        "Copy of ap3swedishequity": "SWEDEN",
-        "Copy of bpfbouw": "NETHERLANDS",
-        "Copy of danicapension": "DENMARK",
-        "Copy of detailhandel": "NETHERLANDS",
-        "Copy of pansiondanmark": "DENMARK",
-        "Copy of rail+ov": "NETHERLANDS",
-        "Copy of sampension": "DENMARK",
-        "Copy of stichting_pensioenfonds": "NETHERLANDS",
-        "Copy of vervoershares": "NETHERLANDS",
+    # Fill issuer country codes from names (PensionDanmark, PME) and
+    # names from codes (AP2, AP4); for codes with several names the
+    # alphabetically last wins (CZECHIA, SOUTH KOREA)
+    country_names = {
+        code: name for name, code in sorted(country_codes.items())
     }
-    pension_funds_df.loc[:, ["investor_country_name"]] = pension_funds_df[
-        "source"
-    ].map(investor_country_name_map)
-    pension_funds_df.loc[:, ["investor_country_code"]] = pension_funds_df[
-        "investor_country_name"
-    ].map(country_codes)
-
-    # Correct share counts
-    corrected_counts = pension_funds_df["stock_number_of_shares"].apply(
-        lambda val: val.replace(" ", "") if isinstance(val, str) else val
+    has_name = pension_funds_df["issuer_country_name"] != ""
+    has_code = pension_funds_df["issuer_country_code"] != ""
+    pension_funds_df.loc[has_name & ~has_code, "issuer_country_code"] = (
+        pension_funds_df.loc[has_name & ~has_code, "issuer_country_name"]
+        .map(country_codes)
+        .fillna("")
     )
-
-    # Cast counts to nullable integer column
-    pension_funds_df.loc[:, ["stock_number_of_shares"]] = (
-        pd.to_numeric(corrected_counts, errors="coerce")
-        .replace({pd.NA: np.nan})
-        .astype("Int64")
+    pension_funds_df.loc[has_code & ~has_name, "issuer_country_name"] = (
+        pension_funds_df.loc[has_code & ~has_name, "issuer_country_code"]
+        .map(country_names)
+        .fillna("")
     )
-
-    # Define function to correct security market value amounts
-    def correct_market_value(row: pd.Series) -> float:
-        """Correctly formats the market value amount."""
-        if isinstance(row["security_market_value_amount"], str) and any(
-            char.isalpha() for char in row["security_market_value_amount"]
-        ):
-            return np.nan
-        elif row["source"] in (
-            "Copy of Fjarde APswedishshares",
-            "Copy of Fjarde AP Foreignshares",
-            "Copy of ap2 foreignequity",
-            "Copy of ap2swedishequity",
-            "Copy of vervoershares",
-        ):
-            return (
-                row["security_market_value_amount"]
-                .replace(" ", "")
-                .replace(",", "")
-                if isinstance(row["security_market_value_amount"], str)
-                else row["security_market_value_amount"]
-            )
-        elif row["source"] == "Copy of detailhandel":
-
-            return (
-                row["security_market_value_amount"].replace(".", "")
-                if isinstance(row["security_market_value_amount"], str)
-                else row["security_market_value_amount"]
-            )
-        else:
-            return row["security_market_value_amount"]
-
-    # Correct share counts and cast to nullable integer column
-    pension_funds_df.loc[:, ["security_market_value_amount"]] = (
-        pension_funds_df.apply(correct_market_value, axis=1).astype(float)
+    unmapped = sorted(
+        pension_funds_df.loc[
+            has_name & (pension_funds_df["issuer_country_code"] == ""),
+            "issuer_country_name",
+        ].unique()
     )
-
-    # Add URL column
-    url_map = {
-        "Copy of AMF": "https://www.amf.se/globalassets/pdf/rapporter/innehav_2024.pdf",
-        "Copy of BPL": "https://www.bplpensioen.nl/sites/default/files/documenten/beleggingsoverzicht.pdf",
-        "Copy of Fjarde AP Foreignshares": "https://www.ap4.se/globalassets/rapporter-och-innehav/2024/listed-shares-and-participations-2024-12-31.pdf",
-        "Copy of Fjarde APswedishshares": "https://www.ap4.se/globalassets/rapporter-och-innehav/2024/listed-shares-and-participations-2024-12-31.pdf",
-        "Copy of KPA": "https://www.kpa.se/globalassets/trycksaker/hallbarhet/kpa-innehav-30-oktober-2025.pdf",
-        "Copy of PFZW": "https://www.pfzw.nl/over-pfzw/beleggen-voor-een-goed-pensioen/soorten-beleggingen.html",
-        "Copy of PKA": "https://pka.dk/globalassets/_2-ansvarlighed/ansvarlige-investeringer/politikker-og-rapporter/beholdningsliste.pdf",
-        "Copy of PME": "https://www.pmepensioen.nl/en/investments/we-do-invest-in",
-        "Copy of PMT": "https://www.pmt.nl/over-pmt/zo-beleggen-we/waar-beleggen-we-in/aandelen-en-obligaties",
-        "Copy of Sjunde AP": "https://www.ap7.se/english/ap7-equity-fund/",
-        "Copy of ap2 foreignequity": "https://ap2.se/wp-content/uploads/2025/02/2024_12_31_Utlandska_Aktier_Hemsidan.pdf",
-        "Copy of ap2swedishequity": "https://ap2.se/wp-content/uploads/2025/02/2024_12_31_Svenska_Aktier_Hemsidan.pdf",
-        "Copy of ap3foreignequity": "https://a.storyblok.com/f/257759/x/21eb85d815/ap3-foreign-equity-holdings-30-june-2025.pdf",
-        "Copy of ap3privateequity": "https://a.storyblok.com/f/257759/x/61b8d40700/ap3-private-equity-investments-june-30-2025.pdf",
-        "Copy of ap3swedishequity": "https://a.storyblok.com/f/257759/x/1000eb0ade/ap3-swedish-equity-holdings-30-june-2025.pdf",
-        "Copy of bpfbouw": "https://www.bpfbouw.nl/content/dam/bpfbouw/documenten/beleggen/bpfbouw-aandelenportefeuille.pdf",
-        "Copy of danicapension": "https://danica.dk/-/media/pdf/danica-pension/dk/regnskaber/2024/q4/kapitalandele-31-12-2024.pdf",
-        "Copy of detailhandel": "https://pensioenfondsdetailhandel.nl/content/pdfs/Beleggingen-Pensioenfonds-Detailhandel.pdf",
-        "Copy of pansiondanmark": "https://www.pensiondanmark.com/en/investments/equity-list",
-        "Copy of rail+ov": "https://railov.nl/documents/1174/Overzicht_beleggingen_MVB_voor_de_website_20241231.pdf",
-        "Copy of sampension": "https://www.sampension.dk/3db25a/globalassets/global-media/dokumenter/shared-links---pdf/sampension/beholdningslister/20250831---aktieliste---sampension.pdf",
-        "Copy of stichting_pensioenfonds": "https://www.abp.nl/content/dam/abp/documenten/beleggen/abp-beursgenoteerde-beleggingen.pdf",
-        "Copy of vervoershares": "https://www.pfvervoer.nl/sites/default/files/documenten/overzicht-beleggingen.pdf",
-    }
-    pension_funds_df.loc[:, ["url"]] = pension_funds_df["source"].map(url_map)
-
-    # Update source column
-    source_map = {
-        "Copy of AMF": "AMF Pensionsförsäkring AB",
-        "Copy of BPL": "Stichting BPL Pensioen",
-        "Copy of Fjarde AP Foreignshares": "Fjärde AP-fonden",
-        "Copy of Fjarde APswedishshares": "Fjärde AP-fonden",
-        "Copy of KPA": "KPA Pensionsforsakring",
-        "Copy of PFZW": "Pensioenfonds Zorg en Welzijn",
-        "Copy of PKA": "Pensionskassernes Administration A/S",
-        "Copy of PME": "Pensioenfonds van de Metalektro",
-        "Copy of PMT": "Pensioenfonds Metaal en Techniek",
-        "Copy of Sjunde AP": "Sjunde AP-fonden",
-        "Copy of ap2 foreignequity": "Andra AP-fonden",
-        "Copy of ap2swedishequity": "Andra AP-fonden",
-        "Copy of ap3foreignequity": "Tredje AP-fonden",
-        "Copy of ap3privateequity": "Tredje AP-fonden",
-        "Copy of ap3swedishequity": "Tredje AP-fonden",
-        "Copy of bpfbouw": "Bouwnijverheid",
-        "Copy of danicapension": "Danica Pension Livsforsikrings AB",
-        "Copy of detailhandel": "Pensioenfonds Detailhandel",
-        "Copy of pansiondanmark": "Pensiondanmark Pensionsforsikring A/S",
-        "Copy of rail+ov": "Pensioenfonds Rail & OV",
-        "Copy of sampension": "Sampension Administrationsselskab A/S",
-        "Copy of stichting_pensioenfonds": "Stichting Pensioenfonds ABP",
-        "Copy of vervoershares": "Pensioenfonds Vervoer",
-    }
-    pension_funds_df.loc[:, ["source"]] = (
-        pension_funds_df["source"].map(source_map).str.upper()
-    )
-
-    # Capitalize text-based columns
-    for col in (
-        "investor_name",
-        "investor_type",
-        "issuer_name",
-        "issuer_sector",
-        "security_type",
-    ):
-        pension_funds_df.loc[:, [col]] = pension_funds_df[col].str.upper()
-
-    # Replace NaNs with empty strings in text columns
-    for col in (
-        "issuer_country_name",
-        "issuer_country_code",
-        "issuer_name",
-        "issuer_sector",
-        "security_type",
-        "security_isin",
-        "document_report_date",
-        "security_market_value_currency_code",
-        "security_market_value_multiplier",
-        "stock_ticker",
-    ):
-        pension_funds_df.loc[:, [col]] = pension_funds_df[col].replace(
-            {np.nan: ""}
+    if unmapped:
+        logger.warning(
+            "No country code for issuer countries %s; add them to the map "
+            "in _process_pension_funds.",
+            unmapped,
         )
 
-    # Initialize currency converter
+    # Fetch exchange rate to USD for each currency and report year
     converter = CurrencyConverter(currency_map_fpath)
-
-    # Fetch exchange rate to USD for investment year and currency code
-    pension_funds_df.loc[:, ["security_market_value_conversion_rate"]] = (
-        pension_funds_df.apply(
-            lambda row: converter.get_usd_exchange_rate(
-                currency=row["security_market_value_currency_code"],
-                year=str(row["document_report_date"])[:4],
+    rate_keys = pension_funds_df[
+        ["security_market_value_currency_code", "document_report_date"]
+    ].drop_duplicates()
+    rates = {
+        (currency, date): converter.get_usd_exchange_rate(
+            currency=currency, year=date[:4]
+        )
+        for currency, date in rate_keys.itertuples(index=False)
+    }
+    pension_funds_df["security_market_value_conversion_rate"] = [
+        rates[(currency, date)]
+        for currency, date in zip(
+            pension_funds_df["security_market_value_currency_code"],
+            pension_funds_df["document_report_date"],
+        )
+    ]
+    pension_funds_df["security_market_value_conversion_rate"] = (
+        pension_funds_df["security_market_value_conversion_rate"].astype(float)
+    )
+    no_rate = (
+        pension_funds_df["security_market_value_amount"].notna()
+        & pension_funds_df["security_market_value_conversion_rate"].isna()
+    )
+    if no_rate.any():
+        missing_rates = pension_funds_df.loc[
+            no_rate,
+            ["security_market_value_currency_code", "document_report_date"],
+        ]
+        logger.warning(
+            "No exchange rate for %s rows with a market value "
+            "(currency, year): %s.",
+            f"{int(no_rate.sum()):,}",
+            sorted(
+                set(
+                    zip(
+                        missing_rates["security_market_value_currency_code"],
+                        missing_rates["document_report_date"].str[:4],
+                    )
+                )
             ),
-            axis=1,
-        )
-    )
-
-    # Correct market value multiplier
-    pension_funds_df.loc[:, ["security_market_value_multiplier"]] = (
-        pension_funds_df["security_market_value_multiplier"].replace(
-            {"": "x1"}
-        )
-    )
-
-    # Define local function to perform conversion
-    def convert(row: pd.Series) -> int | None:
-        """Converts nominal currency to USD.
-
-        Args:
-            row: A row of data from the DataFrame.
-
-        Returns:
-            The exchange rate to USD, or `None`
-                if the rate cannot be determined.
-        """
-        if pd.isna(row["security_market_value_amount"]) or pd.isna(
-            row["security_market_value_conversion_rate"]
-        ):
-            return np.nan
-        converted_base_amount = int(
-            row["security_market_value_amount"]
-            * row["security_market_value_conversion_rate"]
-        )
-        multiplier_map = {
-            "x1": 1,
-            "x1_000": 1_000,
-            "x1_000_000": 1_000_000,
-        }
-        return int(
-            converted_base_amount
-            * multiplier_map[row["security_market_value_multiplier"]]
         )
 
     # Calculate market value in USD
     pension_funds_df["security_market_value_amount_usd"] = (
-        pension_funds_df.apply(convert, axis=1).astype("Int64")
+        (
+            pension_funds_df["security_market_value_amount"]
+            * pension_funds_df["security_market_value_multiplier"].map(
+                MULTIPLIER_FACTORS
+            )
+            * pension_funds_df["security_market_value_conversion_rate"]
+        )
+        .round()
+        .astype("Int64")
     )
 
-    return pension_funds_df
+    # Finalize columns
+    return pension_funds_df[
+        [
+            "source",
+            "document_report_date",
+            "document_filing_date",
+            "investor_type",
+            "investor_cik",
+            "investor_name",
+            "investor_abbreviation",
+            "investor_country_name",
+            "investor_country_code",
+            "investor_region_name",
+            "investor_region_code",
+            "issuer_name",
+            "issuer_country_name",
+            "issuer_country_code",
+            "issuer_sector",
+            "security_vintage_year",
+            "security_type",
+            "security_principal_amount_currency_code",
+            "security_principal_amount",
+            "security_market_value_currency_code",
+            "security_market_value_amount",
+            "security_market_value_multiplier",
+            "security_market_value_conversion_rate",
+            "security_market_value_amount_usd",
+            "security_isin",
+            "security_cusip",
+            "security_figi",
+            "stock_ticker",
+            "stock_number_of_shares",
+            "stock_percent_ownership",
+            "stock_percent_voting_power",
+            "stock_voting_auth_sole",
+            "stock_voting_auth_shared",
+            "stock_voting_auth_none",
+            "url",
+        ]
+    ]
 
 
 def _process_sec_investments(
@@ -845,9 +1094,7 @@ def _process_sec_investments(
     mapped_sec_df.loc[:, ["source"]] = (
         "U.S. SECURITIES AND EXCHANGE COMMISSION (SEC)"
     )
-    mapped_sec_df.loc[:, ["investor_abbreviation"]] = mapped_sec_df[
-        "investor_name"
-    ].apply(lambda name: "NBIM" if name.upper() == "NORGES BANK" else "")
+    mapped_sec_df.loc[:, ["investor_abbreviation"]] = ""
     mapped_sec_df.loc[:, ["investor_region_code"]] = ""
     mapped_sec_df.loc[:, ["issuer_country_name"]] = ""
     mapped_sec_df.loc[:, ["issuer_country_code"]] = ""
@@ -1288,6 +1535,29 @@ def _merge_datasets(
     return final_df
 
 
+def _iso_date(value: str) -> str:
+    """Validates a `YYYY-MM-DD` command line argument.
+
+    Args:
+        value: The raw argument value.
+
+    Returns:
+        The value, unchanged, if it is a valid `YYYY-MM-DD` date.
+
+    Raises:
+        argparse.ArgumentTypeError: If the value is not a `YYYY-MM-DD` date.
+    """
+    try:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+            raise ValueError("wrong shape")
+        datetime.strptime(value, "%Y-%m-%d")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(
+            f"expected a date formatted as YYYY-MM-DD, got {value!r}"
+        ) from e
+    return value
+
+
 def main() -> None:
     """Loads, cleans, and combines securities from three separate datasets.
 
@@ -1301,12 +1571,50 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Merges securities datasets into a combined release file."
     )
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--sec-only",
         action="store_true",
         help=(
             "Process only SEC Form 13F investments, skipping "
             "the NBIM and pension fund input files."
+        ),
+    )
+    mode.add_argument(
+        "--nbim-only",
+        action="store_true",
+        help=(
+            "Process only the NBIM (Norges Bank) equity report, skipping "
+            "the SEC and pension fund input files. "
+            "Requires --nbim-report-date."
+        ),
+    )
+    mode.add_argument(
+        "--pension-only",
+        action="store_true",
+        help=(
+            "Process only the pension fund workbook, skipping the SEC and "
+            "NBIM input files. Requires --pension-file."
+        ),
+    )
+    parser.add_argument(
+        "--pension-file",
+        type=Path,
+        metavar="PATH",
+        help=(
+            "Path to the pension fund workbook (.xlsx) described in "
+            "PENSION_FUND_REFRESH.md § 2. Required whenever the pension "
+            "funds are processed."
+        ),
+    )
+    parser.add_argument(
+        "--nbim-report-date",
+        type=_iso_date,
+        metavar="YYYY-MM-DD",
+        help=(
+            "Snapshot date of the NBIM equity report. Required whenever NBIM "
+            "is processed. Selects data/input/nbim_equity_<date>.csv and "
+            "sets document_report_date and the row URL."
         ),
     )
     parser.add_argument(
@@ -1319,8 +1627,28 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # Instantiate logger
-    logger = logging.getLogger("MANUAL DATA MERGE")
+    # Decide which sources to process. A "--<source>-only" flag narrows the
+    # set to that source; with no mode flag, every source is processed. To
+    # add a mode (e.g., --pension-only), add the flag to the `mode` group
+    # above and an `elif` here.
+    all_sources = {"sec", "nbim", "pension"}
+    if args.sec_only:
+        sources = {"sec"}
+    elif args.nbim_only:
+        sources = {"nbim"}
+    elif args.pension_only:
+        sources = {"pension"}
+    else:
+        sources = set(all_sources)
+
+    if "nbim" in sources and args.nbim_report_date is None:
+        parser.error("--nbim-report-date is required when NBIM is processed.")
+    if "pension" in sources and args.pension_file is None:
+        parser.error(
+            "--pension-file is required when the pension funds are processed."
+        )
+
+    # Configure logger (shared with the processing functions)
     logger.setLevel(logging.INFO)
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO)
@@ -1337,10 +1665,6 @@ def main() -> None:
     output_dir = data_dir / "output"
 
     # Define input and output file paths
-    nbim_fpath = input_dir / "nbim-1765555755557.csv"
-    pension_funds_fpath = (
-        input_dir / "Pension Fund for Shareholder Tracker.xlsx"
-    )
     currency_map_fpath = input_dir / "currency_country_map.json"
     sec_fpath = input_dir / "current_investments.csv"
     pension_fund_labels_fpath = input_dir / "sec_pension_funds.csv"
@@ -1348,34 +1672,49 @@ def main() -> None:
     # Record date of processing
     timestamp = datetime.now(tz=timezone.utc).strftime("%Y%m%d")
 
-    # Load and clean SEC investments
-    logger.info("Processing SEC Form 13F investments.")
-    sec_df = _process_sec_investments(sec_fpath, pension_fund_labels_fpath)
+    # Load and clean each selected source
+    skipped = sorted(all_sources - sources)
+    if skipped:
+        logger.info("Skipping sources: %s.", ", ".join(skipped))
+    frames: dict[str, pd.DataFrame] = {}
 
-    if args.sec_only:
-        # Substitute empty DataFrames for the external sources and add
-        # the columns they would otherwise contribute during concatenation
-        logger.info("Skipping NBIM and pension fund securities (--sec-only).")
-        nbim_df = sec_df.iloc[0:0]
-        pension_funds_df = sec_df.iloc[0:0]
-        sec_df["security_vintage_year"] = ""
-        sec_df["stock_percent_ownership"] = np.nan
-    else:
-        # Load and clean NBIM investments
+    if "sec" in sources:
+        logger.info("Processing SEC Form 13F investments.")
+        frames["sec"] = _process_sec_investments(
+            sec_fpath, pension_fund_labels_fpath
+        )
+
+    if "nbim" in sources:
         logger.info("Processing NBIM securities.")
-        nbim_df = _process_nbim_investments(nbim_fpath)
+        nbim_fpath = input_dir / f"nbim_equity_{args.nbim_report_date}.csv"
+        frames["nbim"] = _process_nbim_investments(
+            nbim_fpath, args.nbim_report_date
+        )
 
-        # Load and clean pension funds
-        logger.info("Processing pension fund securites.")
-        pension_funds_df = _process_pension_funds(
-            data_fpath=pension_funds_fpath,
+    if "pension" in sources:
+        logger.info("Processing pension fund securities.")
+        frames["pension"] = _process_pension_funds(
+            data_fpath=args.pension_file,
             currency_map_fpath=currency_map_fpath,
         )
+
+    if sources == {"sec"}:
+        # On its own, the SEC frame lacks the columns the external sources
+        # would otherwise contribute during concatenation
+        frames["sec"]["security_vintage_year"] = ""
+        frames["sec"]["stock_percent_ownership"] = np.nan
+
+    # Substitute an empty frame (same columns and dtypes as a processed
+    # frame, so concatenation adds nothing) for each skipped source
+    empty_df = next(iter(frames.values())).iloc[0:0]
 
     # Merge datasets
     logger.info("Merging datasets.")
     final_df = _merge_datasets(
-        sec_df, pension_funds_df, nbim_df, args.last_accessed_date
+        nbim_df=frames.get("nbim", empty_df),
+        pension_funds_df=frames.get("pension", empty_df),
+        sec_df=frames.get("sec", empty_df),
+        last_accessed_date=args.last_accessed_date,
     )
 
     # Write output dataset to disk as CSV file

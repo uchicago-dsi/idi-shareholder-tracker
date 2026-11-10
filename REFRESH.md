@@ -196,6 +196,10 @@ psql -c "\copy (SELECT DISTINCT investor_name AS name FROM investment WHERE sour
 ```
 
 Review it — new pension-fund filers since the last refresh won't be in it.
+It **must** contain `PGGM INVESTMENTS`, `APG ASSET MANAGEMENT N.V.` and
+`APG ASSET MANAGEMENT US INC.` (relabeled from institutional investor at the data
+team's request, 2026-09/11 — see PENSION_FUND_REFRESH.md § 6a); if they are
+missing, the next load reverts them.
 
 ### 2c. Export the SEC data
 
@@ -227,11 +231,13 @@ The CSV is pipe-delimited with `NULL` for nulls, and its 37 columns match the
 `--last-accessed-date YYYY-MM-DD` overrides the `last_accessed_date` column
 (defaults to today, UTC).
 
-For a **full refresh** including external sources: drop `--sec-only` and supply
-`data/input/` with the NBIM export CSV, the pension funds `.xlsx`, and
-`currency_country_map.json` (filenames are hard-coded near the top of `main()` —
-update them, along with the NBIM `document_report_date` constant in
-`_process_nbim_investments`).
+External sources are refreshed separately, each replacing only its own
+`source` rows — see [PENSION_FUND_REFRESH.md](PENSION_FUND_REFRESH.md):
+§ 5 for NBIM (a CSV downloaded from nbim.no, `--nbim-only`), § 6 for the
+pension fund workbook (`--pension-only --pension-file <path>`). Running
+`main.py` with no mode flag processes all three at once and needs all input
+files present plus `--nbim-report-date` and `--pension-file`; there is no
+reason to do that for a routine refresh.
 
 ### 2e. Load, scoped by source
 
@@ -355,8 +361,8 @@ admin for access. Objects are laid out one dated prefix per release:
 These are hard-coded and must be updated each refresh:
 
 - [ ] `manual/sql/recreate_current_investments.sql` — `WHERE form_report_date = '…'`
-- [ ] (full refresh only) NBIM `document_report_date` constant in `main.py`
-- [ ] (full refresh only) input filenames at the top of `main()`
+- [ ] (NBIM refresh only) `--nbim-report-date` — see PENSION_FUND_REFRESH.md § 5
+- [ ] (workbook refresh only) `--pension-file` — see PENSION_FUND_REFRESH.md § 6
 - [ ] `last_accessed_date` — defaults to today via `--last-accessed-date`
 - [ ] (downloads only) new `YYYY-MM-DD/` prefix in R2 and a new entry at the top
       of `web/config/downloads.ts` (§2g)

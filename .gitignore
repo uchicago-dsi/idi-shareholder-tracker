@@ -16,8 +16,11 @@ private_key.json
 # VS Code
 *.vscode/
 
-# Data
+# Data (everything except the tiny, hand-maintained currency map)
 data/*
+!data/input/
+data/input/*
+!data/input/currency_country_map.json
 
 # Beads / Dolt files (added by bd init)
 .dolt/
