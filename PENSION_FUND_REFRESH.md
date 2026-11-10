@@ -12,7 +12,7 @@ Three independent pieces of work, each replacing only its own `source` rows:
 | NBIM | CSV downloaded from nbim.no | § 5 | Code implemented (§ 5b, 2026-11-10); load not yet run |
 | Pension workbook | Google Sheet → `.xlsx` | §§ 2–4, 6 | Code implemented (§ 4, 2026-11-10); dry run (§ 4.5) passes on the 2026-11-10 download; load not yet run |
 | SEC-side relabel (PGGM, APG ×2) | one `UPDATE` in prod | § 6a | Ready to run |
-| BPL ownership-field correction | one `UPDATE` in prod | § 6a | Ready to run |
+| BPL ownership-field correction | one `UPDATE` in prod | § 6a | **Not running** — not partner-requested; parked until they confirm |
 
 **To run it all: § 8 is the ordered prod run sheet.**
 
@@ -187,7 +187,8 @@ marked **→**.
    for every fund that reports a percentage, which of the two it is.
    *Prod today:* PKA (2,571 rows), AP7 (2,072), **BPL (1,148)** and Danica (482)
    all carry weights in this field. PKA/AP7/Danica are replaced by the load;
-   **BPL is a "keep" fund, so its values must be nulled by hand** — see § 6a.
+   BPL is a "keep" fund, so its values survive the refresh; **left as-is
+   pending partner confirmation** — see § 6a.
    **→ AP7 resolved 2026-11-10:** the team agreed and deleted the column.
    **→ PKA still open — the team disagrees, but the sheet does not support
    their reading.** They cite "DKK 111,123,771 of Adidas = a 0.04 % stake".
@@ -712,10 +713,12 @@ These four have no tab in the workbook. **Never include their source strings
 in the load's DELETE**, and confirm in the post-load verification that their
 counts are exactly unchanged. Their `last_accessed_date` stays 2025-12-18.
 
-One in-place correction to the kept rows (§ 3.5): BPL's 1,148 populated
-`stock_percent_ownership` values are portfolio weights, which the website
-renders as an ownership sentence. Null them; nothing else on those rows
-changes:
+**Parked, not partner-requested (decision 2026-11-10):** BPL's 1,148 populated
+`stock_percent_ownership` values look like portfolio weights (§ 3.5), which the
+website renders as an ownership sentence. The partner never raised BPL and has
+disputed the same reading for PKA, so **leave the values as-is** until they
+confirm. Raise it together with the open PKA question. If they agree, the fix
+is one statement, reversible from the backup table:
 
 ```sql
 UPDATE investment SET stock_percent_ownership = NULL
@@ -934,8 +937,10 @@ Measured results of the 2026-11-10 dry run are in § 4.5.
   portfolio weights, which the website renders as an ownership sentence.
   After this refresh the sentence appears only for AP2, AP3, AP4 and NBIM:
   PKA is not mapped, AP7's column was deleted from the sheet, Danica's new tab
-  has no such column, BPL is nulled by hand (§ 6a). Any fund that later adds
-  a percentage column must be classified first (§ 3.5).
+  has no such column. **BPL's values remain in prod** (not partner-requested
+  to change, § 6a), so BPL cards keep showing the sentence until the partner
+  weighs in. Any fund that later adds a percentage column must be classified
+  first (§ 3.5).
 - **AP4 has no market values** after this refresh (prod had $24.7 bn). The
   data team accepted this pending a re-scrape; Sampension is likewise frozen
   on 2025-08-31 rows. When either re-scraped tab arrives, re-run § 6c for
@@ -977,9 +982,19 @@ export PGPASSWORD="$(gcloud secrets versions access latest --secret=POSTGRES_PAS
 psql -c "SELECT 1;"
 ```
 
-**Start `psql` from the repo root** for every SQL block below: `\copy` reads
-the file path relative to psql's working directory, and the paths are written
-as `data/output/...`.
+Then open an interactive session — **every SQL block in §§ 8.1–8.5 is pasted
+at the `postgres=#` prompt**, and the `\copy` lines are psql meta-commands
+that only work there (not via `psql -c`). Start it from the repo root, because
+`\copy` reads file paths relative to psql's working directory and the paths
+below are written as `data/output/...`:
+
+```bash
+cd ~/repo/idi-shareholder-tracker && psql
+```
+
+The `python main.py` / validator / `\copy`-export shell steps in §§ 8.2–8.4
+run outside psql: use a third terminal tab (re-export the `PG*` variables
+there), or `\q` and reopen psql after each one.
 
 Inputs that must exist locally:
 
@@ -1025,10 +1040,13 @@ UPDATE investment
    AND investor_name IN ('PGGM INVESTMENTS', 'APG ASSET MANAGEMENT N.V.',
                          'APG ASSET MANAGEMENT US INC.');
 -- expect UPDATE 613 (59 + 493 + 61) on the 2026-06-30 quarter
-UPDATE investment SET stock_percent_ownership = NULL
- WHERE source = 'STICHTING BPL PENSIOEN' AND stock_percent_ownership IS NOT NULL;
--- expect UPDATE 1148
 COMMIT;
+```
+
+(The BPL `stock_percent_ownership` null that earlier drafts had here is
+**deliberately omitted** — not partner-requested; see § 6a.)
+
+```sql
 SELECT investor_name, investor_type, COUNT(*) FROM investment
  WHERE investor_name LIKE 'PGGM%' OR investor_name LIKE 'APG %' GROUP BY 1,2 ORDER BY 1;
 ```
@@ -1164,6 +1182,5 @@ COMMIT;
 ```
 
 For § 8.2, the inverse is `UPDATE … SET investor_type = 'INSTITUTIONAL
-INVESTOR'` for the three names; BPL's percentages come back from the backup
-with the same recipe. Drop the backup table once the release has been live for
-a few weeks.
+INVESTOR'` for the three names. Drop the backup table once the release has
+been live for a few weeks.
