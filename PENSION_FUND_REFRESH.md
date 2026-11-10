@@ -929,6 +929,11 @@ Measured results of the 2026-11-10 dry run are in § 4.5.
 - **No cross-source dedup exists** (see § 1). There is no NBIM/SEC or
   LACERA/SEC overlap in the current data. If dedup is ever wanted, it's new
   logic, not a regression fix.
+- **Percentage columns were `numeric(6,5)`** (max 9.99999) until the November
+  2026 refresh widened them to `numeric(8,5)` (§ 8.3). Any future source with
+  a stake above 10 % needs that schema, and `export_release.py`'s precision
+  note in REFRESH.md § 2g still describes 5-decimal rounding, which is
+  unchanged.
 - **NBIM rows have no identifiers** (no ISIN/CUSIP/ticker/share count) and are
   one row per company, aggregated across share classes by nbim.no. Search and
   matching for them is by issuer name only.
@@ -1058,7 +1063,25 @@ psql -c "\copy (SELECT DISTINCT investor_name AS name FROM investment WHERE sour
 grep -c . data/input/sec_pension_funds.csv   # 31 = header + 30 names (27 before + 3)
 ```
 
-### 8.3 NBIM (10 min)
+### 8.3 NBIM (15 min)
+
+**Schema fix first (one-time).** `stock_percent_ownership` and
+`stock_percent_voting_power` are `numeric(6,5)`, which caps at 9.99999 %.
+Norges Bank owns 23.45 % of Shaftesbury Capital and 12.21 % of Vonovia, so the
+COPY fails with `numeric field overflow` at line 5525. Widen both columns
+before loading. Nothing in prod depends on these columns (no views), but the
+ALTER rewrites the 2.1 GB table under an exclusive lock — expect 1–3 minutes
+during which site queries wait. If a load transaction is open and aborted
+(`postgres=!>` prompt), `ROLLBACK;` first.
+
+```sql
+ALTER TABLE investment
+  ALTER COLUMN stock_percent_ownership TYPE numeric(8,5),
+  ALTER COLUMN stock_percent_voting_power TYPE numeric(8,5);
+SELECT column_name, numeric_precision, numeric_scale FROM information_schema.columns
+ WHERE table_name = 'investment' AND column_name LIKE 'stock_percent%';
+-- expect precision 8, scale 5 for both
+```
 
 ```bash
 export NBIM_DATE=2026-06-30

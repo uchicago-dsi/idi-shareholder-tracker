@@ -311,7 +311,8 @@ admin for access. Objects are laid out one dated prefix per release:
    querying prod.
 
    *Precision caveat.* The `investment` table stores its numeric columns at
-   fixed scales — `numeric(6,5)` for the conversion rate and the two percentage
+   fixed scales — `numeric(6,5)` for the conversion rate, `numeric(8,5)` (since
+   2026-11; previously `6,5`) for the two percentage
    columns, `numeric(20,2)` for the amounts — so every load rounds to 5 or 2
    decimals. A release exported from prod therefore differs from the December
    2025 parquet (which `main.py` wrote at full float precision) in those columns
