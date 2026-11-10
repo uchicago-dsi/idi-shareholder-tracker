@@ -977,6 +977,10 @@ export PGPASSWORD="$(gcloud secrets versions access latest --secret=POSTGRES_PAS
 psql -c "SELECT 1;"
 ```
 
+**Start `psql` from the repo root** for every SQL block below: `\copy` reads
+the file path relative to psql's working directory, and the paths are written
+as `data/output/...`.
+
 Inputs that must exist locally:
 
 | File | How |
