@@ -71,15 +71,17 @@ const About: React.FC = () => {
             quarterly basis, when they are required to be filed.
           </li>
           <li>
-            The shareholdings of 17 European pension funds that do not report to
-            the U.S. Securities and Exchange Commission. This database compiles
-            information disclosed by the pension funds on their websites. The
-            pension funds are: Norges Bank Investment Management, PME
-            pensioenfonds, BPL Pensioen, PFZW, Tredje AP – Fonden, Sjunde
-            AP-fonden, KPA Pensions, Pensionskassernes Administration, Pension
-            Danmark, Sampension, Danica, Fjärde AP – Fonden, Stichting
-            Pensioenfonds ABP, Andra AP-Fonden, bpf BOUW, Pensioenfonds Vervoer,
-            and AMF Pension.
+            The shareholdings of 19 European pension funds that do not report to
+            the U.S. SEC. This database compiles information disclosed by the
+            pension funds on their websites. The pension funds are: Norges Bank
+            Investment Management, Pensioenfonds Vervoer, Sampension, Rail & OV,
+            Metal and Technology Pension Fund, PME pensioenfonds,
+            Pensionskassernes Administration, PensionDanmark, KPA Pension,
+            Danica Pension, bpfBOUW, Sjunde AP-fonden, Fjärde AP – Fonden,
+            Tredje AP – Fonden, Andra AP-Fonden, AMF Pension, BPL Pensioen,
+            PFZW, and Stichting Pensioenfonds ABP. We have also included one
+            U.S. pension fund that does not disclose to the U.S. SEC: Los
+            Angeles County Employees Retirement Association.
           </li>
         </ul>
         <p>

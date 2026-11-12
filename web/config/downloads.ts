@@ -3,6 +3,28 @@
  */
 export const DOWNLOAD_CONFIG = [
   {
+    date: "November 10, 2026",
+    dataDictionaryUrl:
+      "https://shareholder-tracker.cdn.uchicago-dsi.org/2025-12-18/shareholder_tracker_data_dictionary_20251218.pdf",
+    files: [
+      {
+        type: "CSV",
+        url: "https://shareholder-tracker.cdn.uchicago-dsi.org/2026-11-10/shareholder_tracker_release_20261110.zip",
+        size: "110 MB",
+      },
+      {
+        type: "PARQUET",
+        url: "https://shareholder-tracker.cdn.uchicago-dsi.org/2026-11-10/shareholder_tracker_release_20261110.parquet",
+        size: "135 MB",
+      },
+      {
+        type: "SQLITE",
+        url: "https://shareholder-tracker.cdn.uchicago-dsi.org/2026-11-10/shareholder_tracker_release_20261110.sqlite.gz",
+        size: "132 MB",
+      },
+    ],
+  },
+  {
     date: "September 8, 2026",
     dataDictionaryUrl:
       "https://shareholder-tracker.cdn.uchicago-dsi.org/2025-12-18/shareholder_tracker_data_dictionary_20251218.pdf",

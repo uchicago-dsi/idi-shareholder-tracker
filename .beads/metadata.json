@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "idi_shareholder_tracker",
+  "project_id": "eb5199ed-02ae-4349-984f-b091c2ee75a5"
+}
